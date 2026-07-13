@@ -2,12 +2,33 @@ import React, { useState } from 'react';
 import { formatCurrency } from '../../lib/utils';
 import { Calculator, HelpCircle, Check, DollarSign } from 'lucide-react';
 
-export function RepaymentSimulator() {
+export interface RepaymentSimulatorProps {
+  selectedLiability?: {
+    name: string;
+    value: number;
+    interest_rate?: number;
+    monthly_payment?: number;
+  } | null;
+}
+
+export function RepaymentSimulator({ selectedLiability }: RepaymentSimulatorProps) {
   const [balance, setBalance] = useState<number>(300000);
   const [interestRate, setInterestRate] = useState<number>(4.25);
   const [monthlyPayment, setMonthlyPayment] = useState<number>(3500);
   const [prepayment, setPrepayment] = useState<number>(50000);
   const [strategy, setStrategy] = useState<'duration' | 'payment'>('duration');
+
+  React.useEffect(() => {
+    if (selectedLiability) {
+      setBalance(selectedLiability.value);
+      if (selectedLiability.interest_rate) {
+        setInterestRate(selectedLiability.interest_rate);
+      }
+      if (selectedLiability.monthly_payment) {
+        setMonthlyPayment(selectedLiability.monthly_payment);
+      }
+    }
+  }, [selectedLiability]);
 
   const formatMAD = (val: number) => formatCurrency(val, 'fr').replace('MAD', 'DH');
 

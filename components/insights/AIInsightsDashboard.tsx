@@ -83,15 +83,11 @@ export function AIInsightsDashboard({ lang }: AIInsightsDashboardProps) {
                 <p>Aucune anomalie critique détectée. Vos enveloppes de dépenses sont respectées à la lettre ! Excellent travail d'arbitrage.</p>
               </div>
             ) : (
-              anomalies.map(anom => (
-                <div key={anom.id} className="flex gap-3 bg-slate-50 border border-slate-100 rounded-xl p-3 hover:bg-slate-100/50 transition-all">
-                  <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${anom.severity === 'high' ? 'bg-rose-500 animate-ping' : 'bg-amber-400'}`} />
+              anomalies.map((anom, idx) => (
+                <div key={idx} className="flex gap-3 bg-slate-50 border border-slate-100 rounded-xl p-3 hover:bg-slate-100/50 transition-all">
+                  <div className="w-2 h-2 rounded-full mt-1.5 shrink-0 bg-amber-400" />
                   <div>
-                    <h4 className="text-xs font-black text-slate-800">{anom.title}</h4>
-                    <p className="text-[10px] text-slate-500 font-medium leading-relaxed mt-0.5">{anom.description}</p>
-                    <span className="text-[8px] text-rose-500 font-black tracking-wide uppercase mt-1 block">
-                      Impact : -{formatMAD(anom.impactMAD)}
-                    </span>
+                    <p className="text-xs font-semibold text-slate-800 leading-relaxed">{anom}</p>
                   </div>
                 </div>
               ))
@@ -116,15 +112,16 @@ export function AIInsightsDashboard({ lang }: AIInsightsDashboardProps) {
                   <span className="text-xs mt-0.5">💡</span>
                   <div>
                     <span className="text-[8px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider">
-                      {sug.category}
+                      Conseil Floussi
                     </span>
-                    <p className="text-[11px] text-slate-600 font-semibold leading-relaxed mt-1.5">{sug.text}</p>
+                    <h4 className="text-xs font-black text-slate-800 mt-1">{sug.title}</h4>
+                    <p className="text-[11px] text-slate-600 font-semibold leading-relaxed mt-1">{sug.description}</p>
                   </div>
                 </div>
 
                 <div className="text-right shrink-0">
                   <span className="text-[10px] font-black text-emerald-600 font-mono">
-                    +{formatMAD(sug.potentialSavingsMAD)}
+                    +{formatMAD(sug.potentialSaving)}
                   </span>
                   <span className="block text-[8px] text-slate-400">estimé</span>
                 </div>
@@ -141,8 +138,8 @@ export function AIInsightsDashboard({ lang }: AIInsightsDashboardProps) {
         </div>
         <div className="space-y-1">
           <span className="text-[9px] font-black uppercase text-amber-600 tracking-wider">Événement & Saison d'épargne Maroc</span>
-          <h4 className="text-xs font-black text-slate-800 tracking-tight">{seasonalAdvice.title}</h4>
-          <p className="text-xs text-slate-600 font-medium leading-relaxed">{seasonalAdvice.text}</p>
+          <h4 className="text-xs font-black text-slate-800 tracking-tight">Conseil Saisonnier</h4>
+          <p className="text-xs text-slate-600 font-medium leading-relaxed">{seasonalAdvice}</p>
         </div>
       </div>
     </div>

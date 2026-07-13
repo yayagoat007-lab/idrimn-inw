@@ -60,15 +60,15 @@ export function MoroccanBenchmarks({ lang }: MoroccanBenchmarksProps) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 bg-slate-50 border border-slate-100 rounded-2xl p-4 text-xs font-semibold text-slate-600">
         <div className="space-y-0.5">
           <span className="block text-[8px] uppercase font-bold text-slate-400">Région de référence</span>
-          <span className="text-sm font-black text-slate-800">{regionalAverage.regionName}</span>
+          <span className="text-sm font-black text-slate-800">{regionalAverage.name}</span>
         </div>
         <div className="space-y-0.5">
-          <span className="block text-[8px] uppercase font-bold text-slate-400">Dépense mensuelle moyenne</span>
-          <span className="text-sm font-black text-slate-800 font-mono">{formatMAD(regionalAverage.averageMonthlyExpense)}</span>
+          <span className="block text-[8px] uppercase font-bold text-slate-400">Revenu mensuel moyen</span>
+          <span className="text-sm font-black text-slate-800 font-mono">{formatMAD(regionalAverage.avgIncome)}</span>
         </div>
         <div className="space-y-0.5">
           <span className="block text-[8px] uppercase font-bold text-slate-400">Poste principal de dépense</span>
-          <span className="text-sm font-black text-emerald-600">{regionalAverage.highestSpendingCategory}</span>
+          <span className="text-sm font-black text-emerald-600">Alimentation ({regionalAverage.foodPercent}%)</span>
         </div>
       </div>
 

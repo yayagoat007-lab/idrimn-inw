@@ -210,10 +210,10 @@ export default function App() {
       return <PricingPage onEnterApp={() => setCurrentScreen('login')} />;
     }
     if (currentScreen === 'login') {
-      return <LoginPage onLogin={login} onNavigateRegister={() => setCurrentScreen('register')} />;
+      return <LoginPage onLogin={() => {}} onNavigateRegister={() => setCurrentScreen('register')} />;
     }
     if (currentScreen === 'register') {
-      return <RegisterPage onRegister={register} onNavigateLogin={() => setCurrentScreen('login')} />;
+      return <RegisterPage onRegister={() => {}} onNavigateLogin={() => setCurrentScreen('login')} />;
     }
     if (currentScreen === 'forgot-password') {
       return <ForgotPasswordPage onNavigateLogin={() => setCurrentScreen('login')} />;
