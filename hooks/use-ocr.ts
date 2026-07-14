@@ -1,12 +1,16 @@
 import { useState } from 'react';
 import { createWorker } from 'tesseract.js';
+import { parseReceiptText, LineItem } from '../lib/receipt-parser';
+import { useAuth } from './use-auth';
 
 export interface ScannedReceipt {
   merchant: string;
   amount: number;
+  totalAmount?: number;
   date: string;
   category: string;
   isReliable: boolean;
+  lineItems: LineItem[];
   rawText?: string;
 }
 
@@ -15,9 +19,28 @@ export interface ScannedReceipt {
  * Optimised to extract merchant name, total cash/card amount, and date from typical Moroccan store receipts (BIM, Marjane, etc.).
  */
 export function useOcr() {
+  const { profile } = useAuth();
+  const userId = profile?.id || "mock-user-id-9999";
+  
   const [scanning, setScanning] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
+
+  // Helper to update and check badge progress
+  const trackOcrProgress = () => {
+    try {
+      const countKey = `floussi_ocr_success_count_${userId}`;
+      const count = parseInt(localStorage.getItem(countKey) || '0', 10) + 1;
+      localStorage.setItem(countKey, count.toString());
+      if (count >= 5) {
+        import('../lib/gamification').then(({ unlockGlobalBadge }) => {
+          unlockGlobalBadge(userId, 'scanner_pro');
+        }).catch(err => console.error(err));
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   /**
    * Scans a receipt file (Image / PDF) and returns structured parsed fields
@@ -45,6 +68,7 @@ export function useOcr() {
       
       setProgress(100);
       setScanning(false);
+      trackOcrProgress();
       return parsed;
 
     } catch (err: any) {
@@ -52,7 +76,9 @@ export function useOcr() {
       // Beautiful robust fallback for development or file format errors
       await new Promise(resolve => setTimeout(resolve, 1500));
       setScanning(false);
-      return generateSmartFallback(file.name);
+      const fallbackResult = generateSmartFallback(file.name);
+      trackOcrProgress();
+      return fallbackResult;
     } finally {
       if (worker) {
         await worker.terminate();
@@ -64,66 +90,24 @@ export function useOcr() {
    * Extractor function for typical French/Moroccan receipts
    */
   const parseMoroccanReceipt = (text: string): ScannedReceipt => {
-    const uppercase = text.toUpperCase();
-    
-    // Merchant matching
-    let merchant = "Commerce Marocain";
-    if (uppercase.includes("MARJANE")) merchant = "Marjane";
-    else if (uppercase.includes("BIM")) merchant = "BIM Stores";
-    else if (uppercase.includes("CARREFOUR")) merchant = "Carrefour";
-    else if (uppercase.includes("DECATHLON")) merchant = "Decathlon";
-    else if (uppercase.includes("GLOVO")) merchant = "Glovo";
-    else if (uppercase.includes("ACIMA")) merchant = "Acima";
-    else if (uppercase.includes("LABEL")) merchant = "Label'Vie";
-    
-    // Amount extraction
-    // Looks for patterns: "TOTAL TTC", "A PAYER", "NET A PAYER", "TTC", "DH"
-    let amount = 0;
-    const amountRegexes = [
-      /(?:TOTAL|PAYER|NET|TTC|MONTANT|DH)\s*(?:TTC|A PAYER)?[:\s-]*([0-9]+[.,]\s*[0-9]{2})/i,
-      /([0-9]+[.,]\s*[0-9]{2})\s*(?:DH|MAD)/i,
-      /TOTAL\s*[:\s]*([0-9]+[.,][0-9]{2})/i
-    ];
-
-    for (const regex of amountRegexes) {
-      const match = text.match(regex);
-      if (match && match[1]) {
-        const cleanedStr = match[1].replace(/\s/g, '').replace(',', '.');
-        const num = parseFloat(cleanedStr);
-        if (!isNaN(num) && num > 0) {
-          amount = num;
-          break;
-        }
-      }
-    }
-
-    // Default mock amount if regex failed but receipt is found
-    if (amount === 0) {
-      amount = merchant === "BIM Stores" ? 84.50 : 157.90;
-    }
-
-    // Date extraction (e.g. DD/MM/YYYY or DD-MM-YYYY)
-    let dateStr = new Date().toISOString().split('T')[0];
-    const dateMatch = text.match(/(\d{2})[\/\.-](\d{2})[\/\.-](\d{4})/);
-    if (dateMatch) {
-      // transform from DD/MM/YYYY to YYYY-MM-DD
-      dateStr = `${dateMatch[3]}-${dateMatch[2]}-${dateMatch[1]}`;
-    }
+    const parsedEnriched = parseReceiptText(text);
 
     // Smart category based on merchant
     let category = "other";
-    if (["BIM Stores", "Marjane", "Carrefour", "Acima", "Label'Vie"].includes(merchant)) {
+    if (["BIM Stores", "Marjane", "Carrefour", "Acima", "Label'Vie"].includes(parsedEnriched.merchant)) {
       category = "food";
-    } else if (merchant === "Decathlon") {
+    } else if (parsedEnriched.merchant === "Decathlon") {
       category = "leisure";
     }
 
     return {
-      merchant,
-      amount,
-      date: dateStr,
+      merchant: parsedEnriched.merchant,
+      amount: parsedEnriched.totalAmount,
+      totalAmount: parsedEnriched.totalAmount,
+      date: parsedEnriched.date,
       category,
-      isReliable: amount > 0 && merchant !== "Commerce Marocain",
+      isReliable: parsedEnriched.totalAmount > 0 && parsedEnriched.merchant !== "Commerce Marocain",
+      lineItems: parsedEnriched.lineItems,
       rawText: text
     };
   };
@@ -135,28 +119,42 @@ export function useOcr() {
     const cleanName = filename.toLowerCase();
     
     if (cleanName.includes("marjane")) {
+      const parsed = parseReceiptText("MARJANE");
       return {
         merchant: "Marjane El Fida",
-        amount: 342.50,
+        amount: 157.90,
+        totalAmount: 157.90,
         date: new Date().toISOString().split('T')[0],
         category: "food",
-        isReliable: true
+        isReliable: true,
+        lineItems: parsed.lineItems,
+        rawText: "MOCK MARJANE TEXT"
       };
     } else if (cleanName.includes("bim")) {
+      const parsed = parseReceiptText("BIM");
       return {
         merchant: "BIM Maarif",
-        amount: 78.90,
+        amount: 84.50,
+        totalAmount: 84.50,
         date: new Date().toISOString().split('T')[0],
         category: "food",
-        isReliable: true
+        isReliable: true,
+        lineItems: parsed.lineItems,
+        rawText: "MOCK BIM TEXT"
       };
     } else if (cleanName.includes("decathlon")) {
       return {
         merchant: "Decathlon Ain Diab",
         amount: 199.00,
+        totalAmount: 199.00,
         date: new Date().toISOString().split('T')[0],
         category: "leisure",
-        isReliable: true
+        isReliable: true,
+        lineItems: [
+          { name: "QUECHUA SAC DOS 10L", quantity: 2, unitPrice: 49.50, isPromo: false },
+          { name: "DOMYOS TAPIS GYM", quantity: 1, unitPrice: 100.00, isPromo: false }
+        ],
+        rawText: "MOCK DECATHLON TEXT"
       };
     }
 
@@ -164,9 +162,15 @@ export function useOcr() {
     return {
       merchant: "Épicerie Moul Hanout",
       amount: 45.00,
+      totalAmount: 45.00,
       date: new Date().toISOString().split('T')[0],
       category: "food",
-      isReliable: true
+      isReliable: true,
+      lineItems: [
+        { name: "PAIN ROND TAFARNOUT", quantity: 3, unitPrice: 5.00, isPromo: false },
+        { name: "LAIT JOUDA 1L", quantity: 3, unitPrice: 10.00, isPromo: false }
+      ],
+      rawText: "MOCK HANOUT TEXT"
     };
   };
 

@@ -8,9 +8,16 @@ export interface SyncItem {
   timestamp: string;
 }
 
+export interface PrioritySyncItem extends SyncItem {
+  priority: 'high' | 'medium' | 'low';
+  requiresWifi: boolean;
+  readyToSync: boolean;
+}
+
 /**
  * Robust IndexedDB Local Database Wrapper using idb-keyval.
  * Supports offline-first capabilities and a synchronisation queue for offline transactions.
+ * Extended with sync prioritization and connection-aware scheduling.
  */
 export const OfflineDB = {
   /**
@@ -79,6 +86,65 @@ export const OfflineDB = {
    */
   async getSyncQueue(): Promise<SyncItem[]> {
     return (await this.get('sync_queue') as SyncItem[]) || [];
+  },
+
+  /**
+   * Retrieves the synchronization queue sorted by priority, mapping WiFi requirements.
+   * - Transactions/text edits: HIGH priority (ready to sync immediately on any connection).
+   * - Receipts, images, and OCR items: LOW priority (require WiFi to prevent cellular data drainage).
+   */
+  async getSyncPriorityQueue(): Promise<PrioritySyncItem[]> {
+    const queue = await this.getSyncQueue();
+    const isOnline = typeof window !== 'undefined' ? navigator.onLine : true;
+
+    // Detect if we are on a WiFi/Ethernet connection
+    let isWifi = true;
+    if (typeof window !== 'undefined') {
+      const nav = navigator as any;
+      const conn = nav.connection || nav.mozConnection || nav.webkitConnection;
+      if (conn) {
+        if (conn.type) {
+          isWifi = conn.type === 'wifi' || conn.type === 'ethernet';
+        } else if (conn.saveData) {
+          isWifi = false; // Data saver mode implies metered data
+        } else {
+          // Check effective type - assume cellular if 3g/4g is set and no connection.type is present
+          const et = conn.effectiveType;
+          isWifi = et !== '2g' && et !== '3g' && et !== '4g';
+        }
+      } else {
+        // Fallback to simple online state
+        isWifi = isOnline;
+      }
+    }
+
+    const processed: PrioritySyncItem[] = queue.map(item => {
+      // Check if it represents an image / ocr item
+      const isImage = 
+        item.table === 'ocr' || 
+        item.table === 'receipts' || 
+        item.table === 'images' ||
+        !!item.data?.imageUrl || 
+        !!item.data?.receiptImage ||
+        !!item.data?.imagePath;
+
+      const requiresWifi = isImage;
+      const priority: 'high' | 'medium' | 'low' = isImage ? 'low' : 'high';
+      const readyToSync = isOnline && (!requiresWifi || isWifi);
+
+      return {
+        ...item,
+        priority,
+        requiresWifi,
+        readyToSync
+      };
+    });
+
+    // Sort: High priority first, then medium, then low
+    return processed.sort((a, b) => {
+      const priorityWeights = { high: 0, medium: 1, low: 2 };
+      return priorityWeights[a.priority] - priorityWeights[b.priority];
+    });
   },
 
   /**

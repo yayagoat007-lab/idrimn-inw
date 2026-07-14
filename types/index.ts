@@ -279,3 +279,147 @@ export interface SubscriptionPayment {
   expires_at: string;
   created_at: string;
 }
+
+export interface WalletBalance {
+  userId: string;
+  balance: number;
+  currency: string;
+  dailyLimit: number;
+  kycVerified: boolean;
+  updatedAt: string;
+}
+
+export interface WalletMovement {
+  id: string;
+  userId: string;
+  type: 'add_funds' | 'transfer_out' | 'transfer_in' | 'bill_payment' | 'recharge' | 'round_up';
+  amount: number;
+  description: string;
+  status: 'completed' | 'failed' | 'pending';
+  createdAt: string;
+}
+
+export interface P2PTransfer {
+  id: string;
+  fromUserId: string;
+  toUserId?: string;
+  toPhone: string;
+  amount: number;
+  note: string;
+  status: 'pending' | 'completed' | 'failed';
+  createdAt: string;
+}
+
+export type BillProvider = 'ONEE' | 'RADEEMA' | 'AMENDIS' | 'IAM' | 'INWI' | 'Orange' | 'Lydec' | 'Redal';
+
+export interface BillPayment {
+  id: string;
+  userId: string;
+  provider: BillProvider;
+  accountReference: string;
+  amount: number;
+  status: 'pending' | 'completed' | 'failed';
+  paidAt: string;
+}
+
+export type MobileOperator = 'IAM' | 'INWI' | 'Orange';
+
+export interface MobileRecharge {
+  id: string;
+  userId: string;
+  operator: MobileOperator;
+  phoneNumber: string;
+  amount: number;
+  status: 'pending' | 'completed' | 'failed';
+  createdAt: string;
+}
+
+export interface RoundUpSettings {
+  userId: string;
+  enabled: boolean;
+  threshold: 5 | 10 | 20 | 50;
+  totalSaved: number;
+  targetBucketId: string | null;
+}
+
+export interface MicroChallenge {
+  id: string;
+  userId: string;
+  type: 'no_coffee' | 'no_taxi' | 'custom';
+  active: boolean;
+  savedAmount: number;
+  streakDays: number;
+}
+
+export interface CommunityPost {
+  id: string;
+  authorAlias: string;
+  authorCity: string;
+  content: string;
+  type: 'achievement' | 'tip' | 'question';
+  relatedGoalName?: string;
+  reactions: Record<string, number>;
+  commentsCount: number;
+  createdAt: string;
+}
+
+export interface Comment {
+  id: string;
+  postId: string;
+  authorAlias: string;
+  content: string;
+  createdAt: string;
+}
+
+export interface Challenge {
+  id: string;
+  title: string;
+  description: string;
+  type: 'savings' | 'no_spend' | 'ocr_scan';
+  targetValue: number;
+  startDate: string;
+  endDate: string;
+  participantsCount: number;
+  xpReward?: number;
+}
+
+export interface ChallengeParticipation {
+  userId: string;
+  challengeId: string;
+  currentValue: number;
+  joinedAt: string;
+  completed: boolean;
+}
+
+export interface SavingsGroup {
+  id: string;
+  name: string;
+  targetAmount: number;
+  currentAmount: number;
+  deadline: string;
+  memberIds: string[];
+  createdBy: string;
+}
+
+export interface GroupContribution {
+  groupId: string;
+  userId: string;
+  amount: number;
+  date: string;
+}
+
+export interface PartnerOffer {
+  id: string;
+  partnerName: string;
+  title: string;
+  description: string;
+  promoCode: string;
+  discountValue: string;
+  category: string;
+  imageUrl?: string;
+  logoUrl?: string;
+  linkUrl: string;
+  isFeatured?: boolean;
+}
+
+

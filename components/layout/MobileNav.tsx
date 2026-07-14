@@ -4,7 +4,8 @@ import {
   Plus, 
   Layers, 
   Settings,
-  PiggyBank
+  PiggyBank,
+  CreditCard
 } from 'lucide-react';
 
 interface MobileNavProps {
@@ -16,7 +17,7 @@ interface MobileNavProps {
 export function MobileNav({ currentRoute, onNavigate, onQuickAdd }: MobileNavProps) {
   const navItems = [
     { id: 'dashboard', label: 'Tawjih', icon: LayoutDashboard },
-    { id: 'transactions', label: 'Mu\'amalat', icon: ArrowDownUp },
+    { id: 'wallet', label: 'Mihfada', icon: CreditCard },
     { id: 'buckets', label: 'Sanadiq', icon: Layers },
     { id: 'tontine', label: 'Daret', icon: PiggyBank },
   ];

@@ -11,7 +11,12 @@ import {
   Settings,
   Sparkles,
   HelpCircle,
-  PiggyBank
+  PiggyBank,
+  CreditCard,
+  Compass,
+  Activity,
+  Gift,
+  Calculator
 } from 'lucide-react';
 import { getTranslation, Language } from '../../lib/i18n';
 
@@ -23,17 +28,38 @@ interface SidebarProps {
 }
 
 export function Sidebar({ currentRoute, onNavigate, language, subscriptionTier }: SidebarProps) {
-  const menuItems = [
-    { id: 'dashboard', label: getTranslation('dashboard', language), icon: LayoutDashboard },
-    { id: 'transactions', label: getTranslation('transactions', language), icon: ArrowDownUp },
-    { id: 'buckets', label: getTranslation('buckets', language), icon: Layers },
-    { id: 'insights', label: getTranslation('insights', language), icon: PieChart },
-    { id: 'goals', label: getTranslation('goals', language), icon: Target },
-    { id: 'tontine', label: getTranslation('tontine', language), icon: PiggyBank },
-    { id: 'net-worth', label: getTranslation('netWorth', language), icon: Wallet },
-    { id: 'family', label: getTranslation('family', language), icon: Heart },
-    { id: 'reports', label: getTranslation('reports', language), icon: BookOpen },
-    { id: 'settings', label: getTranslation('settings', language), icon: Settings },
+  const sections = [
+    {
+      title: language === 'darija' ? 'Ra\'issi' : 'Principal',
+      items: [
+        { id: 'dashboard', label: getTranslation('dashboard', language), icon: LayoutDashboard },
+        { id: 'transactions', label: getTranslation('transactions', language), icon: ArrowDownUp },
+        { id: 'buckets', label: getTranslation('buckets', language), icon: Layers },
+        { id: 'insights', label: getTranslation('insights', language), icon: PieChart },
+        { id: 'goals', label: getTranslation('goals', language), icon: Target },
+      ]
+    },
+    {
+      title: language === 'darija' ? 'Outils Maroc 🇲🇦' : 'Outils Maroc 🇲🇦',
+      items: [
+        { id: 'wallet', label: getTranslation('wallet', language), icon: CreditCard },
+        { id: 'tontine', label: getTranslation('tontine', language), icon: PiggyBank },
+        { id: 'community', label: getTranslation('community', language), icon: Users },
+        { id: 'calculators', label: getTranslation('calculators', language), icon: Calculator },
+        { id: 'hajj-planner', label: getTranslation('hajjPlanner', language), icon: Compass },
+        { id: 'cnss-tracker', label: getTranslation('cnssTracker', language), icon: Activity },
+        { id: 'aid-programs', label: getTranslation('aidPrograms', language), icon: Gift },
+      ]
+    },
+    {
+      title: language === 'darija' ? 'Idara' : 'Gestion',
+      items: [
+        { id: 'net-worth', label: getTranslation('netWorth', language), icon: Wallet },
+        { id: 'family', label: getTranslation('family', language), icon: Heart },
+        { id: 'reports', label: getTranslation('reports', language), icon: BookOpen },
+        { id: 'settings', label: getTranslation('settings', language), icon: Settings },
+      ]
+    }
   ];
 
   return (
@@ -56,30 +82,37 @@ export function Sidebar({ currentRoute, onNavigate, language, subscriptionTier }
       </div>
 
       {/* Main Navigation */}
-      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-        {menuItems.map(item => {
-          const Icon = item.icon;
-          const isActive = currentRoute === item.id;
-          return (
-            <button
-              key={item.id}
-              onClick={() => onNavigate(item.id)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all group ${
-                isActive
-                  ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/10'
-                  : 'hover:bg-slate-800 hover:text-slate-100'
-              }`}
-            >
-              <Icon 
-                size={18} 
-                className={`transition-colors ${
-                  isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'
-                }`} 
-              />
-              <span>{item.label}</span>
-            </button>
-          );
-        })}
+      <nav className="flex-1 p-4 space-y-4 overflow-y-auto">
+        {sections.map(section => (
+          <div key={section.title} className="space-y-1">
+            <h5 className="px-4 text-[10px] font-black tracking-widest uppercase text-slate-500 pb-1">
+              {section.title}
+            </h5>
+            {section.items.map(item => {
+              const Icon = item.icon;
+              const isActive = currentRoute === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => onNavigate(item.id)}
+                  className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all group cursor-pointer ${
+                    isActive
+                      ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/10'
+                      : 'hover:bg-slate-800 hover:text-slate-100 text-slate-400'
+                  }`}
+                >
+                  <Icon 
+                    size={15} 
+                    className={`transition-colors ${
+                      isActive ? 'text-white' : 'text-slate-500 group-hover:text-slate-300'
+                    }`} 
+                  />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        ))}
       </nav>
 
       {/* Premium Upgrade prompt or Support */}

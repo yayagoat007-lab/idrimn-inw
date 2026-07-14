@@ -12,6 +12,12 @@ export const translations = {
     family: "Famille (Aila)",
     reports: "Rapports",
     settings: "Paramètres",
+    wallet: "Portefeuille (Wallet)",
+    community: "Communauté (L-Comunauté)",
+    calculators: "Calculateurs (Hisabat)",
+    hajjPlanner: "Hajj & Omra (🕋)",
+    cnssTracker: "Remboursements AMO",
+    aidPrograms: "Aides Sociales (🇲🇦)",
     
     // Header/Stats
     totalBalance: "Solde Total",
@@ -132,7 +138,32 @@ export const translations = {
     otpCodeLabel: "Saisissez le code de vérification à 6 chiffres",
     verifyOtpButton: "Vérifier le code",
     guestModeButton: "Continuer en mode Invité (Sans compte)",
-    rateLimitMessage: "Trop de tentatives. Veuillez patienter {seconds} secondes."
+    rateLimitMessage: "Trop de tentatives. Veuillez patienter {seconds} secondes.",
+    
+    // Wallet
+    walletBalance: "Solde du Portefeuille",
+    walletKyc: "Vérification d'Identité (KYC)",
+    walletSendMoney: "Envoyer de l'argent",
+    walletRecharge: "Recharge Mobile",
+    walletBills: "Payer des factures",
+    walletKycStatus: "Statut de vérification",
+    walletKycVerified: "Vérifié (Compte sécurisé)",
+    walletKycPending: "En attente de vérification",
+    
+    // Community
+    communityFeed: "Fil d'actualité de la communauté",
+    communityNewPost: "Partager une astuce ou réussite",
+    communityLikes: "Réactions",
+    communityComments: "Commentaires",
+    communityAnonymity: "Anonymat Garanti",
+    communityPlaceholder: "Partagez votre astuce d'épargne ou posez une question anonymement...",
+    
+    // CNSS & Social Aid
+    cnssStatus: "Suivi des remboursements AMO",
+    cnssDossiers: "Mes Dossiers Médicaux",
+    aidStatus: "Aides Sociales Directes",
+    aidFamilyAid: "Aide Sociale Directe (Da3m)",
+    aidHousingAid: "Aide au Logement"
   },
   
   darija: {
@@ -146,6 +177,12 @@ export const translations = {
     family: "L'Aila (Famille)",
     reports: "Taqarir (Rapports)",
     settings: "I'dadat (Paramètres)",
+    wallet: "Mihfada (Wallet)",
+    community: "L-Comunauté (الكومونوطي)",
+    calculators: "Hisabat Floussi (حسابات)",
+    hajjPlanner: "Safar Al-Haram (الحج)",
+    cnssTracker: "Tafsil d-AMO (الضمان الاجتماعي)",
+    aidPrograms: "Da3m d-Doulat (الدعم الاجتماعي)",
     
     // Header/Stats
     totalBalance: "Koulchi l'Flouss (Solde)",
@@ -266,7 +303,32 @@ export const translations = {
     otpCodeLabel: "Kteb code ttheqqeq fih 6 d'larqam",
     verifyOtpButton: "Theqqeq mel code",
     guestModeButton: "Khdem b'Sifat Zair (Bla hssab)",
-    rateLimitMessage: "Ktariti m'l'mouhawalat. Sber chwya {seconds} taniya."
+    rateLimitMessage: "Ktariti m'l'mouhawalat. Sber chwya {seconds} taniya.",
+    
+    // Wallet
+    walletBalance: "Sard d-Mihfada",
+    walletKyc: "Theqqoq mel Hwiya (KYC)",
+    walletSendMoney: "Ssefet l-Flouss",
+    walletRecharge: "Recharge Tilifoun",
+    walletBills: "Khless l-Fawatir",
+    walletKycStatus: "Statut dyal theqqoq",
+    walletKycVerified: "Mtheqqeq (Securisé)",
+    walletKycPending: "Siyen l-theqqoq",
+    
+    // Community
+    communityFeed: "Mansourat l-Comunauté",
+    communityNewPost: "Zid post jdid f l-Comunauté",
+    communityLikes: "I'jabat",
+    communityComments: "Ta'liqat",
+    communityAnonymity: "Anonymat mdmoun (Bla smya)",
+    communityPlaceholder: "Kteb nassiha dyalk f l-iddikhar hna...",
+    
+    // CNSS & Social Aid
+    cnssStatus: "Ttabo3 dyal AMO",
+    cnssDossiers: "Dossierat dyal tbib",
+    aidStatus: "Da3m l-Moubashir dyal l'Aila",
+    aidFamilyAid: "Da3m d-Doulat l-Aila",
+    aidHousingAid: "Da3m d-Sakan"
   }
 };
 

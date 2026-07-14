@@ -173,9 +173,18 @@ export function useGoals(userId: string = "mock-user-id-9999") {
    * Contribute money to a goal
    */
   const contributeToGoal = async (id: string, amount: number, note: string = "Contribution épargne") => {
+    let goalCompletedJustNow = false;
+    let completedGoalName = "";
+    let completedGoalAmount = 0;
+
     const list = goals.map(g => {
       if (g.id === id) {
         const nextAmount = Math.min(g.target_amount, g.current_amount + amount);
+        if (nextAmount >= g.target_amount && g.current_amount < g.target_amount) {
+          goalCompletedJustNow = true;
+          completedGoalName = g.name;
+          completedGoalAmount = g.target_amount;
+        }
         return {
           ...g,
           current_amount: nextAmount,
@@ -198,6 +207,58 @@ export function useGoals(userId: string = "mock-user-id-9999") {
     const updatedLogs = [newLog, ...contributions];
     setContributions(updatedLogs);
     await OfflineDB.set('goal_contributions', updatedLogs);
+
+    // Generate automated community post if goal was reached
+    if (goalCompletedJustNow) {
+      try {
+        const userStr = localStorage.getItem('floussi_auth_user');
+        let fullName = null;
+        let email = null;
+        let city = null;
+        if (userStr) {
+          try {
+            const u = JSON.parse(userStr);
+            fullName = u?.full_name || u?.name || null;
+            email = u?.email || null;
+            city = u?.city || null;
+          } catch (_) {}
+        }
+
+        // Lazy compute user alias
+        const baseName = fullName 
+          ? fullName.split(' ')[0] 
+          : (email ? email.split('@')[0] : 'FloussiUser');
+        const cleanName = baseName.replace(/[^a-zA-Z0-9]/g, '');
+        const cleanCity = (city || 'Maroc').replace(/[^a-zA-Z0-9]/g, '');
+        const suffix = email ? (email.length % 100) : '42';
+        const userAlias = `${cleanName}_${cleanCity}${suffix}`;
+        const userCity = city || 'Maroc';
+
+        const feedStr = localStorage.getItem('floussi_community_posts');
+        let currentFeed = [];
+        if (feedStr) {
+          try {
+            currentFeed = JSON.parse(feedStr);
+          } catch (_) {}
+        }
+
+        const autoPost = {
+          id: `post-auto-${Math.floor(Math.random() * 1000000)}`,
+          authorAlias: userAlias,
+          authorCity: userCity,
+          content: `Yallah khouya/khti! 🎉 J'ai atteint 100% de mon objectif d'épargne "${completedGoalName}" d'un montant de ${completedGoalAmount.toLocaleString('fr-FR')} DH ! Grâce à l'application Floussi, la rigueur et la discipline paient toujours ! 🚀🇲🇦`,
+          type: 'achievement' as const,
+          relatedGoalName: completedGoalName,
+          reactions: { '👍': 1, '❤️': 1, '🎉': 3, '🔥': 2, '💡': 0 },
+          commentsCount: 0,
+          createdAt: new Date().toISOString()
+        };
+
+        localStorage.setItem('floussi_community_posts', JSON.stringify([autoPost, ...currentFeed]));
+      } catch (e) {
+        console.error('Error generating automated achievement post on goal completion', e);
+      }
+    }
 
     // Update DB
     const target = list.find(g => g.id === id);

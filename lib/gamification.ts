@@ -39,8 +39,71 @@ export const ALL_BADGES: Badge[] = [
   { id: 'ramadan_ready', title: 'Siyane & Sandoq', description: 'Activer le profil d\'enveloppes de dépenses Ramadan.', emoji: '🌙', xpValue: 120, category: 'features' },
   { id: 'zakat_pay', title: 'Zakat Al Maal', description: 'Utiliser le calculateur de Zakat pour évaluer son dû.', emoji: '🕋', xpValue: 100, category: 'features' },
   { id: 'referral_king', title: 'Ambassadeur Floussi', description: 'Inviter un ami qui s\'inscrit activement.', emoji: '🎁', xpValue: 200, category: 'onboarding' },
-  { id: 'elite_tier', title: 'Club Floussi Elite', description: 'Passer à l\'abonnement Floussi Elite pour débloquer tout.', emoji: '✨', xpValue: 500, category: 'features' }
+  { id: 'elite_tier', title: 'Club Floussi Elite', description: 'Passer à l\'abonnement Floussi Elite pour débloquer tout.', emoji: '✨', xpValue: 500, category: 'features' },
+  { id: 'sidi_friend', title: 'Ami de Sidi', description: 'Discuter plus de 10 fois avec Sidi Floussi, l\'assistant IA.', emoji: '🧠', xpValue: 150, category: 'features' },
+  { id: 'scanner_pro', title: 'Scanner Pro', description: 'Numériser 5 reçus avec succès en extrayant les articles.', emoji: '📱', xpValue: 120, category: 'features' },
+  { id: 'smart_saver', title: 'Épargnant Malin', description: 'Activer le round-up automatique pour épargner sans effort.', emoji: '🌀', xpValue: 100, category: 'savings' },
+  { id: 'community_citizen', title: 'Citoyen Communautaire', description: 'Créer votre premier post d\'entraide dans la communauté.', emoji: '🗣️', xpValue: 100, category: 'tontine' },
+  { id: 'challenge_solved', title: 'Défi relevé', description: 'Compléter avec succès un défi budgétaire hebdomadaire.', emoji: '🎯', xpValue: 150, category: 'streak' },
+  { id: 'hajj_pilgrim', title: 'Pèlerin en préparation', description: 'Créer un projet d\'épargne ou planifier pour le Hajj.', emoji: '🕋', xpValue: 200, category: 'savings' }
 ];
+
+/**
+ * Utility to unlock a badge globally from any context/hook.
+ * It reads the local gamification state for the current user, appends the badge, adds the XP,
+ * and updates the level before saving.
+ */
+export function unlockGlobalBadge(userId: string = "mock-user-id-9999", badgeId: string): { unlocked: boolean; badge?: Badge; newXp?: number } {
+  try {
+    const key = `floussi_gamification_${userId}`;
+    const saved = localStorage.getItem(key);
+    let state: GamificationState;
+    
+    if (saved) {
+      state = JSON.parse(saved);
+    } else {
+      state = {
+        xp: 140,
+        level: 2,
+        streak: 3,
+        lastActiveDate: new Date().toISOString().split('T')[0],
+        unlockedBadges: ['first_trans', 'streak_3'],
+        streakHistory: []
+      };
+    }
+
+    if (state.unlockedBadges.includes(badgeId)) {
+      return { unlocked: false };
+    }
+
+    const badge = ALL_BADGES.find(b => b.id === badgeId);
+    if (!badge) {
+      return { unlocked: false };
+    }
+
+    const updatedXp = state.xp + badge.xpValue;
+    const { level } = getLevelForXp(updatedXp);
+
+    const updatedState: GamificationState = {
+      ...state,
+      unlockedBadges: [...state.unlockedBadges, badgeId],
+      xp: updatedXp,
+      level
+    };
+
+    localStorage.setItem(key, JSON.stringify(updatedState));
+    console.log(`[Gamification] Badge unlocked! ${badge.title} (+${badge.xpValue} XP)`);
+
+    // Dispatch custom event to let components/listeners know a badge was unlocked
+    const event = new CustomEvent('floussi_badge_unlocked', { detail: { badge, xpEarned: badge.xpValue } });
+    window.dispatchEvent(event);
+
+    return { unlocked: true, badge, newXp: updatedXp };
+  } catch (err) {
+    console.error("Error unlocking global badge", err);
+    return { unlocked: false };
+  }
+}
 
 export function getLevelForXp(xp: number): { level: number; levelName: string; nextLevelThreshold: number; percent: number } {
   let level = 1;

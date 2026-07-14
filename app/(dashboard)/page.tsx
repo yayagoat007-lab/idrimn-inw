@@ -20,6 +20,7 @@ import { TontineMiniCard } from '../../components/dashboard/TontineMiniCard';
 import { TransactionRow } from '../../components/transactions/TransactionRow';
 import { AdBanner } from '../../components/ads/AdBanner';
 import { SyncStatusBadge } from '../../components/shared/SyncStatusBadge';
+import { PartnerOfferBanner } from '../../components/shared/PartnerOfferBanner';
 
 import { formatCurrency } from '../../lib/utils';
 import { Language, getTranslation } from '../../lib/i18n';
@@ -275,6 +276,7 @@ export default function DashboardPage({
 
       {/* 3. AD BANNER (Free plan only) */}
       <AdBanner unitId="dashboard-native-1" userTier={userTier as any} />
+      <PartnerOfferBanner />
 
       {/* 4. SECTIONS PRINCIPALES (Bento Grid) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

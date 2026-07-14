@@ -131,6 +131,28 @@ export const FLOUSSI_THEMES: FloussiTheme[] = [
     surface: "#FCE7F3",
     text: "#500724",
     accent: "#F472B6"
+  },
+  {
+    id: "dark",
+    name: "Sombre Floussi",
+    description: "Ambiance nocturne douce pour reposer les yeux.",
+    primary: "#3B82F6",
+    secondary: "#64748B",
+    background: "#0F172A",
+    surface: "#1E293B",
+    text: "#F1F5F9",
+    accent: "#38BDF8"
+  },
+  {
+    id: "oled",
+    name: "OLED Noir Absolu",
+    description: "Fond noir pur #000000 pour préserver la batterie des écrans AMOLED.",
+    primary: "#3B82F6",
+    secondary: "#94A3B8",
+    background: "#000000",
+    surface: "#121212",
+    text: "#F8FAFC",
+    accent: "#60A5FA"
   }
 ];
 
@@ -157,6 +179,9 @@ export function applyThemeToDOM(theme: FloussiTheme, customConfig?: CustomThemeC
   root.style.setProperty('--color-surface', theme.surface);
   root.style.setProperty('--color-text', theme.text);
   root.style.setProperty('--color-accent', theme.accent);
+
+  // Apply smooth transition (300ms) for background and text properties
+  root.style.transition = 'background-color 300ms ease-in-out, color 300ms ease-in-out, border-color 300ms ease-in-out, box-shadow 300ms ease-in-out';
 
   // If there's an elite custom configuration, apply it
   if (customConfig) {

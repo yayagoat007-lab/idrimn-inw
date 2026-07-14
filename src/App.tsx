@@ -18,6 +18,12 @@ import FamilyPage from '../app/(dashboard)/family/page';
 import NetWorthPage from '../app/(dashboard)/net-worth/page';
 import ReportsPage from '../app/(dashboard)/reports/page';
 import SettingsPage from '../app/(dashboard)/settings/page';
+import { WalletPage } from '../components/wallet/WalletPage';
+import { CommunityPage } from '../components/community/CommunityPage';
+import HajjPlannerPage from '../app/(dashboard)/hajj-planner/page';
+import CalculatorsPage from '../app/(dashboard)/calculators/page';
+import CnssTrackerPage from '../app/(dashboard)/cnss-tracker/page';
+import AidProgramsPage from '../app/(dashboard)/aid-programs/page';
 
 // Public/Auth Pages
 import LandingPage from '../app/(public)/page';
@@ -33,8 +39,16 @@ import MobileNav from '../components/layout/MobileNav';
 import AdBanner from '../components/ads/AdBanner';
 import TransactionForm from '../components/transactions/TransactionForm';
 import { BucketForm } from '../components/buckets/BucketForm';
+import { SidiFAB } from '../components/sidi/SidiFAB';
 
-import { ShieldAlert, RefreshCw, Camera, Sparkles, X } from 'lucide-react';
+import { ShieldAlert, RefreshCw, Camera, Sparkles, X, Settings, Layers, Wallet, Check } from 'lucide-react';
+
+// Advanced OCR & Cash features
+import { ReceiptLineItemsPreview } from '../components/ocr/ReceiptLineItemsPreview';
+import { SplitByCategoryModal } from '../components/ocr/SplitByCategoryModal';
+import { QuickCashEntry } from '../components/ocr/QuickCashEntry';
+import { validateAmount, validateDate } from '../lib/receipt-validation';
+import { compressImage } from '../lib/image-compression';
 
 export default function App() {
   const { user, profile, loading, updateProfile, setLanguage, upgradeSubscription, logout, login, register } = useAuth();
@@ -66,6 +80,12 @@ export default function App() {
   // Simulated scan state
   const [scannedResult, setScannedResult] = useState<any | null>(null);
 
+  // Advanced states
+  const [ocrTab, setOcrTab] = useState<'scan' | 'quick'>('scan');
+  const [showSplitModal, setShowSplitModal] = useState(false);
+  const [editedOcrAmount, setEditedOcrAmount] = useState<number>(0);
+  const [editedOcrDate, setEditedOcrDate] = useState<string>('');
+
   // Sync current navigation with auth state
   useEffect(() => {
     if (session) {
@@ -89,9 +109,21 @@ export default function App() {
 
     setScannedResult(null);
     try {
-      const result = await scanReceipt(file);
+      let finalFile = file;
+      if (file.type.startsWith('image/')) {
+        try {
+          const compressed = await compressImage(file, 400); // compress to 400KB max
+          finalFile = new File([compressed], file.name, { type: compressed.type });
+        } catch (compressionErr) {
+          console.warn("[App] Image compression failed, scanning original:", compressionErr);
+        }
+      }
+
+      const result = await scanReceipt(finalFile);
       if (result) {
         setScannedResult(result);
+        setEditedOcrAmount(result.amount);
+        setEditedOcrDate(result.date);
       }
     } catch (err) {
       console.error(err);
@@ -102,11 +134,11 @@ export default function App() {
     if (!scannedResult) return;
 
     createTransaction({
-      amount: scannedResult.amount,
-      description: scannedResult.description || 'Scan Ticket Marjane/BIM',
+      amount: editedOcrAmount,
+      description: `Scan Ticket ${scannedResult.merchant}`,
       type: 'expense',
-      category: 'alimentation', // default
-      transaction_date: scannedResult.date || new Date().toISOString().split('T')[0],
+      category: scannedResult.category || 'alimentation',
+      transaction_date: editedOcrDate || new Date().toISOString().split('T')[0],
       account_id: 'acc-cash',
       tags: ['ocr', 'cash', scannedResult.merchant?.toLowerCase() || 'marjane'],
       merchant: scannedResult.merchant || 'Marjane',
@@ -118,6 +150,28 @@ export default function App() {
 
     setScannedResult(null);
     setShowOcrModal(false);
+  };
+
+  const handleConfirmSplit = (splits: { category: string; amount: number; bucketId: string | null }[]) => {
+    splits.forEach(split => {
+      createTransaction({
+        amount: split.amount,
+        description: `[Split] ${split.category.toUpperCase()} - ${scannedResult?.merchant || 'Ticket'}`,
+        type: 'expense',
+        category: split.category,
+        transaction_date: editedOcrDate || scannedResult?.date || new Date().toISOString().split('T')[0],
+        account_id: 'acc-cash',
+        tags: ['ocr', 'split', split.category],
+        merchant: scannedResult?.merchant || 'Marchand',
+        bucket_id: split.bucketId,
+        receipt_url: null,
+        is_recurring: false,
+        recurring_frequency: null
+      });
+    });
+    setScannedResult(null);
+    setShowOcrModal(false);
+    setShowSplitModal(false);
   };
 
   // Render correct subpage
@@ -173,6 +227,18 @@ export default function App() {
         return <GoalsPage language={language} />;
       case 'tontine':
         return <TontinePage language={language} />;
+      case 'wallet':
+        return <WalletPage lang={language} />;
+      case 'community':
+        return <CommunityPage lang={language} />;
+      case 'calculators':
+        return <CalculatorsPage language={language} />;
+      case 'hajj-planner':
+        return <HajjPlannerPage language={language} />;
+      case 'cnss-tracker':
+        return <CnssTrackerPage language={language} />;
+      case 'aid-programs':
+        return <AidProgramsPage language={language} />;
       case 'family':
         return <FamilyPage language={language} />;
       case 'net-worth':
@@ -308,76 +374,225 @@ export default function App() {
         </div>
       )}
 
-      {/* MODAL: Ticket OCR Scanner */}
+      {/* MODAL: Ticket OCR Scanner / Cash quick entry tabbed panel */}
       {showOcrModal && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl border border-gray-100 space-y-4">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-              <h3 className="font-extrabold text-sm text-gray-900 flex items-center gap-1.5">
-                <Camera size={18} className="text-emerald-600" />
-                Numériseur OCR Floussi (Darija)
-              </h3>
-              <button 
-                onClick={() => {
-                  setShowOcrModal(false);
-                  setScannedResult(null);
-                }}
-                className="p-1 hover:bg-slate-50 text-gray-400 hover:text-gray-900 rounded-lg transition-colors"
-              >
-                <X size={16} />
-              </button>
-            </div>
-
-            <div className="space-y-4 text-xs font-semibold text-gray-500">
-              <p className="leading-relaxed text-gray-500">
-                Uploadez ou prenez une photo de votre ticket de caisse (Marjane, BIM, Carrefour, Aswak Assalam). Notre IA Tesseract va extraire le montant total et le marchand automatiquement !
-              </p>
-
-              <div className="border-2 border-dashed border-slate-200 hover:border-emerald-500 rounded-xl p-6 text-center cursor-pointer transition-colors relative">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleOcrFileChange}
-                  className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
-                />
-                <div className="space-y-2">
-                  <Camera size={28} className="text-gray-400 mx-auto" />
-                  <p className="font-bold text-gray-700">Cliquez pour prendre une photo</p>
-                  <p className="text-[10px] text-gray-400 font-medium">PNG, JPG, JPEG jusqu'à 5 MB</p>
-                </div>
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto">
+          <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl border border-slate-100 overflow-hidden font-sans">
+            
+            {/* Header / Tabs Selector */}
+            <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex flex-col gap-3">
+              <div className="flex justify-between items-center">
+                <h3 className="font-extrabold text-xs text-slate-800 uppercase tracking-widest flex items-center gap-1.5">
+                  <Camera size={18} className="text-emerald-600 animate-pulse" />
+                  <span>{language === 'darija' ? 'Nafida d l-mouwamalat' : 'Transactions & Saisies Floussi'}</span>
+                </h3>
+                <button 
+                  onClick={() => {
+                    setShowOcrModal(false);
+                    setScannedResult(null);
+                  }}
+                  className="p-1 hover:bg-slate-150 text-slate-400 hover:text-slate-800 rounded-xl transition-colors cursor-pointer"
+                >
+                  <X size={18} />
+                </button>
               </div>
 
-              {isScanning && (
-                <div className="flex items-center justify-center gap-2 p-3 bg-slate-50 rounded-xl text-emerald-800">
-                  <RefreshCw size={14} className="animate-spin text-emerald-600" />
-                  <span>Analyse du ticket de caisse (Tesseract OCR)...</span>
-                </div>
-              )}
-
-              {scannedResult && (
-                <div className="bg-emerald-50/50 border border-emerald-100 rounded-xl p-4 space-y-3">
-                  <h4 className="font-extrabold text-xs text-emerald-900 flex items-center gap-1">
-                    <Sparkles size={14} className="text-emerald-600" />
-                    Informations Extraites :
-                  </h4>
-                  <div className="grid grid-cols-2 gap-2 text-[11px] text-emerald-950 font-bold">
-                    <div>Marchand : {scannedResult.merchant}</div>
-                    <div>Montant : {scannedResult.amount} DH</div>
-                    <div className="col-span-2">Date détectée : {scannedResult.date || "Aujourd'hui"}</div>
-                  </div>
-
-                  <button
-                    onClick={handleApplyOcrResult}
-                    className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs transition-all shadow-xs"
-                  >
-                    Enregistrer la dépense
-                  </button>
-                </div>
-              )}
+              {/* Mode switch: scan vs quick-cash */}
+              <div className="grid grid-cols-2 p-1 bg-slate-150 rounded-xl gap-1">
+                <button
+                  onClick={() => setOcrTab('scan')}
+                  className={`py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${
+                    ocrTab === 'scan' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  {language === 'darija' ? 'Numériser Ticket' : 'Scanner Ticket'}
+                </button>
+                <button
+                  onClick={() => setOcrTab('quick')}
+                  className={`py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${
+                    ocrTab === 'quick' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  {language === 'darija' ? 'Kash Express' : 'Saisie Cash Express'}
+                </button>
+              </div>
             </div>
+
+            {/* TAB CONTENT: Quick cash entry */}
+            {ocrTab === 'quick' && (
+              <div className="p-6">
+                <QuickCashEntry lang={language as 'fr' | 'darija'} onClose={() => setShowOcrModal(false)} />
+              </div>
+            )}
+
+            {/* TAB CONTENT: Scan Ticket (OCR) */}
+            {ocrTab === 'scan' && (
+              <div className="p-6 space-y-4">
+                <p className="text-xs text-slate-500 font-semibold leading-relaxed">
+                  {language === 'darija' 
+                    ? "Sowwer l'ticket d caisse dyalek (Marjane, BIM, Carrefour). L'machine ghadi t-khrej l-hsab b wa7dha."
+                    : "Uploadez une photo de votre ticket de caisse marocain. L'intelligence Floussi extraira le montant, la date, et chaque ligne d'article automatiquement."}
+                </p>
+
+                {/* Dropzone/Picker */}
+                {!scannedResult && !isScanning && (
+                  <div className="border-2 border-dashed border-slate-200 hover:border-emerald-500 rounded-2xl p-6 text-center cursor-pointer transition-all relative bg-slate-50/50">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleOcrFileChange}
+                      className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                    />
+                    <div className="space-y-2">
+                      <Camera size={28} className="text-slate-400 mx-auto animate-bounce" />
+                      <p className="font-extrabold text-slate-700 text-xs">
+                        {language === 'darija' ? 'Sowwer / Khtar l-ticket' : 'Prendre une photo ou Choisir'}
+                      </p>
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">PNG, JPG, JPEG • Auto-compressé</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Loading state */}
+                {isScanning && (
+                  <div className="flex flex-col items-center justify-center gap-2 p-8 bg-slate-50 rounded-2xl text-emerald-800 border border-slate-100 text-xs font-bold text-center">
+                    <RefreshCw size={24} className="animate-spin text-emerald-600 mb-2" />
+                    <span>{language === 'darija' ? 'Kay-9ra l-ticket dyalek... (Tesseract OCR)' : 'Sidi Floussi lit les articles de votre ticket...'}</span>
+                  </div>
+                )}
+
+                {/* Scanned Result & Editing Interface */}
+                {scannedResult && (
+                  <div className="space-y-4 animate-fadeIn">
+                    
+                    {/* Header extracted details info */}
+                    <div className="bg-emerald-50/50 border border-emerald-100/60 rounded-2xl p-4 space-y-3.5">
+                      <h4 className="font-extrabold text-xs text-emerald-900 flex items-center gap-1">
+                        <Sparkles size={14} className="text-emerald-600 animate-pulse" />
+                        <span>{language === 'darija' ? 'L-ma3loumat l-makhrouja :' : 'Données En-tête :'}</span>
+                      </h4>
+
+                      <div className="grid grid-cols-2 gap-3.5">
+                        {/* Merchant */}
+                        <div className="space-y-1">
+                          <span className="text-[9px] uppercase font-black text-slate-400 block tracking-wider">Marchand</span>
+                          <span className="font-extrabold text-slate-800 text-xs">{scannedResult.merchant}</span>
+                        </div>
+
+                        {/* Date with validation warning */}
+                        <div className="space-y-1">
+                          <span className="text-[9px] uppercase font-black text-slate-400 block tracking-wider">Date</span>
+                          <input
+                            type="date"
+                            value={editedOcrDate}
+                            onChange={(e) => setEditedOcrDate(e.target.value)}
+                            className="font-mono text-xs font-bold bg-white border border-slate-200 rounded-lg px-2 py-0.5"
+                          />
+                          {validateDate(editedOcrDate).warning && (
+                            <span className="text-[8px] text-amber-600 font-black uppercase tracking-wider block mt-1 animate-pulse">
+                              ⚠️ {language === 'darija' ? 'Ticket 9dim' : 'Ticket ancien (>7j)'}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Amount Override with validation */}
+                        <div className="space-y-1 col-span-2">
+                          <span className="text-[9px] uppercase font-black text-slate-400 block tracking-wider">Montant total (DH)</span>
+                          <div className="flex items-center gap-3">
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={editedOcrAmount}
+                              onChange={(e) => setEditedOcrAmount(parseFloat(e.target.value) || 0)}
+                              className="font-mono text-sm font-black text-slate-800 bg-white border border-slate-200 rounded-lg px-3 py-1 w-28 focus:outline-hidden focus:ring-1 focus:ring-emerald-500"
+                            />
+                            <span className="text-xs font-bold text-slate-400">DH</span>
+                          </div>
+
+                          {validateAmount(scannedResult.amount, editedOcrAmount).warning && (
+                            <p className="text-[9px] text-rose-500 font-bold mt-1 bg-rose-50 p-2 rounded-lg leading-normal">
+                              ⚠️ {language === 'darija' 
+                                ? `Kayn far9 m3a s-scan (${Math.round(validateAmount(scannedResult.amount, editedOcrAmount).discrepancyPercent)}%)` 
+                                : `Écart important de ${Math.round(validateAmount(scannedResult.amount, editedOcrAmount).discrepancyPercent)}% avec la valeur scannée.`}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Subcomponent: ReceiptLineItemsPreview */}
+                    <ReceiptLineItemsPreview 
+                      lineItems={scannedResult.lineItems} 
+                      onChange={(updatedItems) => {
+                        setScannedResult({ ...scannedResult, lineItems: updatedItems });
+                        // Recalculate sum of items to prompt amount sync
+                        const itemsSum = updatedItems.reduce((acc: number, item: any) => {
+                          const cost = item.quantity * item.unitPrice;
+                          return item.isPromo && cost > 0 ? acc - cost : acc + cost;
+                        }, 0);
+                        setEditedOcrAmount(Math.max(0, Math.round(itemsSum * 100) / 100));
+                      }}
+                      lang={language as 'fr' | 'darija'}
+                    />
+
+                    {/* Submit and Split actions footer */}
+                    <div className="flex flex-col gap-2.5 pt-3 border-t border-slate-100">
+                      <div className="flex gap-2.5">
+                        <button
+                          type="button"
+                          onClick={() => setShowSplitModal(true)}
+                          className="flex-1 py-2.5 border border-emerald-600/30 text-emerald-700 bg-emerald-50/50 hover:bg-emerald-50 font-extrabold rounded-2xl text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                        >
+                          <Layers size={13} />
+                          <span>{language === 'darija' ? '9ssem b sandoq' : 'Ventiler sandoqs (Split)'}</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={handleApplyOcrResult}
+                          className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-2xl text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
+                        >
+                          <Check size={13} />
+                          <span>{language === 'darija' ? 'Sejjel l-kamil' : 'Enregistrer'}</span>
+                        </button>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setScannedResult(null);
+                        }}
+                        className="w-full text-center py-1.5 text-[9px] font-black uppercase text-slate-400 hover:text-slate-600 tracking-widest"
+                      >
+                        {language === 'darija' ? 'Sowwer ticket akhor' : 'Scanner un autre ticket'}
+                      </button>
+                    </div>
+
+                  </div>
+                )}
+              </div>
+            )}
+
           </div>
         </div>
       )}
+
+      {/* Split Modal overlay trigger */}
+      {showSplitModal && scannedResult && (
+        <SplitByCategoryModal
+          isOpen={showSplitModal}
+          onClose={() => setShowSplitModal(false)}
+          lineItems={scannedResult.lineItems}
+          buckets={buckets}
+          merchantName={scannedResult.merchant}
+          receiptDate={editedOcrDate}
+          onConfirmSplit={handleConfirmSplit}
+          lang={language as 'fr' | 'darija'}
+        />
+      )}
+
+      {/* Floating Sidi Floussi Assistant */}
+      <SidiFAB />
 
     </div>
   );
