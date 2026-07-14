@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { SavingsGroup, GroupContribution, WalletBalance } from '../types';
-import { SEED_GROUPS } from '../src/lib/community-seed-data';
+import { SEED_GROUPS } from '../lib/community-seed-data';
 import { getWalletUserId, getWalletBalance, saveWalletBalance, addWalletMovement, getDailySpentTotal, canTransact } from '../lib/wallet-mock';
 import { useAuth } from './use-auth';
 import { getUserAlias } from './use-community-feed';
+import { logBudgetTransaction } from '../lib/log-budget-transaction';
 
 export function useSavingsGroups(userId: string = getWalletUserId()) {
   const { profile } = useAuth();
@@ -124,6 +125,15 @@ export function useSavingsGroups(userId: string = getWalletUserId()) {
       amount,
       description: `Cotisation Groupe : ${targetGroup.name}`,
       status: 'completed'
+    });
+
+    // Log to budget transactions
+    await logBudgetTransaction(userId, {
+      amount,
+      description: `Contribution groupe d'épargne : ${targetGroup.name}`,
+      category: 'epargne',
+      tags: ['wallet', 'groupe-epargne', 'contribution'],
+      merchant: targetGroup.name
     });
 
     // Create the contribution record

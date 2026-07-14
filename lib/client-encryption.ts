@@ -39,11 +39,40 @@ function base64ToArrayBuffer(base64: string): ArrayBuffer {
 let activeSessionKey: CryptoKey | null = null;
 
 /**
- * Derives a cryptographic key from a pin or password using PBKDF2 and a static salt.
+ * Derives a cryptographic key from a pin or password using PBKDF2 and an individual salt per user.
  */
-export async function deriveKeyFromPassword(password: string, saltString: string = "floussi-secure-salt-2026"): Promise<CryptoKey> {
+export async function deriveKeyFromPassword(password: string, userId: string): Promise<CryptoKey> {
+  if (typeof window === 'undefined' || !window.crypto || !window.crypto.subtle) {
+    throw new Error("Web Crypto API is not available in this environment.");
+  }
+
+  const saltKey = `floussi_encryption_salt_${userId}`;
+  let saltBase64 = '';
+
+  if (typeof localStorage !== 'undefined') {
+    saltBase64 = localStorage.getItem(saltKey) || '';
+  }
+
+  let saltBuffer: Uint8Array;
+
+  if (saltBase64) {
+    try {
+      saltBuffer = new Uint8Array(base64ToArrayBuffer(saltBase64));
+    } catch (e) {
+      console.warn("[Encryption] Failed to parse existing salt, generating a new one:", e);
+      saltBuffer = window.crypto.getRandomValues(new Uint8Array(16));
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem(saltKey, arrayBufferToBase64(saltBuffer.buffer));
+      }
+    }
+  } else {
+    saltBuffer = window.crypto.getRandomValues(new Uint8Array(16));
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem(saltKey, arrayBufferToBase64(saltBuffer.buffer));
+    }
+  }
+
   const passwordBuffer = encoder.encode(password);
-  const saltBuffer = encoder.encode(saltString);
 
   const keyMaterial = await window.crypto.subtle.importKey(
     "raw",
@@ -131,9 +160,9 @@ export function setActiveSessionKey(key: CryptoKey | null) {
 /**
  * Helper to initialize a session key from a 4-digit PIN or custom password
  */
-export async function initializeSession(password: string): Promise<void> {
+export async function initializeSession(password: string, userId: string): Promise<void> {
   try {
-    const key = await deriveKeyFromPassword(password);
+    const key = await deriveKeyFromPassword(password, userId);
     setActiveSessionKey(key);
     console.log("[Encryption] Cryptographic session initialized successfully.");
   } catch (e) {

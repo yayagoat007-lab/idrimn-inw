@@ -2,7 +2,11 @@
  * Validates the discrepancy between the OCR-scanned amount and manual corrections.
  * Flags warnings if the variance exceeds 5%.
  */
-export function validateAmount(ocrAmount: number, manualAmount: number): {
+export function validateAmount(
+  ocrAmount: number,
+  manualAmount: number,
+  lang: 'fr' | 'darija' = 'fr'
+): {
   isValid: boolean;
   discrepancyPercent: number;
   warning?: string;
@@ -22,7 +26,7 @@ export function validateAmount(ocrAmount: number, manualAmount: number): {
     return {
       isValid: false,
       discrepancyPercent,
-      warning: warningFr // Can be customized based on language
+      warning: lang === 'darija' ? warningDarija : warningFr
     };
   }
 
@@ -35,7 +39,10 @@ export function validateAmount(ocrAmount: number, manualAmount: number): {
 /**
  * Checks if the receipt is older than 7 days, which is critical for real-time Moroccan expense tracking.
  */
-export function validateDate(receiptDateStr: string): {
+export function validateDate(
+  receiptDateStr: string,
+  lang: 'fr' | 'darija' = 'fr'
+): {
   isValid: boolean;
   warning?: string;
 } {
@@ -56,7 +63,7 @@ export function validateDate(receiptDateStr: string): {
 
       return {
         isValid: false,
-        warning: warningFr
+        warning: lang === 'darija' ? warningDarija : warningFr
       };
     }
   } catch (_) {}

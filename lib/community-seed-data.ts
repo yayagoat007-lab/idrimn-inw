@@ -1,4 +1,4 @@
-import { CommunityPost, Challenge, SavingsGroup } from '../../types';
+import { CommunityPost, Challenge, SavingsGroup } from '../types';
 
 export const SEED_POSTS: CommunityPost[] = [
   {

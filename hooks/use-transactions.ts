@@ -133,7 +133,7 @@ export function useTransactions(userId: string = "mock-user-id-9999", onBucketUp
   /**
    * Create transaction
    */
-  const createTransaction = async (txData: Omit<Transaction, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
+  const createTransaction = async (txData: Omit<Transaction, 'id' | 'user_id' | 'created_at' | 'updated_at'>): Promise<Transaction> => {
     const newTx: Transaction = {
       ...txData,
       id: generateId(),
@@ -156,6 +156,8 @@ export function useTransactions(userId: string = "mock-user-id-9999", onBucketUp
         data: newTx
       });
     }
+
+    return newTx;
   };
 
   /**
@@ -178,6 +180,28 @@ export function useTransactions(userId: string = "mock-user-id-9999", onBucketUp
   };
 
   /**
+   * Update transaction
+   */
+  const updateTransaction = async (id: string, updates: Partial<Transaction>) => {
+    const nextTxs = transactions.map(t => t.id === id ? { ...t, ...updates, updated_at: new Date().toISOString() } : t);
+    await saveTransactions(nextTxs);
+    await triggerLocalBucketRecalculation(nextTxs);
+
+    const updatedTx = nextTxs.find(t => t.id === id);
+    if (updatedTx) {
+      try {
+        await supabase.from('transactions').update(updates).eq('id', id);
+      } catch (_) {
+        await OfflineDB.addToSyncQueue({
+          table: 'transactions',
+          action: 'update',
+          data: updatedTx
+        });
+      }
+    }
+  };
+
+  /**
    * Analytics helpers
    */
   const getCashRatio = () => {
@@ -196,6 +220,7 @@ export function useTransactions(userId: string = "mock-user-id-9999", onBucketUp
     loading,
     createTransaction,
     deleteTransaction,
+    updateTransaction,
     getCashRatio
   };
 }

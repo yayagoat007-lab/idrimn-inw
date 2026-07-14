@@ -3,7 +3,7 @@ import { getTranslation } from '../lib/i18n';
 
 export const metadata = {
   title: 'Floussi - Mon Budget Enveloppe',
-  description: 'Le clone adapté au Maroc de BucketBudgetApp. Maîtrisez vos finances cash et planifiez vos sandoqs.',
+  description: 'Maîtrisez vos finances cash, planifiez vos sandoqs et gérez vos budgets d\'espèces au Maroc en toute simplicité.',
 };
 
 export default function RootLayout({

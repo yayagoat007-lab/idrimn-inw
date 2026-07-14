@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Challenge, ChallengeParticipation } from '../types';
-import { SEED_CHALLENGES } from '../src/lib/community-seed-data';
+import { SEED_CHALLENGES } from '../lib/community-seed-data';
 import { useTransactions } from './use-transactions';
 import { useGoals } from './use-goals';
 import { useGamification } from './use-gamification';

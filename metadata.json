@@ -1,6 +1,6 @@
 {
   "name": "Floussi",
-  "description": "Le clone adapté au Maroc de BucketBudgetApp pour gérer vos sandoqs (compartiments), vos dépenses en cash et votre Daret (tontine).",
+  "description": "Application de budget d'enveloppes adaptée au Maroc pour gérer vos sandoqs (compartiments), vos dépenses en cash et votre Daret (tontine).",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

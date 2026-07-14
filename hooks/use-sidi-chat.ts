@@ -5,9 +5,11 @@ import { useBuckets } from './use-buckets';
 import { useGoals } from './use-goals';
 import { useTontines } from './use-tontines';
 import { useMoroccanEvents } from './use-moroccan-events';
+import { useAccounts } from './use-accounts';
 import { normalizeDarija } from '../lib/darija-dictionary';
 import { detectIntent } from '../lib/sidi-intents';
 import { getPersonalityResponse } from '../lib/sidi-personality';
+import { getCategoryById } from '../lib/categories';
 import { generateId } from '../lib/utils';
 
 export interface SidiMessage {
@@ -24,11 +26,12 @@ export function useSidiChat() {
   const { profile } = useAuth();
   const userId = profile?.id || "mock-user-id-9999";
 
-  const { createTransaction, transactions } = useTransactions(userId);
+  const { createTransaction, transactions, updateTransaction } = useTransactions(userId);
   const { buckets } = useBuckets(userId);
   const { goals, contributeToGoal } = useGoals(userId);
   const { tontines } = useTontines(userId);
   const { events, createEvent } = useMoroccanEvents(userId);
+  const { totalBalance } = useAccounts(userId);
 
   const [messages, setMessages] = useState<SidiMessage[]>([]);
   const [isTyping, setIsTyping] = useState(false);
@@ -127,20 +130,6 @@ export function useSidiChat() {
       merchant: slots.merchant
     };
 
-    // Calculate total balance across active accounts
-    // Look in floussi_table_accounts or default
-    let totalBalance = 0;
-    try {
-      const rawAccounts = localStorage.getItem('floussi_table_accounts');
-      if (rawAccounts) {
-        const accs = JSON.parse(rawAccounts);
-        totalBalance = accs.reduce((sum: number, a: any) => sum + (a.balance || 0), 0);
-      } else {
-        totalBalance = 4320; // default mock
-      }
-    } catch (_) {
-      totalBalance = 4320;
-    }
     context.totalBalance = totalBalance;
 
     // Calculate unallocated
@@ -150,15 +139,16 @@ export function useSidiChat() {
     // Action execution based on recognized intent
     let customTextResponse = "";
     let quickButtons: SidiMessage['quickButtons'] = undefined;
+    let responseIntentId = intentId;
 
     if (intentId === 'add_expense' && slots.amount) {
-      // Find matching bucket by category or default
-      const category = slots.category || 'alimentation';
+      const isUncertain = !slots.category;
+      const category = slots.category || 'non_categorise';
       const bucket = buckets.find(b => b.category === category);
       const bucketId = bucket ? bucket.id : null;
 
       // Executing real action
-      await createTransaction({
+      const createdTx = await createTransaction({
         account_id: "acc-cash", // default cash
         bucket_id: bucketId,
         type: "expense",
@@ -174,11 +164,56 @@ export function useSidiChat() {
       });
 
       // Enrich context
-      context.categoryName = category.charAt(0).toUpperCase() + category.slice(1);
+      if (category === 'non_categorise') {
+        context.categoryName = profile?.preferred_language === 'darija' ? "غير مصنف" : "Non catégorisé";
+      } else {
+        context.categoryName = category.charAt(0).toUpperCase() + category.slice(1);
+      }
+
       if (bucket) {
         context.bucketName = bucket.name;
         context.bucketAllocated = bucket.allocated_amount;
         context.bucketSpent = (bucket.spent_amount || 0) + slots.amount;
+      }
+
+      if (isUncertain) {
+        // Compute 3-4 most frequent categories
+        const categoryCounts: Record<string, number> = {};
+        transactions
+          .filter(t => t.type === 'expense' && t.category && t.category !== 'non_categorise')
+          .forEach(t => {
+            categoryCounts[t.category] = (categoryCounts[t.category] || 0) + 1;
+          });
+
+        const sortedCategories = Object.keys(categoryCounts)
+          .sort((a, b) => categoryCounts[b] - categoryCounts[a]);
+
+        const defaultFallbacks = ['alimentation', 'transport', 'telecom', 'loisirs'];
+        const topCategories = [...sortedCategories];
+        for (const fallback of defaultFallbacks) {
+          if (!topCategories.includes(fallback)) {
+            topCategories.push(fallback);
+          }
+        }
+        const finalSuggestions = topCategories.slice(0, 4);
+
+        // Generate quick buttons
+        quickButtons = finalSuggestions.map(catId => {
+          const catObj = getCategoryById(catId);
+          const label = catObj 
+            ? (profile?.preferred_language === 'darija' ? catObj.name_darija : catObj.name_fr)
+            : catId;
+          return {
+            label,
+            payload: {
+              action: "correct_category",
+              transactionId: createdTx.id,
+              category: catId
+            }
+          };
+        });
+
+        responseIntentId = 'add_expense_uncertain';
       }
     } else if (intentId === 'add_income' && slots.amount) {
       await createTransaction({
@@ -245,25 +280,63 @@ export function useSidiChat() {
     }
 
     // 4. Generate final text response
-    const botText = customTextResponse || getPersonalityResponse(intentId, context);
+    const botText = customTextResponse || getPersonalityResponse(responseIntentId, context);
 
     const sidiMsg: SidiMessage = {
       id: `sidi-${Date.now()}`,
       sender: 'sidi',
       text: botText,
       timestamp: new Date().toISOString(),
-      intentId,
+      intentId: responseIntentId,
       quickButtons
     };
 
     saveHistory([...nextMessages, sidiMsg]);
     setIsTyping(false);
-  }, [messages, profile?.full_name, profile?.preferred_language, createTransaction, buckets, goals, tontines, events, saveHistory]);
+  }, [messages, profile?.full_name, profile?.preferred_language, createTransaction, buckets, goals, tontines, events, saveHistory, transactions]);
+
+  // Handle correcting transaction category
+  const handleCorrection = useCallback(async (transactionId: string, categoryId: string) => {
+    const bucket = buckets.find(b => b.category === categoryId);
+    const bucketId = bucket ? bucket.id : null;
+
+    await updateTransaction(transactionId, {
+      category: categoryId,
+      bucket_id: bucketId
+    });
+
+    const catObj = getCategoryById(categoryId);
+    const catLabel = catObj 
+      ? (profile?.preferred_language === 'darija' ? catObj.name_darija : catObj.name_fr)
+      : categoryId;
+
+    const userMsg: SidiMessage = {
+      id: `user-${Date.now()}`,
+      sender: 'user',
+      text: `${profile?.preferred_language === 'darija' ? 'تصنيف' : 'Catégorie'} : ${catLabel}`,
+      timestamp: new Date().toISOString()
+    };
+
+    const botText = profile?.preferred_language === 'darija'
+      ? `صافي، بدلت التصنيف لـ **${catLabel}** ! الحسابات تلمّات دابا. ✨`
+      : `Safi, j'ai corrigé la catégorie en **${catLabel}** ! Tes enveloppes sont à jour maintenant. ✨`;
+
+    const sidiMsg: SidiMessage = {
+      id: `sidi-${Date.now()}`,
+      sender: 'sidi',
+      text: botText,
+      timestamp: new Date().toISOString(),
+      intentId: 'correct_category'
+    };
+
+    saveHistory([...messages, userMsg, sidiMsg]);
+  }, [messages, buckets, updateTransaction, saveHistory, profile?.preferred_language]);
 
   return {
     messages,
     isTyping,
     sendMessage,
-    clearHistory
+    clearHistory,
+    handleCorrection
   };
 }

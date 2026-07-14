@@ -180,7 +180,7 @@ export default function LandingPage({ onEnterApp, onNavigatePricing }: LandingPa
       {/* Footer */}
       <footer className="bg-slate-950 text-slate-400 text-center py-10 px-6 text-[11px] border-t border-slate-900 space-y-3 font-semibold">
         <p className="text-slate-300 font-bold uppercase tracking-widest">Floussi — Fabriqué avec fierté au Maroc 🇲🇦</p>
-        <p>© 2026 Floussi. Tous droits réservés. Clone marocain de BucketBudgetApp.</p>
+        <p>© 2026 Floussi. Tous droits réservés. Votre compagnon d\'épargne intelligent.</p>
         <div className="flex justify-center gap-4 text-[10px] text-slate-500 uppercase tracking-wider">
           <a href="/about" className="hover:text-white transition-colors">À Propos</a>
           <span>·</span>

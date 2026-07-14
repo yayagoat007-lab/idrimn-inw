@@ -488,8 +488,8 @@ export default function App() {
                             onChange={(e) => setEditedOcrDate(e.target.value)}
                             className="font-mono text-xs font-bold bg-white border border-slate-200 rounded-lg px-2 py-0.5"
                           />
-                          {validateDate(editedOcrDate).warning && (
-                            <span className="text-[8px] text-amber-600 font-black uppercase tracking-wider block mt-1 animate-pulse">
+                          {validateDate(editedOcrDate, language as 'fr' | 'darija').warning && (
+                            <span className="text-[8px] text-amber-600 font-black uppercase tracking-wider block mt-1 animate-pulse" title={validateDate(editedOcrDate, language as 'fr' | 'darija').warning}>
                               ⚠️ {language === 'darija' ? 'Ticket 9dim' : 'Ticket ancien (>7j)'}
                             </span>
                           )}
@@ -509,11 +509,9 @@ export default function App() {
                             <span className="text-xs font-bold text-slate-400">DH</span>
                           </div>
 
-                          {validateAmount(scannedResult.amount, editedOcrAmount).warning && (
+                          {validateAmount(scannedResult.amount, editedOcrAmount, language as 'fr' | 'darija').warning && (
                             <p className="text-[9px] text-rose-500 font-bold mt-1 bg-rose-50 p-2 rounded-lg leading-normal">
-                              ⚠️ {language === 'darija' 
-                                ? `Kayn far9 m3a s-scan (${Math.round(validateAmount(scannedResult.amount, editedOcrAmount).discrepancyPercent)}%)` 
-                                : `Écart important de ${Math.round(validateAmount(scannedResult.amount, editedOcrAmount).discrepancyPercent)}% avec la valeur scannée.`}
+                              ⚠️ {validateAmount(scannedResult.amount, editedOcrAmount, language as 'fr' | 'darija').warning}
                             </p>
                           )}
                         </div>

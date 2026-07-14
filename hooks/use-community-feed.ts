@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { CommunityPost, Comment } from '../types';
 import { useAuth } from './use-auth';
-import { SEED_POSTS, SEED_COMMENTS } from '../src/lib/community-seed-data';
+import { SEED_POSTS, SEED_COMMENTS } from '../lib/community-seed-data';
 
 export function getUserAlias(fullName: string | null, email: string | null, city: string | null): string {
   const baseName = fullName 

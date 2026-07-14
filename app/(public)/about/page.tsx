@@ -8,7 +8,7 @@ export default function AboutPage() {
           À propos de Floussi 🇲🇦
         </h2>
         <p className="text-xs text-gray-500 font-semibold leading-relaxed">
-          Floussi est né de la volonté d'adapter la méthode universelle et éprouvée des enveloppes budgétaires (rendue célèbre par BucketBudgetApp) aux particularités uniques du marché marocain.
+          Floussi est né de la volonté d\'adapter la méthode universelle et éprouvée des enveloppes budgétaires aux particularités uniques du marché marocain.
         </p>
         <p className="text-xs text-gray-500 leading-relaxed">
           Au Maroc, la gestion financière est fortement ancrée dans le cash (79% des transactions) et repose sur de magnifiques mécanismes de solidarité communautaire, tels que la tontine traditionnelle amicale "Daret".

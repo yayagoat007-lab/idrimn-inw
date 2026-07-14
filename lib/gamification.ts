@@ -45,7 +45,8 @@ export const ALL_BADGES: Badge[] = [
   { id: 'smart_saver', title: 'Épargnant Malin', description: 'Activer le round-up automatique pour épargner sans effort.', emoji: '🌀', xpValue: 100, category: 'savings' },
   { id: 'community_citizen', title: 'Citoyen Communautaire', description: 'Créer votre premier post d\'entraide dans la communauté.', emoji: '🗣️', xpValue: 100, category: 'tontine' },
   { id: 'challenge_solved', title: 'Défi relevé', description: 'Compléter avec succès un défi budgétaire hebdomadaire.', emoji: '🎯', xpValue: 150, category: 'streak' },
-  { id: 'hajj_pilgrim', title: 'Pèlerin en préparation', description: 'Créer un projet d\'épargne ou planifier pour le Hajj.', emoji: '🕋', xpValue: 200, category: 'savings' }
+  { id: 'hajj_pilgrim', title: 'Pèlerin en préparation', description: 'Créer un projet d\'épargne ou planifier pour le Hajj.', emoji: '🕋', xpValue: 200, category: 'savings' },
+  { id: 'savings_champ', title: 'Champion de l\'Épargne', description: 'Compléter avec succès un défi d\'épargne hebdomadaire.', emoji: '💪', xpValue: 180, category: 'savings' }
 ];
 
 /**

@@ -139,6 +139,16 @@ export const MOROCCAN_CATEGORIES: Category[] = [
     description_fr: 'Virement de compte à compte',
     description_darija: 'تحويل بين الحسابات الشخصية',
     type: 'transfer'
+  },
+  {
+    id: 'non_categorise',
+    name_fr: 'Non catégorisé',
+    name_darija: 'غير مصنف',
+    icon: 'HelpCircle',
+    color: '#64748B', // Slate grey
+    description_fr: 'Dépense à classer ultérieurement',
+    description_darija: 'مصاريف سيتم تصنيفها لاحقًا',
+    type: 'expense'
   }
 ];
 

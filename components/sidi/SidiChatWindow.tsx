@@ -11,7 +11,7 @@ interface SidiChatWindowProps {
 
 export function SidiChatWindow({ onClose }: SidiChatWindowProps) {
   const { profile } = useAuth();
-  const { messages, isTyping, sendMessage, clearHistory } = useSidiChat();
+  const { messages, isTyping, sendMessage, clearHistory, handleCorrection } = useSidiChat();
   const [inputText, setInputText] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -50,6 +50,10 @@ export function SidiChatWindow({ onClose }: SidiChatWindowProps) {
       sendMessage("Comment économiser sur le café ? ☕");
     } else if (action === "tip_avoid_loans") {
       sendMessage("Pourquoi éviter les petits crédits ? 🚫");
+    } else if (action === "correct_category") {
+      if (handleCorrection) {
+        handleCorrection(payload.transactionId, payload.category);
+      }
     } else {
       sendMessage("D'accord !");
     }

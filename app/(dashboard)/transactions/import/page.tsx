@@ -68,7 +68,7 @@ export default function ImportPage({
             description: 'PAIEMENT PAR CARTE MARJANE CASABLANCA',
             amount: 450.50,
             type: 'expense',
-            category: 'food'
+            category: 'alimentation'
           },
           {
             id: 'row-2',
@@ -77,7 +77,7 @@ export default function ImportPage({
             description: 'VIREMENT SALAIRE DE: INGENIA SARL',
             amount: 14500.00,
             type: 'income',
-            category: 'salary'
+            category: 'revenus'
           },
           {
             id: 'row-3',
@@ -86,7 +86,7 @@ export default function ImportPage({
             description: 'PRELEVEMENT LYDEC EAU ELECTRICITE',
             amount: 320.00,
             type: 'expense',
-            category: 'bills'
+            category: 'factures'
           },
           {
             id: 'row-4',
@@ -95,7 +95,7 @@ export default function ImportPage({
             description: 'ACHAT DECATHLON BOUSKOURA',
             amount: 150.00,
             type: 'expense',
-            category: 'leisure'
+            category: 'loisirs'
           }
         ];
       } else {
@@ -108,7 +108,7 @@ export default function ImportPage({
             description: 'RETRAIT GAB ATTIJARIWAFA',
             amount: 500.00,
             type: 'expense',
-            category: 'food'
+            category: 'alimentation'
           },
           {
             id: 'row-2',
@@ -141,6 +141,9 @@ export default function ImportPage({
     setIsParsing(true);
     try {
       for (const row of parsedRows) {
+        const isValidCategory = MOROCCAN_CATEGORIES.some(cat => cat.id === row.category);
+        const finalCategory = isValidCategory ? row.category : 'non_categorise';
+
         await createTransaction({
           account_id: 'acc-checking',
           bucket_id: null,
@@ -148,7 +151,7 @@ export default function ImportPage({
           amount: row.amount,
           description: row.description,
           merchant: row.merchant,
-          category: row.category,
+          category: finalCategory,
           tags: ['imported', selectedBank],
           receipt_url: null,
           is_recurring: false,

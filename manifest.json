@@ -1,7 +1,7 @@
 {
   "name": "Floussi - Mon Budget Enveloppe",
   "short_name": "Floussi",
-  "description": "Le clone marocain de BucketBudgetApp. Suivez vos enveloppes de budget hors-ligne.",
+  "description": "Mon Budget Enveloppe au Maroc. Suivez vos enveloppes de budget hors-ligne.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#123524",

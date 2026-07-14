@@ -109,6 +109,12 @@ export function getPersonalityResponse(intentId: string, context: ResponseContex
       `C'est bon, j'ai déduit **${amount}** f **${cat}** ${merch}. Doucement sur le masrouf a sidi ! 😉`,
       `Et voilà, **${amount}** enregistrés ${merch}. Ton sandoq a été recalculé instantanément.`
     ],
+    add_expense_uncertain: [
+      `J'ai bien enregistré ta dépense de **${amount}** ${merch}, mais je ne suis pas sûr de la catégorie — tu peux la corriger dans tes transactions ! 🧐`,
+      `Noté : **${amount}** dépensés ${merch}, mais c'est classé comme "Non catégorisé" pour l'instant. Choisis la bonne catégorie pour garder tes sandoqs propres !`,
+      `Safi, dépense de **${amount}** enregistrée. Par contre, je ne suis pas sûr de la catégorie... Tu peux cliquer ci-dessous pour la changer ! 👍`,
+      `Srafti **${amount}** ${merch} ! Walakin ma3reftch l'catégorie exact... Khayra, t9der tbeddelha daba !`
+    ],
     add_income: [
       `Allah ybarek ! J'ai ajouté un revenu de **${amount}** pour **${cat}** dans ton portefeuille. Lah yzid f l'baraka ! 📈`,
       `Parfait ! **${amount}** reçus f **${cat}**. Ton solde global augmente !`,
