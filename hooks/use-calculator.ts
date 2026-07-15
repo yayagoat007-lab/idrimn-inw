@@ -23,7 +23,7 @@ export function useCalculator() {
 
   const runZakat = (inputs: any) => {
     const res = calculateZakat(inputs);
-    setZakatResult(res as any);
+    setZakatResult(res);
   };
 
   const runIR = (salary: number, allowanceCount: number, otherDeductions: number) => {

@@ -80,6 +80,11 @@ class MockSupabaseClient {
                     resolve({ data: filtered, error: null });
                   }
                 };
+              },
+              then: async (resolve: any) => {
+                const list = JSON.parse(localStorage.getItem(`floussi_table_${table}`) || "[]");
+                const filtered = list.filter((x: any) => x[col] === val);
+                resolve({ data: filtered, error: null });
               }
             };
           },
@@ -99,66 +104,109 @@ class MockSupabaseClient {
         };
       },
       insert: (data: any) => {
+        const runInsert = () => {
+          const list = JSON.parse(localStorage.getItem(`floussi_table_${table}`) || "[]");
+          const newItems = Array.isArray(data) 
+            ? data.map(x => ({ ...x, id: x.id || "id-" + Date.now() + Math.floor(Math.random() * 1000) })) 
+            : [{ ...data, id: data.id || "id-" + Date.now() + Math.floor(Math.random() * 1000) }];
+          list.push(...newItems);
+          localStorage.setItem(`floussi_table_${table}`, JSON.stringify(list));
+          return newItems;
+        };
+
         return {
           select: () => {
             return {
               single: async () => {
-                const list = JSON.parse(localStorage.getItem(`floussi_table_${table}`) || "[]");
-                const newItem = Array.isArray(data) ? { ...data[0], id: data[0].id || "id-" + Date.now() } : { ...data, id: data.id || "id-" + Date.now() };
-                list.push(newItem);
-                localStorage.setItem(`floussi_table_${table}`, JSON.stringify(list));
-                return { data: newItem, error: null };
+                const res = runInsert();
+                return { data: res[0], error: null };
               },
               then: async (resolve: any) => {
-                const list = JSON.parse(localStorage.getItem(`floussi_table_${table}`) || "[]");
-                const newItems = Array.isArray(data) ? data.map(x => ({ ...x, id: x.id || "id-" + Date.now() })) : [{ ...data, id: data.id || "id-" + Date.now() }];
-                list.push(...newItems);
-                localStorage.setItem(`floussi_table_${table}`, JSON.stringify(list));
-                resolve({ data: newItems, error: null });
+                const res = runInsert();
+                resolve({ data: res, error: null });
               }
             };
+          },
+          then: async (resolve: any) => {
+            const res = runInsert();
+            resolve({ data: res, error: null });
           }
         };
       },
       upsert: (data: any) => {
+        const runUpsert = () => {
+          const list = JSON.parse(localStorage.getItem(`floussi_table_${table}`) || "[]");
+          const updatedItems = Array.isArray(data) ? data : [data];
+          const results: any[] = [];
+          
+          updatedItems.forEach((item: any) => {
+            const lookupId = item.id;
+            const index = list.findIndex((x: any) => x.id === lookupId);
+            if (index !== -1) {
+              list[index] = { ...list[index], ...item, updated_at: new Date().toISOString() };
+              results.push(list[index]);
+            } else {
+              const newItem = { 
+                ...item, 
+                id: lookupId || "id-" + Date.now() + Math.floor(Math.random() * 1000), 
+                created_at: new Date().toISOString(), 
+                updated_at: new Date().toISOString() 
+              };
+              list.push(newItem);
+              results.push(newItem);
+            }
+          });
+          
+          localStorage.setItem(`floussi_table_${table}`, JSON.stringify(list));
+          return results;
+        };
+
         return {
           select: () => {
             return {
               single: async () => {
-                const list = JSON.parse(localStorage.getItem(`floussi_table_${table}`) || "[]");
-                const lookupId = Array.isArray(data) ? data[0].id : data.id;
-                const index = list.findIndex((x: any) => x.id === lookupId);
-                const updatedItem = Array.isArray(data) ? data[0] : data;
-                if (index !== -1) {
-                  list[index] = { ...list[index], ...updatedItem, updated_at: new Date().toISOString() };
-                } else {
-                  list.push({ ...updatedItem, id: lookupId || "id-" + Date.now(), created_at: new Date().toISOString(), updated_at: new Date().toISOString() });
-                }
-                localStorage.setItem(`floussi_table_${table}`, JSON.stringify(list));
-                return { data: list[index !== -1 ? index : list.length - 1], error: null };
+                const res = runUpsert();
+                return { data: res[0], error: null };
+              },
+              then: async (resolve: any) => {
+                const res = runUpsert();
+                resolve({ data: res, error: null });
               }
             };
+          },
+          then: async (resolve: any) => {
+            const res = runUpsert();
+            resolve({ data: res, error: null });
           }
         };
       },
       update: (data: any) => {
         return {
           eq: (col: string, val: any) => {
+            const runUpdate = () => {
+              const list = JSON.parse(localStorage.getItem(`floussi_table_${table}`) || "[]");
+              const updated = list.map((x: any) => {
+                if (x[col] === val) {
+                  return { ...x, ...data, updated_at: new Date().toISOString() };
+                }
+                return x;
+              });
+              localStorage.setItem(`floussi_table_${table}`, JSON.stringify(updated));
+              return updated.filter((x: any) => x[col] === val);
+            };
+
             return {
               select: () => {
                 return {
                   then: async (resolve: any) => {
-                    const list = JSON.parse(localStorage.getItem(`floussi_table_${table}`) || "[]");
-                    const updated = list.map((x: any) => {
-                      if (x[col] === val) {
-                        return { ...x, ...data, updated_at: new Date().toISOString() };
-                      }
-                      return x;
-                    });
-                    localStorage.setItem(`floussi_table_${table}`, JSON.stringify(updated));
-                    resolve({ data: updated.filter((x: any) => x[col] === val), error: null });
+                    const res = runUpdate();
+                    resolve({ data: res, error: null });
                   }
                 };
+              },
+              then: async (resolve: any) => {
+                const res = runUpdate();
+                resolve({ data: res, error: null });
               }
             };
           }
@@ -167,12 +215,18 @@ class MockSupabaseClient {
       delete: () => {
         return {
           eq: (col: string, val: any) => {
+            const runDelete = () => {
+              const list = JSON.parse(localStorage.getItem(`floussi_table_${table}`) || "[]");
+              const remaining = list.filter((x: any) => x[col] !== val);
+              const removed = list.filter((x: any) => x[col] === val);
+              localStorage.setItem(`floussi_table_${table}`, JSON.stringify(remaining));
+              return removed;
+            };
+
             return {
               then: async (resolve: any) => {
-                const list = JSON.parse(localStorage.getItem(`floussi_table_${table}`) || "[]");
-                const remaining = list.filter((x: any) => x[col] !== val);
-                localStorage.setItem(`floussi_table_${table}`, JSON.stringify(remaining));
-                resolve({ data: list.filter((x: any) => x[col] === val), error: null });
+                const res = runDelete();
+                resolve({ data: res, error: null });
               }
             };
           }

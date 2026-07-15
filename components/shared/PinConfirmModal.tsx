@@ -42,6 +42,8 @@ export function PinConfirmModal({
   const [step, setStep] = useState<'enter_pin' | 'double_confirm' | 'success'>('enter_pin');
   const [doubleConfirmCountdown, setDoubleConfirmCountdown] = useState<number>(3);
   const [savedPin, setSavedPin] = useState<string>('');
+  const [attempts, setAttempts] = useState<number>(0);
+  const [lockoutTime, setLockoutTime] = useState<number>(0);
 
   const DEFAULT_PIN = localStorage.getItem('secure_pin') || '1234';
 
@@ -55,6 +57,23 @@ export function PinConfirmModal({
   }, [isOpen]);
 
   useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (lockoutTime > 0) {
+      interval = setInterval(() => {
+        setLockoutTime(prev => {
+          if (prev <= 1) {
+            setAttempts(0);
+            setError('');
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [lockoutTime]);
+
+  useEffect(() => {
     let timer: NodeJS.Timeout;
     if (step === 'double_confirm' && doubleConfirmCountdown > 0) {
       timer = setTimeout(() => {
@@ -65,6 +84,7 @@ export function PinConfirmModal({
   }, [step, doubleConfirmCountdown]);
 
   const handleKeyPress = (num: string) => {
+    if (lockoutTime > 0) return;
     setError('');
     if (pin.length < 4) {
       const nextPin = pin + num;
@@ -81,21 +101,40 @@ export function PinConfirmModal({
   };
 
   const handleDelete = () => {
+    if (lockoutTime > 0) return;
     if (pin.length > 0) {
       setPin(pin.slice(0, -1));
     }
   };
 
   const handleClear = () => {
+    if (lockoutTime > 0) return;
     setPin('');
   };
 
   const validatePin = async (enteredPin: string) => {
+    if (lockoutTime > 0) return;
+
     if (enteredPin !== DEFAULT_PIN) {
-      setError(language === 'darija' ? 'Code PIN rale7 !' : 'Code PIN incorrect !');
+      const nextAttempts = attempts + 1;
+      setAttempts(nextAttempts);
+      if (nextAttempts >= 3) {
+        setError(language === 'darija' 
+          ? 'Trop de tentatives ! Veuillez patienter 30 secondes.' 
+          : 'Trop de tentatives ! Veuillez patienter 30 secondes.'
+        );
+        setLockoutTime(30);
+      } else {
+        setError(language === 'darija' 
+          ? `Code PIN rale7 ! B9a likom ${3 - nextAttempts} d tjarib.` 
+          : `Code PIN incorrect ! Encore ${3 - nextAttempts} essai(s).`
+        );
+      }
       setPin('');
       return;
     }
+
+    setAttempts(0);
 
     // High amount guard (> 5000 DH)
     if (amount > 5000 && step === 'enter_pin') {
@@ -241,16 +280,25 @@ export function PinConfirmModal({
                         index < pin.length
                           ? 'bg-blue-600 border-blue-600 scale-110'
                           : 'border-slate-300 bg-transparent'
-                      }`}
+                      } ${lockoutTime > 0 ? 'border-red-300 bg-red-100' : ''}`}
                     />
                   ))}
                 </div>
+
+                {/* Lockout status indicator */}
+                {lockoutTime > 0 && (
+                  <div className="px-4 py-1 rounded-full bg-red-50 border border-red-100 text-red-600 font-extrabold text-[9px] uppercase tracking-widest animate-pulse flex items-center gap-1">
+                    <Lock size={11} />
+                    <span>Bloqué : {lockoutTime}s</span>
+                  </div>
+                )}
 
                 {/* Biometric unlock option in Double Confirm */}
                 {step === 'double_confirm' && isBiometricEnabled && (
                   <button
                     onClick={handleBiometricOverride}
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-[10px] uppercase cursor-pointer transition-colors"
+                    disabled={lockoutTime > 0}
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-[10px] uppercase cursor-pointer transition-colors disabled:opacity-40"
                   >
                     <Fingerprint size={14} />
                     <span>{t.biometricsBtn}</span>
@@ -263,7 +311,7 @@ export function PinConfirmModal({
                     <button
                       key={num}
                       type="button"
-                      disabled={step === 'double_confirm' && doubleConfirmCountdown > 0}
+                      disabled={(step === 'double_confirm' && doubleConfirmCountdown > 0) || lockoutTime > 0}
                       onClick={() => handleKeyPress(num)}
                       className="w-16 h-16 rounded-full bg-slate-50 hover:bg-slate-100 text-slate-800 active:bg-blue-50 active:text-blue-600 flex items-center justify-center text-lg font-black transition-colors border border-slate-100 cursor-pointer disabled:opacity-40"
                     >
@@ -275,7 +323,8 @@ export function PinConfirmModal({
                   <button
                     type="button"
                     onClick={handleClear}
-                    className="w-16 h-16 rounded-full bg-transparent text-slate-400 hover:text-slate-600 flex items-center justify-center text-xs font-bold cursor-pointer uppercase tracking-wider"
+                    disabled={lockoutTime > 0}
+                    className="w-16 h-16 rounded-full bg-transparent text-slate-400 hover:text-slate-600 flex items-center justify-center text-xs font-bold cursor-pointer uppercase tracking-wider disabled:opacity-30"
                   >
                     Clear
                   </button>
@@ -283,7 +332,7 @@ export function PinConfirmModal({
                   {/* 0 Key */}
                   <button
                     type="button"
-                    disabled={step === 'double_confirm' && doubleConfirmCountdown > 0}
+                    disabled={(step === 'double_confirm' && doubleConfirmCountdown > 0) || lockoutTime > 0}
                     onClick={() => handleKeyPress('0')}
                     className="w-16 h-16 rounded-full bg-slate-50 hover:bg-slate-100 text-slate-800 active:bg-blue-50 active:text-blue-600 flex items-center justify-center text-lg font-black transition-colors border border-slate-100 cursor-pointer disabled:opacity-40"
                   >
@@ -294,7 +343,8 @@ export function PinConfirmModal({
                   <button
                     type="button"
                     onClick={handleDelete}
-                    className="w-16 h-16 rounded-full bg-transparent text-slate-400 hover:text-slate-600 flex items-center justify-center cursor-pointer"
+                    disabled={lockoutTime > 0}
+                    className="w-16 h-16 rounded-full bg-transparent text-slate-400 hover:text-slate-600 flex items-center justify-center cursor-pointer disabled:opacity-30"
                   >
                     <Delete size={20} />
                   </button>

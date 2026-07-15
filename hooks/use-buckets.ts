@@ -98,7 +98,7 @@ export function useBuckets(userId: string = "mock-user-id-9999") {
       const totalSpent = transactions
         .filter(t => t.bucket_id === b.id && t.type === 'expense')
         .reduce((sum, t) => sum + t.amount, 0);
-      return { ...b, spent_amount: totalSpent };
+      return { ...b, spent_amount: Math.round(totalSpent * 100) / 100 };
     });
     
     await saveBuckets(recomputed);

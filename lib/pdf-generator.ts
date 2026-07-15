@@ -317,12 +317,37 @@ export function generateClientPDF(
     </html>
   `;
 
-  // Open in custom window or print frame
-  const printWindow = window.open('', '_blank');
-  if (printWindow) {
-    printWindow.document.write(htmlContent);
-    printWindow.document.close();
+  // Create a hidden iframe to print directly, bypassing popup block in sandbox iframes
+  const iframe = document.createElement('iframe');
+  iframe.style.position = 'fixed';
+  iframe.style.right = '0';
+  iframe.style.bottom = '0';
+  iframe.style.width = '0';
+  iframe.style.height = '0';
+  iframe.style.border = '0';
+  document.body.appendChild(iframe);
+
+  const iframeDoc = iframe.contentWindow?.document || iframe.contentDocument;
+  if (iframeDoc) {
+    iframeDoc.open();
+    iframeDoc.write(htmlContent);
+    iframeDoc.close();
+
+    // Trigger printing once loaded
+    setTimeout(() => {
+      iframe.contentWindow?.focus();
+      iframe.contentWindow?.print();
+      // Keep iframe in DOM long enough for the print dialog to register, then remove
+      setTimeout(() => {
+        document.body.removeChild(iframe);
+      }, 2000);
+    }, 500);
   } else {
-    alert("Veuillez autoriser les fenêtres contextuelles (popups) pour générer et imprimer le rapport PDF.");
+    // Fallback if iframe method is blocked
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(htmlContent);
+      printWindow.document.close();
+    }
   }
 }

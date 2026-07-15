@@ -69,7 +69,8 @@ export interface ZakatResult {
   isEligible: boolean;
   nisabGold: number;
   nisabSilver: number;
-  totalAssets: boolean;
+  selectedNisab: number;
+  netAssets: number;
   zakatDue: number;
 }
 

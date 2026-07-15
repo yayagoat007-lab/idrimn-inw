@@ -120,7 +120,7 @@ export function useTransactions(userId: string = "mock-user-id-9999", onBucketUp
       const totalSpent = updatedTxs
         .filter(t => t.bucket_id === b.id && t.type === 'expense')
         .reduce((sum, t) => sum + t.amount, 0);
-      return { ...b, spent_amount: totalSpent };
+      return { ...b, spent_amount: Math.round(totalSpent * 100) / 100 };
     });
     await OfflineDB.set('buckets', recomputedBuckets);
     localStorage.setItem('floussi_table_buckets', JSON.stringify(recomputedBuckets));
@@ -212,7 +212,7 @@ export function useTransactions(userId: string = "mock-user-id-9999", onBucketUp
     const totalCashAmount = cashExpenses.reduce((sum, t) => sum + t.amount, 0);
     const totalAmount = expenses.reduce((sum, t) => sum + t.amount, 0);
     
-    return Math.round((totalCashAmount / totalAmount) * 100);
+    return totalAmount > 0 ? Math.round((totalCashAmount / totalAmount) * 100) : 0;
   };
 
   return {

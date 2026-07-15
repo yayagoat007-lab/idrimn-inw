@@ -55,15 +55,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const queue = await OfflineDB.getSyncQueue();
       if (queue.length === 0) return;
 
+      const syncedItemIds: string[] = [];
+
       for (const item of queue) {
-        if (item.table === 'profiles') {
-          await supabase.from('profiles').upsert(item.data);
+        try {
+          if (item.action === 'delete') {
+            await supabase.from(item.table).delete().eq('id', item.data.id || item.id);
+          } else {
+            // 'insert' or 'update'
+            await supabase.from(item.table).upsert(item.data);
+          }
+          syncedItemIds.push(item.id);
+        } catch (syncErr) {
+          console.error(`[Offline Sync] Failed to sync item ${item.id} on table ${item.table}:`, syncErr);
+          // Keep in queue to retry later if sync failed
         }
       }
-      // Clear the sync queue items
-      const itemIds = queue.map(i => i.id);
-      await OfflineDB.clearSyncQueue(itemIds);
-      console.log('[Offline Sync] Sync complete!');
+
+      if (syncedItemIds.length > 0) {
+        await OfflineDB.clearSyncQueue(syncedItemIds);
+      }
+      console.log(`[Offline Sync] Sync complete! Successfully synced ${syncedItemIds.length}/${queue.length} items.`);
     } catch (err) {
       console.error('[Offline Sync] Error syncing queue:', err);
     }

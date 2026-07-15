@@ -86,6 +86,8 @@ export function getWalletBalance(userId: string): WalletBalance {
 
 export function saveWalletBalance(userId: string, balanceObj: WalletBalance) {
   if (typeof window === 'undefined') return;
+  // Prevent floating point representation errors
+  balanceObj.balance = Math.round(balanceObj.balance * 100) / 100;
   // Make sure limits match KYC status
   balanceObj.dailyLimit = balanceObj.kycVerified ? 5000 : 500;
   balanceObj.updatedAt = new Date().toISOString();
@@ -138,15 +140,21 @@ export function addWalletMovement(userId: string, movement: Omit<WalletMovement,
 // Calculate total spent today for daily limits
 export function getDailySpentTotal(userId: string): number {
   const movements = getWalletMovements(userId);
-  const todayStr = new Date().toISOString().split('T')[0];
-  return movements
-    .filter(
-      (m) =>
-        m.createdAt.startsWith(todayStr) &&
+  const now = new Date();
+  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  
+  const total = movements
+    .filter((m) => {
+      const mDate = new Date(m.createdAt);
+      return (
+        mDate >= startOfDay &&
         m.status === 'completed' &&
         ['transfer_out', 'bill_payment', 'recharge', 'round_up'].includes(m.type)
-    )
+      );
+    })
     .reduce((sum, m) => sum + m.amount, 0);
+    
+  return Math.round(total * 100) / 100;
 }
 
 // 3. P2P, Bills, Recharges Lists

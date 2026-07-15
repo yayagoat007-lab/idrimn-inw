@@ -13,6 +13,16 @@ const MS_IN_DAY = 24 * 60 * 60 * 1000;
 export function recordLastActiveTimestamp(userId: string): void {
   if (!userId) return;
   try {
+    if (typeof window !== 'undefined') {
+      // If we don't have a session start timestamp recorded yet, record the previous localStorage value
+      if (!sessionStorage.getItem(`floussi_session_active_${userId}`)) {
+        const previousActive = localStorage.getItem(`floussi_last_active_${userId}`);
+        if (previousActive) {
+          sessionStorage.setItem(`floussi_session_start_last_active_${userId}`, previousActive);
+        }
+        sessionStorage.setItem(`floussi_session_active_${userId}`, 'true');
+      }
+    }
     localStorage.setItem(`floussi_last_active_${userId}`, Date.now().toString());
   } catch (e) {
     console.error("Failed to save last active timestamp", e);
@@ -26,7 +36,14 @@ export function getInactivityTier(userId: string): InactivityTier {
   if (!userId) return 'active';
   
   try {
-    const lastActiveStr = localStorage.getItem(`floussi_last_active_${userId}`);
+    let lastActiveStr = null;
+    if (typeof window !== 'undefined') {
+      lastActiveStr = sessionStorage.getItem(`floussi_session_start_last_active_${userId}`);
+    }
+    if (!lastActiveStr) {
+      lastActiveStr = localStorage.getItem(`floussi_last_active_${userId}`);
+    }
+    
     if (!lastActiveStr) {
       // First time or cleared storage, consider active to avoid immediate popup on new users
       return 'active';

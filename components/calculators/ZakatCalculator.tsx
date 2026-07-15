@@ -142,17 +142,17 @@ export function ZakatCalculator({ onBack }: { onBack?: () => void }) {
                 <div className="grid grid-cols-2 gap-4 pt-6">
                   <div className="border-b border-slate-800 pb-3">
                     <p className="text-[10px] text-slate-400 font-bold uppercase">Nisab Argent d'épargne :</p>
-                    <p className="text-sm font-extrabold mt-1">{(zakatResult as any).selectedNisab.toLocaleString('fr-FR')} DH</p>
+                    <p className="text-sm font-extrabold mt-1">{zakatResult.selectedNisab.toLocaleString('fr-FR')} DH</p>
                   </div>
 
                   <div className="border-b border-slate-800 pb-3">
                     <p className="text-[10px] text-slate-400 font-bold uppercase">Patrimoine Net évaluable :</p>
-                    <p className="text-sm font-extrabold mt-1">{(zakatResult as any).netAssets.toLocaleString('fr-FR')} DH</p>
+                    <p className="text-sm font-extrabold mt-1">{zakatResult.netAssets.toLocaleString('fr-FR')} DH</p>
                   </div>
 
                   <div className="border-b border-slate-800 pb-3 col-span-2">
                     <p className="text-[10px] text-slate-400 font-bold uppercase">Montant de la Zakat dû (2.5%) :</p>
-                    <p className="text-2xl font-black text-emerald-400 mt-1">{(zakatResult as any).zakatDue.toLocaleString('fr-FR')} DH</p>
+                    <p className="text-2xl font-black text-emerald-400 mt-1">{zakatResult.zakatDue.toLocaleString('fr-FR')} DH</p>
                   </div>
                 </div>
 
