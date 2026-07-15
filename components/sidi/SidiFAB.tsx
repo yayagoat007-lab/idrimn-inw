@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSidiProactive } from '../../hooks/use-sidi-proactive';
 import { SidiAvatar } from './SidiAvatar';
 import { SidiChatWindow } from './SidiChatWindow';
@@ -7,6 +7,16 @@ import { X, Sparkles } from 'lucide-react';
 export function SidiFAB() {
   const [isOpen, setIsOpen] = useState(false);
   const { pendingProactiveMessages, dismissProactiveMessage } = useSidiProactive();
+
+  useEffect(() => {
+    const handleOpen = () => {
+      setIsOpen(true);
+    };
+    window.addEventListener('open-sidi-chat', handleOpen);
+    return () => {
+      window.removeEventListener('open-sidi-chat', handleOpen);
+    };
+  }, []);
 
   // If there are unread proactive messages, we'll show a badge count
   const badgeCount = pendingProactiveMessages.length;

@@ -10,6 +10,7 @@ import { CategoryPieChart } from '../../../components/insights/CategoryPieChart'
 import { AIInsightsDashboard } from '../../../components/insights/AIInsightsDashboard';
 import { MoroccanBenchmarks } from '../../../components/insights/MoroccanBenchmarks';
 import { ReportsHistory } from '../../../components/insights/ReportsHistory';
+import { MoodHistoryChart } from '../../../components/checkin/MoodHistoryChart';
 import { 
   BarChart, Sparkles, PieChart, Landmark, FileText, 
   ChevronRight, TrendingUp, HelpCircle 
@@ -124,6 +125,9 @@ export default function InsightsPage({ language }: InsightsPageProps) {
             spendingByCategory={spendingByCategory} 
             topExpenses={topExpenses} 
           />
+
+          {/* Daily financial mood barometer section */}
+          <MoodHistoryChart userId={userId} language={language} />
         </div>
       )}
 

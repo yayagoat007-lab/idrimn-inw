@@ -422,4 +422,14 @@ export interface PartnerOffer {
   isFeatured?: boolean;
 }
 
+export interface DailyCheckin {
+  userId: string;
+  date: string; // YYYY-MM-DD
+  mood: 'great' | 'okay' | 'stressed' | 'worried';
+  quickNote?: string;
+  transactionsConfirmed: boolean;
+  streakDay: number;
+}
+
+
 

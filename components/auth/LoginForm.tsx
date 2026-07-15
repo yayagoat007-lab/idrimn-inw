@@ -263,7 +263,14 @@ export function LoginForm({
       {onNavigateGuest && (
         <button
           type="button"
-          onClick={onNavigateGuest}
+          onClick={async () => {
+            try {
+              await loginMutate({ email: 'invite@floussi.ma', password: 'guestpassword' });
+              onLogin();
+            } catch (err) {
+              onNavigateGuest();
+            }
+          }}
           className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1 cursor-pointer"
         >
           <span>{getTranslation('guestModeButton', language)}</span>

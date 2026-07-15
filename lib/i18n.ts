@@ -18,6 +18,7 @@ export const translations = {
     hajjPlanner: "Hajj & Omra (🕋)",
     cnssTracker: "Remboursements AMO",
     aidPrograms: "Aides Sociales (🇲🇦)",
+    lifePlan: "Plan de Vie (Retraite & Patrimoine)",
     
     // Header/Stats
     totalBalance: "Solde Total",
@@ -183,6 +184,7 @@ export const translations = {
     hajjPlanner: "Safar Al-Haram (الحج)",
     cnssTracker: "Tafsil d-AMO (الضمان الاجتماعي)",
     aidPrograms: "Da3m d-Doulat (الدعم الاجتماعي)",
+    lifePlan: "Taqdir l-Ajal (Plan de Vie)",
     
     // Header/Stats
     totalBalance: "Koulchi l'Flouss (Solde)",

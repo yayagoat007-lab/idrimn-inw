@@ -5,7 +5,7 @@ export interface Badge {
   emoji: string;
   xpValue: number;
   unlockedAt?: string;
-  category: 'onboarding' | 'savings' | 'tontine' | 'family' | 'streak' | 'features';
+  category: 'onboarding' | 'savings' | 'tontine' | 'family' | 'streak' | 'features' | 'engagement' | 'academy';
 }
 
 export interface GamificationState {
@@ -46,7 +46,20 @@ export const ALL_BADGES: Badge[] = [
   { id: 'community_citizen', title: 'Citoyen Communautaire', description: 'Créer votre premier post d\'entraide dans la communauté.', emoji: '🗣️', xpValue: 100, category: 'tontine' },
   { id: 'challenge_solved', title: 'Défi relevé', description: 'Compléter avec succès un défi budgétaire hebdomadaire.', emoji: '🎯', xpValue: 150, category: 'streak' },
   { id: 'hajj_pilgrim', title: 'Pèlerin en préparation', description: 'Créer un projet d\'épargne ou planifier pour le Hajj.', emoji: '🕋', xpValue: 200, category: 'savings' },
-  { id: 'savings_champ', title: 'Champion de l\'Épargne', description: 'Compléter avec succès un défi d\'épargne hebdomadaire.', emoji: '💪', xpValue: 180, category: 'savings' }
+  { id: 'savings_champ', title: 'Champion de l\'Épargne', description: 'Compléter avec succès un défi d\'épargne hebdomadaire.', emoji: '💪', xpValue: 180, category: 'savings' },
+  { id: 'wrapped_viewer', title: "Bilan de l'Année", description: "Consulter ton premier Floussi Wrapped.", emoji: '🎊', xpValue: 50, category: 'engagement' },
+  { id: 'checkin_streak_30', title: 'Rituel Ancré', description: 'Faire son check-in quotidien 30 jours de suite.', emoji: '🧘', xpValue: 150, category: 'engagement' },
+  { id: 'academy_budget_basics', title: 'Bases du Budget', description: 'Compléter le module "Les bases du budget" de l\'Académie Floussi.', emoji: '📊', xpValue: 100, category: 'academy' },
+  { id: 'academy_savings', title: 'Épargne Intelligente', description: 'Compléter le module "Épargner intelligemment" de l\'Académie Floussi.', emoji: '💡', xpValue: 100, category: 'academy' },
+  { id: 'academy_credit', title: 'Maître du Crédit', description: 'Compléter le module "Comprendre le crédit au Maroc" de l\'Académie Floussi.', emoji: '💳', xpValue: 150, category: 'academy' },
+  { id: 'academy_investing', title: 'Investisseur Marocain', description: 'Compléter le module "Investir au Maroc" de l\'Académie Floussi.', emoji: '📈', xpValue: 200, category: 'academy' },
+  { id: 'academy_retirement', title: 'Avenir Serein', description: 'Compléter le module "Préparer sa retraite" de l\'Académie Floussi.', emoji: '⏳', xpValue: 250, category: 'academy' },
+  { id: 'academy_tax', title: 'Sagesse Fiscale', description: 'Compléter le module "Fiscalité personnelle marocaine" de l\'Académie Floussi.', emoji: '📝', xpValue: 250, category: 'academy' },
+  { id: 'academy_master', title: "Maître de l'Académie", description: "Compléter les 6 modules de l'Académie Floussi.", emoji: '🎓', xpValue: 500, category: 'academy' },
+  { id: 'anniversary_1y', title: '1 An Avec Floussi', description: 'Célébration de ton premier anniversaire d\'inscription ! Un an d\'efforts.', emoji: '🎂', xpValue: 100, category: 'engagement' },
+  { id: 'anniversary_2y', title: '2 Ans Avec Floussi', description: 'Deux ans d\'iddikhar et d\'accompagnement sur Floussi.', emoji: '🥈', xpValue: 200, category: 'engagement' },
+  { id: 'anniversary_3y', title: '3 Ans Avec Floussi', description: 'Trois ans d\'assiduité et d\'excellence budgétaire.', emoji: '🏆', xpValue: 300, category: 'engagement' },
+  { id: 'anniversary_5y', title: '5 Ans Avec Floussi', description: 'Cinq ans de sagesse financière et de prospérité absolue !', emoji: '👑', xpValue: 500, category: 'engagement' }
 ];
 
 /**
@@ -152,5 +165,52 @@ export function updateStreak(lastActiveDate: string | null, currentStreak: numbe
   } else {
     // Break in streak
     return { streak: 1, shouldReset: true };
+  }
+}
+
+/**
+ * Utility to award XP to a user and save to gamification state.
+ */
+export function awardGlobalXp(userId: string = "mock-user-id-9999", amount: number): { xp: number; level: number; xpEarned: number; leveledUp: boolean } {
+  try {
+    const key = `floussi_gamification_${userId}`;
+    const saved = localStorage.getItem(key);
+    let state: GamificationState;
+    
+    if (saved) {
+      state = JSON.parse(saved);
+    } else {
+      state = {
+        xp: 140,
+        level: 2,
+        streak: 3,
+        lastActiveDate: new Date().toISOString().split('T')[0],
+        unlockedBadges: ['first_trans', 'streak_3'],
+        streakHistory: []
+      };
+    }
+
+    const previousLevel = state.level;
+    const updatedXp = state.xp + amount;
+    const { level } = getLevelForXp(updatedXp);
+    const leveledUp = level > previousLevel;
+
+    const updatedState: GamificationState = {
+      ...state,
+      xp: updatedXp,
+      level
+    };
+
+    localStorage.setItem(key, JSON.stringify(updatedState));
+    console.log(`[Gamification] Awarded +${amount} XP! New total: ${updatedXp}`);
+
+    // Dispatch event to update global UI
+    const event = new CustomEvent('floussi_xp_gained', { detail: { xp: updatedXp, level, xpEarned: amount, leveledUp } });
+    window.dispatchEvent(event);
+
+    return { xp: updatedXp, level, xpEarned: amount, leveledUp };
+  } catch (err) {
+    console.error("Error awarding global XP", err);
+    return { xp: 0, level: 1, xpEarned: 0, leveledUp: false };
   }
 }

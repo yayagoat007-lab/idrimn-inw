@@ -22,6 +22,18 @@ export function SidiChatWindow({ onClose }: SidiChatWindowProps) {
     }
   }, [messages, isTyping]);
 
+  // Check for prefilled messages
+  useEffect(() => {
+    const prefilled = localStorage.getItem('sidi_prefilled_message');
+    if (prefilled) {
+      localStorage.removeItem('sidi_prefilled_message');
+      const timer = setTimeout(() => {
+        sendMessage(prefilled);
+      }, 400);
+      return () => clearTimeout(timer);
+    }
+  }, [sendMessage]);
+
   const handleSend = () => {
     if (!inputText.trim()) return;
     sendMessage(inputText);

@@ -5,6 +5,11 @@ import { useTransactions } from '../hooks/use-transactions';
 import { useOcr } from '../hooks/use-ocr';
 import { useOffline } from '../hooks/use-offline';
 import { getTranslation } from '../lib/i18n';
+import { recordLastActiveTimestamp } from '../lib/inactivity-detector';
+import { useWinBack } from '../hooks/use-winback';
+import { WinBackModal } from '../components/winback/WinBackModal';
+import { useAccountAnniversary } from '../hooks/use-account-anniversary';
+import { AnniversaryModal } from '../components/anniversary/AnniversaryModal';
 
 // Pages
 import DashboardPage from '../app/(dashboard)/page';
@@ -24,6 +29,9 @@ import HajjPlannerPage from '../app/(dashboard)/hajj-planner/page';
 import CalculatorsPage from '../app/(dashboard)/calculators/page';
 import CnssTrackerPage from '../app/(dashboard)/cnss-tracker/page';
 import AidProgramsPage from '../app/(dashboard)/aid-programs/page';
+import WrappedPage from '../app/(dashboard)/wrapped/page';
+import LifePlanPage from '../app/(dashboard)/life-plan/page';
+import AcademyPage from '../app/(dashboard)/academy/page';
 
 // Public/Auth Pages
 import LandingPage from '../app/(public)/page';
@@ -54,6 +62,24 @@ export default function App() {
   const { user, profile, loading, updateProfile, setLanguage, upgradeSubscription, logout, login, register } = useAuth();
   const session = user ? { user } : null;
   const language = profile?.preferred_language || 'fr';
+
+  // Winback logic for returning inactive users
+  const { winBackMessage, dismissWinBack } = useWinBack(user?.id || '');
+
+  // Account anniversary celebration logic
+  const { 
+    isAnniversaryToday, 
+    summary: anniversarySummary, 
+    hasBeenShownThisYear: anniversaryShownThisYear, 
+    markAsShown: markAnniversaryAsShown 
+  } = useAccountAnniversary(user?.id || '');
+
+  // Record user activity on mount and when user session changes
+  useEffect(() => {
+    if (user?.id) {
+      recordLastActiveTimestamp(user.id);
+    }
+  }, [user?.id]);
 
   const { buckets, loading: bucketsLoading, createBucket, deleteBucket, autoAllocate } = useBuckets(user?.id || '');
   const { transactions, loading: transactionsLoading, createTransaction, deleteTransaction, getCashRatio } = useTransactions(user?.id || '');
@@ -239,10 +265,16 @@ export default function App() {
         return <CnssTrackerPage language={language} />;
       case 'aid-programs':
         return <AidProgramsPage language={language} />;
+      case 'wrapped':
+        return <WrappedPage />;
       case 'family':
         return <FamilyPage language={language} />;
       case 'net-worth':
         return <NetWorthPage language={language} />;
+      case 'life-plan':
+        return <LifePlanPage language={language} />;
+      case 'academy':
+        return <AcademyPage language={language} />;
       case 'reports':
         return <ReportsPage language={language} />;
       case 'settings':
@@ -586,6 +618,26 @@ export default function App() {
           receiptDate={editedOcrDate}
           onConfirmSplit={handleConfirmSplit}
           lang={language as 'fr' | 'darija'}
+        />
+      )}
+
+      {/* Winback Welcome Modal popup */}
+      {winBackMessage && (
+        <WinBackModal
+          message={winBackMessage}
+          language={language as 'fr' | 'darija'}
+          onClose={dismissWinBack}
+          onNavigate={handleNavigate}
+        />
+      )}
+
+      {/* Account Anniversary Celebration Modal */}
+      {isAnniversaryToday && !anniversaryShownThisYear && anniversarySummary && (
+        <AnniversaryModal
+          summary={anniversarySummary}
+          language={language as 'fr' | 'darija'}
+          onClose={markAnniversaryAsShown}
+          onNavigate={handleNavigate}
         />
       )}
 

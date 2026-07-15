@@ -16,7 +16,9 @@ import {
   Compass,
   Activity,
   Gift,
-  Calculator
+  Calculator,
+  TrendingUp,
+  GraduationCap
 } from 'lucide-react';
 import { getTranslation, Language } from '../../lib/i18n';
 
@@ -37,11 +39,13 @@ export function Sidebar({ currentRoute, onNavigate, language, subscriptionTier }
         { id: 'buckets', label: getTranslation('buckets', language), icon: Layers },
         { id: 'insights', label: getTranslation('insights', language), icon: PieChart },
         { id: 'goals', label: getTranslation('goals', language), icon: Target },
+        { id: 'wrapped', label: language === 'darija' ? 'Bilan d l-3am 🎊' : 'Floussi Wrapped 🎊', icon: Sparkles },
       ]
     },
     {
       title: language === 'darija' ? 'Outils Maroc 🇲🇦' : 'Outils Maroc 🇲🇦',
       items: [
+        { id: 'academy', label: language === 'darija' ? 'Akadimiya Floussi 🎓' : 'Académie Floussi 🎓', icon: GraduationCap },
         { id: 'wallet', label: getTranslation('wallet', language), icon: CreditCard },
         { id: 'tontine', label: getTranslation('tontine', language), icon: PiggyBank },
         { id: 'community', label: getTranslation('community', language), icon: Users },
@@ -55,6 +59,7 @@ export function Sidebar({ currentRoute, onNavigate, language, subscriptionTier }
       title: language === 'darija' ? 'Idara' : 'Gestion',
       items: [
         { id: 'net-worth', label: getTranslation('netWorth', language), icon: Wallet },
+        { id: 'life-plan', label: getTranslation('lifePlan', language), icon: TrendingUp },
         { id: 'family', label: getTranslation('family', language), icon: Heart },
         { id: 'reports', label: getTranslation('reports', language), icon: BookOpen },
         { id: 'settings', label: getTranslation('settings', language), icon: Settings },

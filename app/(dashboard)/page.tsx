@@ -21,6 +21,9 @@ import { TransactionRow } from '../../components/transactions/TransactionRow';
 import { AdBanner } from '../../components/ads/AdBanner';
 import { SyncStatusBadge } from '../../components/shared/SyncStatusBadge';
 import { PartnerOfferBanner } from '../../components/shared/PartnerOfferBanner';
+import { useWrapped } from '../../hooks/use-wrapped';
+import { WrappedIntroModal } from '../../components/wrapped/WrappedIntroModal';
+import { DailyCheckinCard } from '../../components/checkin/DailyCheckinCard';
 
 import { formatCurrency } from '../../lib/utils';
 import { Language, getTranslation } from '../../lib/i18n';
@@ -78,6 +81,16 @@ export default function DashboardPage({
 
   // Load ads config
   const { shouldShowAds, trackImpression } = useAds();
+
+  // Floussi Wrapped Season check & state
+  const { isWrappedSeasonActive, hasSeenThisYearWrapped, markAsSeen: markWrappedAsSeen } = useWrapped(userId);
+  const [isWrappedIntroOpen, setIsWrappedIntroOpen] = useState(false);
+
+  React.useEffect(() => {
+    if (isWrappedSeasonActive && !hasSeenThisYearWrapped) {
+      setIsWrappedIntroOpen(true);
+    }
+  }, [isWrappedSeasonActive, hasSeenThisYearWrapped]);
 
   // Handle active balance display based on selected tab
   const getDisplayBalance = () => {
@@ -200,6 +213,9 @@ export default function DashboardPage({
 
         </div>
       </div>
+
+      {/* Daily Ritual Checkin Card */}
+      <DailyCheckinCard userId={userId} language={language as 'fr' | 'darija'} />
 
       {/* 2. SECTION FREE-TO-SPEND */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -418,6 +434,20 @@ export default function DashboardPage({
         </div>
 
       </div>
+
+      <WrappedIntroModal
+        isOpen={isWrappedIntroOpen}
+        onClose={() => {
+          markWrappedAsSeen();
+          setIsWrappedIntroOpen(false);
+        }}
+        onStart={() => {
+          markWrappedAsSeen();
+          setIsWrappedIntroOpen(false);
+          onNavigate('wrapped');
+        }}
+        language={language}
+      />
 
     </div>
   );
