@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Share2, Sparkles, X, QrCode, Phone } from 'lucide-react';
 import { QRCodeGenerator } from '../shared/QRCodeGenerator';
+import { useFocusTrap } from '../../hooks/use-focus-trap';
 
 interface TontineInviteModalProps {
   tontineId: string;
@@ -11,6 +12,8 @@ interface TontineInviteModalProps {
 export function TontineInviteModal({ tontineId, tontineName, onClose }: TontineInviteModalProps) {
   const [phone, setPhone] = useState('');
   const [showQR, setShowQR] = useState(false);
+
+  const modalRef = useFocusTrap<HTMLDivElement>({ isOpen: true, onClose });
 
   const inviteLink = `https://floussi.ma/join-jmâa?id=${tontineId}`;
 
@@ -28,9 +31,10 @@ export function TontineInviteModal({ tontineId, tontineName, onClose }: TontineI
 
   return (
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl relative border border-slate-100">
+      <div ref={modalRef} className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl relative border border-slate-100">
         <button 
           onClick={onClose}
+          aria-label="Fermer l'invitation / إغلاق الدعوة"
           className="absolute right-4 top-4 p-1 hover:bg-slate-50 text-slate-400 hover:text-slate-950 rounded-lg transition-colors"
         >
           <X size={18} />

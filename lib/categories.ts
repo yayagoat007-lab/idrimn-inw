@@ -141,6 +141,16 @@ export const MOROCCAN_CATEGORIES: Category[] = [
     type: 'transfer'
   },
   {
+    id: 'impots',
+    name_fr: 'Impôts & Cotisations',
+    name_darija: 'الضرائب و الاشتراكات',
+    icon: 'ShieldAlert',
+    color: '#E11D48', // Rose-600
+    description_fr: 'IR, taxes, cotisations CNSS/professionnelles',
+    description_darija: 'الضريبة على الدخل، اشتراكات التضامن الاجتماعي',
+    type: 'expense'
+  },
+  {
     id: 'non_categorise',
     name_fr: 'Non catégorisé',
     name_darija: 'غير مصنف',

@@ -4,6 +4,7 @@ import { LineItem } from '../../lib/receipt-parser';
 import { categorizeReceipt, CategorySplit } from '../../lib/receipt-categorizer';
 import { Bucket } from '../../types';
 import { formatCurrency } from '../../lib/utils';
+import { useFocusTrap } from '../../hooks/use-focus-trap';
 
 interface SplitByCategoryModalProps {
   isOpen: boolean;
@@ -45,6 +46,8 @@ export function SplitByCategoryModal({
     return initialMap;
   });
 
+  const modalRef = useFocusTrap<HTMLDivElement>({ isOpen, onClose });
+
   if (!isOpen) return null;
 
   const handleBucketChange = (category: string, bucketId: string) => {
@@ -83,7 +86,7 @@ export function SplitByCategoryModal({
 
   return (
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white border border-slate-100 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-slideUp font-sans">
+      <div ref={modalRef} className="bg-white border border-slate-100 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-slideUp font-sans">
         
         {/* Header */}
         <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
@@ -100,6 +103,7 @@ export function SplitByCategoryModal({
           </div>
           <button
             onClick={onClose}
+            aria-label="Fermer la ventilation / إغلاق تقسيم الفاتورة"
             className="p-1.5 hover:bg-slate-100 text-slate-400 hover:text-slate-700 rounded-xl transition-all cursor-pointer"
           >
             <X size={18} />

@@ -11,6 +11,7 @@ import {
   RefreshCw 
 } from 'lucide-react';
 import { useBiometricAuth } from '../../hooks/use-biometric-auth';
+import { useFocusTrap } from '../../hooks/use-focus-trap';
 
 interface PinConfirmModalProps {
   isOpen: boolean;
@@ -185,12 +186,15 @@ export function PinConfirmModal({
     successMsg: language === 'darija' ? 'T-haqoq Maqboula !' : 'Transaction Validée !',
   };
 
+  const modalRef = useFocusTrap<HTMLDivElement>({ isOpen, onClose });
+
   if (!isOpen) return null;
 
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs font-sans">
         <motion.div
+          ref={modalRef}
           initial={{ opacity: 0, scale: 0.95, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 15 }}
@@ -208,6 +212,7 @@ export function PinConfirmModal({
             </div>
             <button
               onClick={onClose}
+              aria-label="Fermer la confirmation du code PIN / إغلاق تأكيد الرمز السري"
               className="w-8 h-8 rounded-full bg-slate-50 hover:bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center cursor-pointer transition-colors"
             >
               <X size={15} />

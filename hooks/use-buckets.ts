@@ -9,7 +9,7 @@ const DEFAULT_BUCKETS: Bucket[] = [
     id: "bucket-food",
     user_id: "mock-user-id-9999",
     name: "Alimentation (Khobz & Lmarqa)",
-    category: "food",
+    category: "alimentation",
     allocated_amount: 1500,
     spent_amount: 320,
     color: "#10B981", // Green
@@ -26,7 +26,7 @@ const DEFAULT_BUCKETS: Bucket[] = [
     id: "bucket-housing",
     user_id: "mock-user-id-9999",
     name: "Logement & Factures (Dar & Kahraba)",
-    category: "housing",
+    category: "logement",
     allocated_amount: 2500,
     spent_amount: 2500,
     color: "#3B82F6", // Blue

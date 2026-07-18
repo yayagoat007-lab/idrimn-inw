@@ -14,6 +14,7 @@ import {
 import { SidiAvatar } from '../sidi/SidiAvatar';
 import { ConfettiAnimation } from '../shared/ConfettiAnimation';
 import { AnniversarySummary } from '../../lib/account-anniversary';
+import { useFocusTrap } from '../../hooks/use-focus-trap';
 
 interface AnniversaryModalProps {
   summary: AnniversarySummary;
@@ -31,6 +32,8 @@ export const AnniversaryModal: React.FC<AnniversaryModalProps> = ({
   const [showConfetti, setShowConfetti] = useState<boolean>(true);
   const content = summary[language];
   const years = summary.yearsCount;
+
+  const modalRef = useFocusTrap<HTMLDivElement>({ isOpen: true, onClose });
 
   // Re-run confetti animation every 4 seconds for maximum celebration vibe while modal is open
   useEffect(() => {
@@ -53,6 +56,7 @@ export const AnniversaryModal: React.FC<AnniversaryModalProps> = ({
       <ConfettiAnimation active={showConfetti} onComplete={() => {}} />
 
       <motion.div
+        ref={modalRef}
         id="anniversary-celebration-modal"
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -67,6 +71,7 @@ export const AnniversaryModal: React.FC<AnniversaryModalProps> = ({
         <button
           id="close-anniversary-modal"
           onClick={onClose}
+          aria-label="Fermer la célébration d'anniversaire / إغلاق احتفال ذكرى الحساب"
           className="absolute top-4 right-4 p-2 rounded-full bg-slate-100/80 hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-all z-10"
         >
           <X className="w-5 h-5" />

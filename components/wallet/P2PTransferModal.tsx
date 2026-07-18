@@ -3,6 +3,7 @@ import { useP2PTransfer } from '../../hooks/use-p2p-transfer';
 import { useWallet } from '../../hooks/use-wallet';
 import { X, Send, ArrowLeft, CheckCircle2, QrCode, Clipboard, Smartphone, Lock, Sparkles, FileText } from 'lucide-react';
 import { P2PTransfer } from '../../types';
+import { useFocusTrap } from '../../hooks/use-focus-trap';
 
 interface P2PTransferModalProps {
   isOpen: boolean;
@@ -24,6 +25,8 @@ export function P2PTransferModal({ isOpen, onClose, lang }: P2PTransferModalProp
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [receipt, setReceipt] = useState<P2PTransfer | null>(null);
+
+  const modalRef = useFocusTrap<HTMLDivElement>({ isOpen, onClose });
 
   if (!isOpen) return null;
 
@@ -104,7 +107,7 @@ export function P2PTransferModal({ isOpen, onClose, lang }: P2PTransferModalProp
 
   return (
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto font-sans">
-      <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl border border-slate-100 overflow-hidden relative">
+      <div ref={modalRef} className="bg-white rounded-3xl w-full max-w-md shadow-2xl border border-slate-100 overflow-hidden relative">
         
         {/* Header (except for final receipt screen) */}
         {step !== 'receipt' && (
@@ -118,6 +121,7 @@ export function P2PTransferModal({ isOpen, onClose, lang }: P2PTransferModalProp
             </div>
             <button 
               onClick={onClose} 
+              aria-label="Fermer le transfert / إغلاق التحويل"
               className="p-1.5 hover:bg-slate-150 rounded-xl text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
             >
               <X size={18} />

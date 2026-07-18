@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { FloussiNotification, categorizeNotification } from '../../lib/notification-hub';
 import { NotificationPreferences } from '../../hooks/use-notification-center';
 import { NotificationPreferencesPanel } from './NotificationPreferencesPanel';
+import { useFocusTrap } from '../../hooks/use-focus-trap';
 
 interface NotificationCenterPanelProps {
   isOpen: boolean;
@@ -43,6 +44,8 @@ export function NotificationCenterPanel({
 }: NotificationCenterPanelProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [showPreferences, setShowPreferences] = useState<boolean>(false);
+
+  const modalRef = useFocusTrap<HTMLDivElement>({ isOpen, onClose });
 
   const filteredNotifs = notifications.filter(n => {
     const category = categorizeNotification(n);
@@ -145,6 +148,7 @@ export function NotificationCenterPanel({
 
           {/* Sliding Panel */}
           <motion.div
+            ref={modalRef}
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
@@ -168,6 +172,7 @@ export function NotificationCenterPanel({
                   </div>
                   <button
                     onClick={onClose}
+                    aria-label="Fermer les préférences de notification / إغلاق تفضيلات التنبيهات"
                     className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
                   >
                     <X size={18} />
@@ -207,6 +212,7 @@ export function NotificationCenterPanel({
                     </button>
                     <button
                       onClick={onClose}
+                      aria-label="Fermer le centre de notifications / إغلاق مركز التنبيهات"
                       className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
                     >
                       <X size={18} />

@@ -50,13 +50,13 @@ export const PERSONA_TEMPLATES: Record<string, PersonaTemplate> = {
       darija: 'ميزانية على قد الحال، التركيز على الدراسة، الأنترنت والنشاط.'
     },
     suggestedBuckets: [
-      { category: 'housing', label: { fr: 'Logement & Internat', darija: 'السكن و الكراء' }, allocatedPercent: 25, isEssential: true, icon: 'Home', color: 'bg-emerald-600' },
-      { category: 'food', label: { fr: 'Alimentation & RU', darija: 'الماكلة و الشرب' }, allocatedPercent: 20, isEssential: true, icon: 'Utensils', color: 'bg-blue-600' },
+      { category: 'logement', label: { fr: 'Logement & Internat', darija: 'السكن و الكراء' }, allocatedPercent: 25, isEssential: true, icon: 'Home', color: 'bg-emerald-600' },
+      { category: 'alimentation', label: { fr: 'Alimentation & RU', darija: 'الماكلة و الشرب' }, allocatedPercent: 20, isEssential: true, icon: 'Utensils', color: 'bg-blue-600' },
       { category: 'education', label: { fr: 'Études & Livres', darija: 'الدراسة و الكتوبة' }, allocatedPercent: 20, isEssential: true, icon: 'GraduationCap', color: 'bg-indigo-600' },
       { category: 'transport', label: { fr: 'Transport & Bus', darija: 'الطوبيس و الترونسبور' }, allocatedPercent: 10, isEssential: true, icon: 'Car', color: 'bg-amber-500' },
-      { category: 'leisure', label: { fr: 'Loisirs & Sorties', darija: 'النشاط و الدوران' }, allocatedPercent: 10, isEssential: false, icon: 'Sparkles', color: 'bg-rose-500' },
-      { category: 'savings', label: { fr: 'Épargne Étudiante', darija: 'توفير الطلبة' }, allocatedPercent: 10, isEssential: false, icon: 'PiggyBank', color: 'bg-purple-600' },
-      { category: 'utilities', label: { fr: 'Télécom & Internet', darija: 'الأنترنت و التعبئة' }, allocatedPercent: 5, isEssential: true, icon: 'Phone', color: 'bg-cyan-500' }
+      { category: 'loisirs', label: { fr: 'Loisirs & Sorties', darija: 'النشاط و الدوران' }, allocatedPercent: 10, isEssential: false, icon: 'Sparkles', color: 'bg-rose-500' },
+      { category: 'epargne', label: { fr: 'Épargne Étudiante', darija: 'توفير الطلبة' }, allocatedPercent: 10, isEssential: false, icon: 'PiggyBank', color: 'bg-purple-600' },
+      { category: 'factures', label: { fr: 'Télécom & Internet', darija: 'الأنترنت و التعبئة' }, allocatedPercent: 5, isEssential: true, icon: 'Phone', color: 'bg-cyan-500' }
     ],
     suggestedGoals: [
       { name: { fr: "Fonds d'urgence étudiant", darija: 'صندوق الطوارئ للطالب' }, icon: 'PiggyBank', suggestedAmount: 2000 }
@@ -79,12 +79,12 @@ export const PERSONA_TEMPLATES: Record<string, PersonaTemplate> = {
       darija: 'صالير منتظم، تقسيم كلاسيكي متوازن و توفير تلقائي.'
     },
     suggestedBuckets: [
-      { category: 'housing', label: { fr: 'Logement (Fixe)', darija: 'السكن و الكراء' }, allocatedPercent: 30, isEssential: true, icon: 'Home', color: 'bg-emerald-600' },
-      { category: 'food', label: { fr: 'Alimentation (Souq)', darija: 'التقدية و الماكلة' }, allocatedPercent: 25, isEssential: true, icon: 'Utensils', color: 'bg-blue-600' },
-      { category: 'savings', label: { fr: 'Épargne Projets', darija: 'التوفير و الحصالة' }, allocatedPercent: 15, isEssential: false, icon: 'PiggyBank', color: 'bg-purple-600' },
+      { category: 'logement', label: { fr: 'Logement (Fixe)', darija: 'السكن و الكراء' }, allocatedPercent: 30, isEssential: true, icon: 'Home', color: 'bg-emerald-600' },
+      { category: 'alimentation', label: { fr: 'Alimentation (Souq)', darija: 'التقدية و الماكلة' }, allocatedPercent: 25, isEssential: true, icon: 'Utensils', color: 'bg-blue-600' },
+      { category: 'epargne', label: { fr: 'Épargne Projets', darija: 'التوفير و الحصالة' }, allocatedPercent: 15, isEssential: false, icon: 'PiggyBank', color: 'bg-purple-600' },
       { category: 'transport', label: { fr: 'Transport & Carburant', darija: 'المواصلات و المازوط' }, allocatedPercent: 10, isEssential: true, icon: 'Car', color: 'bg-amber-500' },
-      { category: 'leisure', label: { fr: 'Loisirs & Café', darija: 'النشاط و القهوة' }, allocatedPercent: 10, isEssential: false, icon: 'Sparkles', color: 'bg-rose-500' },
-      { category: 'utilities', label: { fr: 'Factures (Eau, Élec)', darija: 'الماء، الضو و الويفي' }, allocatedPercent: 10, isEssential: true, icon: 'Receipt', color: 'bg-cyan-500' }
+      { category: 'loisirs', label: { fr: 'Loisirs & Café', darija: 'النشاط و القهوة' }, allocatedPercent: 10, isEssential: false, icon: 'Sparkles', color: 'bg-rose-500' },
+      { category: 'factures', label: { fr: 'Factures (Eau, Élec)', darija: 'الماء، الضو و الويفي' }, allocatedPercent: 10, isEssential: true, icon: 'Receipt', color: 'bg-cyan-500' }
     ],
     suggestedGoals: [
       { name: { fr: "Fonds d'urgence 3 mois", darija: 'صندوق الطوارئ (3 أشهر)' }, icon: 'ShieldAlert', suggestedAmount: 25000 }
@@ -107,12 +107,12 @@ export const PERSONA_TEMPLATES: Record<string, PersonaTemplate> = {
       darija: 'مدخول غير منتظم، الاحتياط للضرائب و التغطية الصحية.'
     },
     suggestedBuckets: [
-      { category: 'taxes', label: { fr: 'Provision IR & CNSS', darija: 'احتياط الضرائب و CNSS' }, allocatedPercent: 20, isEssential: true, icon: 'ShieldAlert', color: 'bg-rose-600' },
-      { category: 'housing', label: { fr: 'Logement & Bureau', darija: 'السكن و المكتب' }, allocatedPercent: 25, isEssential: true, icon: 'Home', color: 'bg-emerald-600' },
-      { category: 'food', label: { fr: 'Alimentation & Vie', darija: 'التقدية و المعيشة' }, allocatedPercent: 20, isEssential: true, icon: 'Utensils', color: 'bg-blue-600' },
-      { category: 'savings', label: { fr: 'Trésorerie Sécurité', darija: 'صندوق احتياطي أمان' }, allocatedPercent: 15, isEssential: false, icon: 'PiggyBank', color: 'bg-purple-600' },
+      { category: 'impots', label: { fr: 'Provision IR & CNSS', darija: 'احتياط الضرائب و CNSS' }, allocatedPercent: 20, isEssential: true, icon: 'ShieldAlert', color: 'bg-rose-600' },
+      { category: 'logement', label: { fr: 'Logement & Bureau', darija: 'السكن و المكتب' }, allocatedPercent: 25, isEssential: true, icon: 'Home', color: 'bg-emerald-600' },
+      { category: 'alimentation', label: { fr: 'Alimentation & Vie', darija: 'التقدية و المعيشة' }, allocatedPercent: 20, isEssential: true, icon: 'Utensils', color: 'bg-blue-600' },
+      { category: 'epargne', label: { fr: 'Trésorerie Sécurité', darija: 'صندوق احتياطي أمان' }, allocatedPercent: 15, isEssential: false, icon: 'PiggyBank', color: 'bg-purple-600' },
       { category: 'transport', label: { fr: 'Transport & Déplacement', darija: 'التنقل و السفر' }, allocatedPercent: 10, isEssential: true, icon: 'Car', color: 'bg-amber-500' },
-      { category: 'utilities', label: { fr: 'Télécom & Logiciels', darija: 'الأنترنت و الأدوات' }, allocatedPercent: 10, isEssential: false, icon: 'Phone', color: 'bg-cyan-500' }
+      { category: 'factures', label: { fr: 'Télécom & Logiciels', darija: 'الأنترنت و الأدوات' }, allocatedPercent: 10, isEssential: false, icon: 'Phone', color: 'bg-cyan-500' }
     ],
     suggestedGoals: [
       { name: { fr: 'Trésorerie de sécurité (6 mois)', darija: 'احتياطي الأمان (6 أشهر)' }, icon: 'ShieldAlert', suggestedAmount: 40000 }
@@ -135,12 +135,12 @@ export const PERSONA_TEMPLATES: Record<string, PersonaTemplate> = {
       darija: 'تسيير البيت، قراية الدراري، الصحة و المناسبات الدينية.'
     },
     suggestedBuckets: [
-      { category: 'housing', label: { fr: 'Logement & Charges', darija: 'السكن و الكراء' }, allocatedPercent: 30, isEssential: true, icon: 'Home', color: 'bg-emerald-600' },
-      { category: 'food', label: { fr: 'Alimentation Foyer', darija: 'قضية الكوزينة و الماكلة' }, allocatedPercent: 25, isEssential: true, icon: 'Utensils', color: 'bg-blue-600' },
+      { category: 'logement', label: { fr: 'Logement & Charges', darija: 'السكن و الكراء' }, allocatedPercent: 30, isEssential: true, icon: 'Home', color: 'bg-emerald-600' },
+      { category: 'alimentation', label: { fr: 'Alimentation Foyer', darija: 'قضية الكوزينة و الماكلة' }, allocatedPercent: 25, isEssential: true, icon: 'Utensils', color: 'bg-blue-600' },
       { category: 'education', label: { fr: 'Scolarité & Enfants', darija: 'المدارس و قراية الدراري' }, allocatedPercent: 15, isEssential: true, icon: 'GraduationCap', color: 'bg-indigo-600' },
-      { category: 'health', label: { fr: 'Santé & Pharmacie', darija: 'الصحة و الطبيب' }, allocatedPercent: 10, isEssential: true, icon: 'Heart', color: 'bg-rose-500' },
+      { category: 'sante', label: { fr: 'Santé & Pharmacie', darija: 'الصحة و الطبيب' }, allocatedPercent: 10, isEssential: true, icon: 'Heart', color: 'bg-rose-500' },
       { category: 'transport', label: { fr: 'Transport Famille', darija: 'الطريق و طوموبيل العائلة' }, allocatedPercent: 10, isEssential: true, icon: 'Car', color: 'bg-amber-500' },
-      { category: 'savings', label: { fr: 'Épargne & Avenir', darija: 'توفير مستقبل الدراري' }, allocatedPercent: 10, isEssential: false, icon: 'PiggyBank', color: 'bg-purple-600' }
+      { category: 'epargne', label: { fr: 'Épargne & Avenir', darija: 'توفير مستقبل الدراري' }, allocatedPercent: 10, isEssential: false, icon: 'PiggyBank', color: 'bg-purple-600' }
     ],
     suggestedGoals: [
       { name: { fr: 'Rentrée scolaire', darija: 'الدخول المدرسي' }, icon: 'GraduationCap', suggestedAmount: 5000 },
@@ -164,11 +164,11 @@ export const PERSONA_TEMPLATES: Record<string, PersonaTemplate> = {
       darija: 'تحويلات البلاد، الاستثمار في المغرب و عطلة الصيف.'
     },
     suggestedBuckets: [
-      { category: 'remittance', label: { fr: 'Envoi Famille Maroc', darija: 'مصروف العائلة في المغرب' }, allocatedPercent: 20, isEssential: true, icon: 'Heart', color: 'bg-rose-600' },
-      { category: 'savings', label: { fr: 'Investissement Maroc', darija: 'الاستثمار في المغرب' }, allocatedPercent: 25, isEssential: false, icon: 'TrendingUp', color: 'bg-purple-600' },
-      { category: 'food', label: { fr: 'Vie Courante & Alimentation', darija: 'المصاريف و الماكلة اليومية' }, allocatedPercent: 25, isEssential: true, icon: 'Utensils', color: 'bg-blue-600' },
-      { category: 'housing', label: { fr: 'Logement principal', darija: 'السكن و الكراء بالخارج' }, allocatedPercent: 20, isEssential: true, icon: 'Home', color: 'bg-emerald-600' },
-      { category: 'transport', label: { fr: 'Voyages & Vacances', darija: 'السفر و العطلة بالبلاد' }, allocatedPercent: 10, isEssential: false, icon: 'Car', color: 'bg-amber-500' }
+      { category: 'transferts', label: { fr: 'Envoi Famille Maroc', darija: 'مصروف العائلة في المغرب' }, allocatedPercent: 20, isEssential: true, icon: 'Heart', color: 'bg-rose-600' },
+      { category: 'epargne', label: { fr: 'Investissement Maroc', darija: 'الاستثمار في المغرب' }, allocatedPercent: 25, isEssential: false, icon: 'TrendingUp', color: 'bg-purple-600' },
+      { category: 'alimentation', label: { fr: 'Vie Courante & Alimentation', darija: 'المصاريف و الماكلة اليومية' }, allocatedPercent: 25, isEssential: true, icon: 'Utensils', color: 'bg-blue-600' },
+      { category: 'logement', label: { fr: 'Logement principal', darija: 'السكن و الكراء بالخارج' }, allocatedPercent: 20, isEssential: true, icon: 'Home', color: 'bg-emerald-600' },
+      { category: 'transport', label: { fr: 'Voyages & Vacances', darija: 'السفر & العطلة بالبلاد' }, allocatedPercent: 10, isEssential: false, icon: 'Car', color: 'bg-amber-500' }
     ],
     suggestedGoals: [
       { name: { fr: 'Investissement immobilier au Maroc', darija: 'بناء أو شراء منزل في المغرب' }, icon: 'Home', suggestedAmount: 150000 }
@@ -191,11 +191,11 @@ export const PERSONA_TEMPLATES: Record<string, PersonaTemplate> = {
       darija: 'صالير التقاعد الثابت، التركيز على الصحة، مساعدة الأحفاد و العمرة.'
     },
     suggestedBuckets: [
-      { category: 'housing', label: { fr: 'Logement & Charges', darija: 'السكن و المصاريف الثابتة' }, allocatedPercent: 30, isEssential: true, icon: 'Home', color: 'bg-emerald-600' },
-      { category: 'food', label: { fr: 'Alimentation', darija: 'التقدية و الصحة الغذائية' }, allocatedPercent: 25, isEssential: true, icon: 'Utensils', color: 'bg-blue-600' },
-      { category: 'health', label: { fr: 'Santé & Traitement', darija: 'الصحة، الدوا و التحاليل' }, allocatedPercent: 20, isEssential: true, icon: 'Heart', color: 'bg-rose-600' },
-      { category: 'leisure', label: { fr: 'Cadeaux & Petits-enfants', darija: 'هدايا الأحفاد و النشاط' }, allocatedPercent: 15, isEssential: false, icon: 'Sparkles', color: 'bg-indigo-600' },
-      { category: 'savings', label: { fr: 'Épargne & Omra', darija: 'حصالة التوفير و العمرة' }, allocatedPercent: 10, isEssential: false, icon: 'PiggyBank', color: 'bg-purple-600' }
+      { category: 'logement', label: { fr: 'Logement & Charges', darija: 'السكن و المصاريف الثابتة' }, allocatedPercent: 30, isEssential: true, icon: 'Home', color: 'bg-emerald-600' },
+      { category: 'alimentation', label: { fr: 'Alimentation', darija: 'التقدية و الصحة الغذائية' }, allocatedPercent: 25, isEssential: true, icon: 'Utensils', color: 'bg-blue-600' },
+      { category: 'sante', label: { fr: 'Santé & Traitement', darija: 'الصحة، الدوا و التحاليل' }, allocatedPercent: 20, isEssential: true, icon: 'Heart', color: 'bg-rose-600' },
+      { category: 'loisirs', label: { fr: 'Cadeaux & Petits-enfants', darija: 'هدايا الأحفاد و النشاط' }, allocatedPercent: 15, isEssential: false, icon: 'Sparkles', color: 'bg-indigo-600' },
+      { category: 'epargne', label: { fr: 'Épargne & Omra', darija: 'حصالة التوفير و العمرة' }, allocatedPercent: 10, isEssential: false, icon: 'PiggyBank', color: 'bg-purple-600' }
     ],
     suggestedGoals: [
       { name: { fr: 'Voyage religieux (Omra)', darija: 'سفر العمرة المباركة' }, icon: 'Plane', suggestedAmount: 18000 },
@@ -203,7 +203,7 @@ export const PERSONA_TEMPLATES: Record<string, PersonaTemplate> = {
     ],
     recommendedAcademyModuleId: 'retirement_prep',
     tipMessage: {
-      fr: 'Suivez de près vos dépenses de santé et anticipez les renouvellements de soins.',
+      fr: 'Suivez de près vos d’épenses de santé et anticipez les renouvellements de soins.',
       darija: 'تبع مزيان مصاريف العلاج و الصحة و توكل على الله فالتوفير لعمرتك !'
     }
   }

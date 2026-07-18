@@ -55,6 +55,8 @@ import AdBanner from '../components/ads/AdBanner';
 import TransactionForm from '../components/transactions/TransactionForm';
 import { BucketForm } from '../components/buckets/BucketForm';
 import { SidiFAB } from '../components/sidi/SidiFAB';
+import BackupReminderBanner from '../components/settings/BackupReminderBanner';
+import StorageWarningBanner from '../components/shared/StorageWarningBanner';
 
 import { ShieldAlert, RefreshCw, Camera, Sparkles, X, Settings, Layers, Wallet, Check } from 'lucide-react';
 
@@ -65,10 +67,20 @@ import { QuickCashEntry } from '../components/ocr/QuickCashEntry';
 import { validateAmount, validateDate } from '../lib/receipt-validation';
 import { compressImage } from '../lib/image-compression';
 
+// Schema migration system
+import { runPendingMigrations } from '../lib/schema-migrations';
+
 export default function App() {
   const { user, profile, loading, updateProfile, setLanguage, upgradeSubscription, logout, login, register } = useAuth();
   const session = user ? { user } : null;
   const language = profile?.preferred_language || 'fr';
+
+  const userId = user?.id || 'mock-user-id-9999';
+
+  // Run pending schema migrations synchronously before other hooks execute their logic
+  const migrationResult = React.useMemo(() => {
+    return runPendingMigrations(userId);
+  }, [userId]);
 
   // Winback logic for returning inactive users
   const { winBackMessage, dismissWinBack } = useWinBack(user?.id || '');
@@ -386,6 +398,48 @@ export default function App() {
     }
   };
 
+  // If database / schema migration failed, block with a gorgeous, user-friendly screen
+  if (!migrationResult.success) {
+    const errorMsg = migrationResult.errors.join(', ');
+    return (
+      <div className="min-h-screen bg-slate-900 text-slate-100 flex items-center justify-center p-6 font-sans">
+        <div className="max-w-md w-full bg-slate-850 border border-slate-700/50 p-8 rounded-3xl shadow-2xl text-center space-y-6">
+          <div className="w-16 h-16 bg-rose-500/10 text-rose-500 rounded-2xl flex items-center justify-center mx-auto border border-rose-500/20">
+            <ShieldAlert size={32} />
+          </div>
+          
+          <div className="space-y-2">
+            <h1 className="text-xl font-black tracking-tight text-white">
+              {language === 'darija' ? "Khatar f Tahdith l-M3loumat ⚙️" : "Échec de la mise à jour ⚙️"}
+            </h1>
+            <p className="text-xs font-bold text-slate-400">
+              {language === 'darija' ? "System ma qdarch i-bdel l-m3loumat dyalk l l-version l-jdida dyal Floussi." : "Le système n'a pas pu migrer vos données vers la nouvelle version de Floussi."}
+            </p>
+          </div>
+
+          <div className="p-4 bg-slate-900/50 border border-slate-700/30 rounded-2xl text-left font-mono text-[10px] text-rose-400 space-y-1">
+            <span className="font-bold text-slate-500 block text-[9px] uppercase tracking-wider">Erreur technique / Khata2 :</span>
+            <p className="break-all">{errorMsg || "Unknown schema migration error"}</p>
+          </div>
+
+          <div className="space-y-3 pt-2">
+            <button
+              onClick={() => window.location.reload()}
+              className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black rounded-xl transition-all shadow-lg shadow-indigo-600/10 cursor-pointer"
+            >
+              {language === 'darija' ? "A3id l-Mohawala 🔄" : "Réessayer la mise à jour 🔄"}
+            </button>
+            <p className="text-[10px] font-semibold text-slate-500">
+              {language === 'darija' 
+                ? "Ila bqa had l-mouchkil, t-wassal m3a s-support dyalna." 
+                : "Si le problème persiste, veuillez contacter le support technique."}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Public layouts
   if (!session) {
     if (currentScreen === 'pricing') {
@@ -489,6 +543,21 @@ export default function App() {
 
         {/* Main Content scrollable panel */}
         <main className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 pb-24 md:pb-8">
+          {currentScreen === 'dashboard' && (
+            <>
+              <StorageWarningBanner 
+                userId={user?.id || 'mock-user-id-9999'} 
+                language={language} 
+                onNavigateToSettings={() => setCurrentScreen('settings')} 
+                context="dashboard"
+              />
+              <BackupReminderBanner 
+                userId={user?.id || 'mock-user-id-9999'} 
+                language={language} 
+                onNavigateToSettings={() => setCurrentScreen('settings')} 
+              />
+            </>
+          )}
           {renderActiveScreen()}
         </main>
 

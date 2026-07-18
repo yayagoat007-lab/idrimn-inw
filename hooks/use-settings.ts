@@ -65,28 +65,11 @@ export function useSettings(userId: string) {
     localStorage.setItem(`floussi_sessions_${userId}`, JSON.stringify(updated));
   };
 
-  const exportUserData = () => {
-    const data = {
-      profile: { id: userId, email: 'user@floussi.ma', fullName: 'Karim Alaoui', city: 'Casablanca' },
-      preferences,
-      exportedAt: new Date().toISOString()
-    };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `floussi_data_export_${userId}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  };
-
   return {
     preferences,
     sessions,
     loading,
     savePreferences,
-    terminateSession,
-    exportUserData
+    terminateSession
   };
 }

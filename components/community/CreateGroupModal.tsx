@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, Sparkles, Plus, Calendar, Coins } from 'lucide-react';
+import { useFocusTrap } from '../../hooks/use-focus-trap';
 
 interface CreateGroupModalProps {
   isOpen: boolean;
@@ -13,6 +14,8 @@ export function CreateGroupModal({ isOpen, onClose, lang, onCreateGroup }: Creat
   const [targetAmount, setTargetAmount] = useState('');
   const [deadline, setDeadline] = useState('');
   const [invited, setInvited] = useState<string[]>([]);
+
+  const modalRef = useFocusTrap<HTMLDivElement>({ isOpen, onClose });
 
   if (!isOpen) return null;
 
@@ -63,11 +66,12 @@ export function CreateGroupModal({ isOpen, onClose, lang, onCreateGroup }: Creat
 
   return (
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fadeIn" id="create-group-modal">
-      <div className="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl border border-slate-100 relative">
+      <div ref={modalRef} className="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl border border-slate-100 relative">
         
         {/* Close */}
         <button 
           onClick={onClose}
+          aria-label="Fermer la création de groupe / إغلاق إنشاء المجموعة"
           className="absolute top-4 right-4 p-1.5 hover:bg-slate-100 text-slate-400 hover:text-slate-600 rounded-xl cursor-pointer transition-all"
         >
           <X size={18} />

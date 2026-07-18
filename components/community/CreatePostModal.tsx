@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useGoals } from '../../hooks/use-goals';
 import { useAuth } from '../../hooks/use-auth';
 import { X, Sparkles, Lightbulb, HelpCircle, Send } from 'lucide-react';
+import { useFocusTrap } from '../../hooks/use-focus-trap';
 
 interface CreatePostModalProps {
   isOpen: boolean;
@@ -17,6 +18,8 @@ export function CreatePostModal({ isOpen, onClose, lang, onCreatePost }: CreateP
   const [content, setContent] = useState('');
   const [type, setType] = useState<'tip' | 'question'>('tip');
   const [selectedGoalId, setSelectedGoalId] = useState('');
+
+  const modalRef = useFocusTrap<HTMLDivElement>({ isOpen, onClose });
 
   if (!isOpen) return null;
 
@@ -52,11 +55,12 @@ export function CreatePostModal({ isOpen, onClose, lang, onCreatePost }: CreateP
 
   return (
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fadeIn" id="create-post-modal">
-      <div className="bg-white rounded-3xl w-full max-w-lg p-6 shadow-2xl border border-slate-100 relative">
+      <div ref={modalRef} className="bg-white rounded-3xl w-full max-w-lg p-6 shadow-2xl border border-slate-100 relative">
         
         {/* Close Button */}
         <button 
           onClick={onClose}
+          aria-label="Fermer la publication / إغلاق المنشور"
           className="absolute top-4 right-4 p-1.5 hover:bg-slate-100 text-slate-400 hover:text-slate-600 rounded-xl cursor-pointer transition-all"
         >
           <X size={18} />

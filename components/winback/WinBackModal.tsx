@@ -2,6 +2,7 @@ import React from 'react';
 import { SidiAvatar } from '../sidi/SidiAvatar';
 import { WinBackMessage } from '../../lib/winback-messages';
 import { X, Sparkles, ArrowRight } from 'lucide-react';
+import { useFocusTrap } from '../../hooks/use-focus-trap';
 
 interface WinBackModalProps {
   message: WinBackMessage;
@@ -18,6 +19,8 @@ export const WinBackModal: React.FC<WinBackModalProps> = ({
 }) => {
   const content = message[language];
   const targetPage = message.targetPage;
+
+  const modalRef = useFocusTrap<HTMLDivElement>({ isOpen: true, onClose });
 
   const handleCtaClick = () => {
     // Map winback targets to actual App screen routes
@@ -37,6 +40,7 @@ export const WinBackModal: React.FC<WinBackModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4">
       <div 
+        ref={modalRef}
         id="winback-welcome-modal"
         className="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-100 flex flex-col relative animate-in fade-in zoom-in-95 duration-200"
       >
@@ -47,6 +51,7 @@ export const WinBackModal: React.FC<WinBackModalProps> = ({
         <button 
           id="close-winback-modal"
           onClick={onClose}
+          aria-label="Fermer le message de bienvenue / إغلاق رسالة الترحيب"
           className="absolute top-4 right-4 p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-all z-10"
         >
           <X className="w-5 h-5" />

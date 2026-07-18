@@ -41,7 +41,7 @@ export function BucketForm({
   const [color, setColor] = useState(AVAILABLE_COLORS[0]);
   const [icon, setIcon] = useState(AVAILABLE_ICONS[0]);
   const [isEssential, setIsEssential] = useState(true);
-  const [category, setCategory] = useState('food');
+  const [category, setCategory] = useState('alimentation');
   const [parentId, setParentId] = useState<string | null>(null);
 
   // Load existing values if we are editing
@@ -145,15 +145,18 @@ export function BucketForm({
               onChange={(e) => setCategory(e.target.value)}
               className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold text-slate-800 focus:outline-hidden focus:ring-1 focus:ring-emerald-500 disabled:opacity-50"
             >
-              <option value="food">Alimentation</option>
-              <option value="housing">Logement & Factures</option>
+              <option value="alimentation">Alimentation</option>
+              <option value="logement">Logement</option>
               <option value="transport">Transport</option>
-              <option value="leisure">Loisirs & Café</option>
-              <option value="health">Santé</option>
-              <option value="education">Éducation & Enfants</option>
+              <option value="telecom">Télécom</option>
+              <option value="factures">Factures</option>
+              <option value="sante">Santé</option>
+              <option value="education">Éducation</option>
+              <option value="loisirs">Loisirs & Café</option>
+              <option value="epargne">Épargne</option>
               <option value="tontine">Tontine (Daret)</option>
-              <option value="savings">Épargne</option>
-              <option value="other">Autre / Divers</option>
+              <option value="impots">Impôts & Cotisations</option>
+              <option value="non_categorise">Autre / Divers</option>
             </select>
           </div>
 

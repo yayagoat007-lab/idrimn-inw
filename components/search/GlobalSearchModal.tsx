@@ -18,6 +18,7 @@ import {
   History
 } from 'lucide-react';
 import { SearchableItem, normalizeText } from '../../lib/global-search';
+import { useFocusTrap } from '../../hooks/use-focus-trap';
 
 interface GlobalSearchModalProps {
   isOpen: boolean;
@@ -229,6 +230,8 @@ export function GlobalSearchModal({
     );
   }
 
+  const modalRef = useFocusTrap<HTMLDivElement>({ isOpen, onClose });
+
   if (!isOpen) return null;
 
   return (
@@ -239,6 +242,7 @@ export function GlobalSearchModal({
 
         {/* Modal Window */}
         <motion.div
+          ref={modalRef}
           initial={{ opacity: 0, scale: 0.95, y: -20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: -20 }}
@@ -267,6 +271,7 @@ export function GlobalSearchModal({
             )}
             <button
               onClick={onClose}
+              aria-label="Fermer la recherche globale / إغلاق البحث الشامل"
               className="text-xs font-black uppercase text-slate-400 hover:text-slate-800 md:hidden ml-2 cursor-pointer"
             >
               Fermer

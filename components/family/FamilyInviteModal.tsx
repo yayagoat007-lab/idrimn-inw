@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Phone, Share2, Sparkles, X, QrCode } from 'lucide-react';
 import { QRCodeGenerator } from '../shared/QRCodeGenerator';
+import { useFocusTrap } from '../../hooks/use-focus-trap';
 
 interface FamilyInviteModalProps {
   onClose: () => void;
@@ -14,6 +15,8 @@ export function FamilyInviteModal({ onClose, onInvite, availableBuckets }: Famil
   const [selectedBuckets, setSelectedBuckets] = useState<string[]>([]);
   const [budgetLimit, setBudgetLimit] = useState('');
   const [showQR, setShowQR] = useState(false);
+
+  const modalRef = useFocusTrap<HTMLDivElement>({ isOpen: true, onClose });
 
   const handleToggleBucket = (bucketName: string) => {
     setSelectedBuckets(prev => 
@@ -42,9 +45,10 @@ export function FamilyInviteModal({ onClose, onInvite, availableBuckets }: Famil
 
   return (
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl relative border border-slate-100 max-h-[90vh] overflow-y-auto">
+      <div ref={modalRef} className="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl relative border border-slate-100 max-h-[90vh] overflow-y-auto">
         <button 
           onClick={onClose}
+          aria-label="Fermer l'invitation de la famille / إغلاق دعوة العائلة"
           className="absolute right-4 top-4 p-1 hover:bg-slate-50 text-slate-400 hover:text-slate-950 rounded-lg transition-colors"
         >
           <X size={18} />

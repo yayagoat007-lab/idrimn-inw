@@ -3,6 +3,7 @@ import { Goal } from '../../types';
 import { formatCurrency, formatDate } from '../../lib/utils';
 import { X, Coins, Check, ArrowUpRight } from 'lucide-react';
 import { GoalContributionLog } from '../../hooks/use-goals';
+import { useFocusTrap } from '../../hooks/use-focus-trap';
 
 interface GoalContributionModalProps {
   isOpen: boolean;
@@ -25,6 +26,8 @@ export function GoalContributionModal({
   const [note, setNote] = useState('');
   const [success, setSuccess] = useState(false);
 
+  const modalRef = useFocusTrap<HTMLDivElement>({ isOpen, onClose });
+
   if (!isOpen || !goal) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -46,7 +49,7 @@ export function GoalContributionModal({
 
   return (
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 font-sans animate-fade-in">
-      <div className="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl border border-slate-100 flex flex-col relative max-h-[90vh]">
+      <div ref={modalRef} className="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl border border-slate-100 flex flex-col relative max-h-[90vh]">
         
         {/* Success Feedback overlay */}
         {success && (
@@ -76,6 +79,7 @@ export function GoalContributionModal({
           </div>
           <button 
             onClick={onClose}
+            aria-label="Fermer la fenêtre / إغلاق النافذة"
             className="p-1.5 hover:bg-slate-50 text-slate-400 hover:text-slate-600 rounded-xl transition-colors cursor-pointer"
           >
             <X size={18} />

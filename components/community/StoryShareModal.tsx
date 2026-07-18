@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { generateAchievementStoryImage } from '../../lib/story-generator';
 import { X, Download, Share2, Sparkles, Loader2, CheckCircle2 } from 'lucide-react';
+import { useFocusTrap } from '../../hooks/use-focus-trap';
 
 interface StoryShareModalProps {
   isOpen: boolean;
@@ -22,6 +23,8 @@ export function StoryShareModal({
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [generating, setGenerating] = useState(true);
   const [shared, setShared] = useState(false);
+
+  const modalRef = useFocusTrap<HTMLDivElement>({ isOpen, onClose });
 
   const t = {
     title: lang === 'darija' ? 'Share d Story dyalk ! 🤳' : 'Partager ma Story 🤳',
@@ -92,11 +95,12 @@ export function StoryShareModal({
 
   return (
     <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 z-55 animate-fadeIn" id="story-share-modal">
-      <div className="bg-slate-900 text-white rounded-3xl w-full max-w-sm p-6 shadow-2xl border border-slate-800 relative overflow-hidden flex flex-col items-center">
+      <div ref={modalRef} className="bg-slate-900 text-white rounded-3xl w-full max-w-sm p-6 shadow-2xl border border-slate-800 relative overflow-hidden flex flex-col items-center">
         
         {/* Close */}
         <button 
           onClick={onClose}
+          aria-label="Fermer le partage de Story / إغلاق مشاركة القصة"
           className="absolute top-4 right-4 p-1.5 bg-slate-850 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl cursor-pointer transition-all"
         >
           <X size={16} />

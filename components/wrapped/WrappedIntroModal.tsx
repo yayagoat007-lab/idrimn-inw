@@ -1,5 +1,6 @@
 import React from 'react';
 import { Sparkles, Calendar, ArrowRight, X } from 'lucide-react';
+import { useFocusTrap } from '../../hooks/use-focus-trap';
 
 interface WrappedIntroModalProps {
   isOpen: boolean;
@@ -9,6 +10,8 @@ interface WrappedIntroModalProps {
 }
 
 export function WrappedIntroModal({ isOpen, onClose, onStart, language }: WrappedIntroModalProps) {
+  const modalRef = useFocusTrap<HTMLDivElement>({ isOpen, onClose });
+
   if (!isOpen) return null;
 
   const t = {
@@ -25,7 +28,7 @@ export function WrappedIntroModal({ isOpen, onClose, onStart, language }: Wrappe
     <div className="fixed inset-0 bg-slate-950/75 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-fade-in font-sans">
       
       {/* Container */}
-      <div className="bg-radial from-slate-900 via-slate-950 to-black text-white rounded-3xl max-w-md w-full p-8 shadow-2xl border border-slate-800 relative overflow-hidden text-center space-y-6">
+      <div ref={modalRef} className="bg-radial from-slate-900 via-slate-950 to-black text-white rounded-3xl max-w-md w-full p-8 shadow-2xl border border-slate-800 relative overflow-hidden text-center space-y-6">
         
         {/* Decorative elements */}
         <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/10 rounded-full filter blur-3xl -mr-16 -mt-16"></div>
@@ -34,6 +37,7 @@ export function WrappedIntroModal({ isOpen, onClose, onStart, language }: Wrappe
         {/* Close Button */}
         <button 
           onClick={onClose}
+          aria-label="Fermer l'introduction / إغلاق التقديم"
           className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-full hover:bg-slate-800/50 transition-colors"
           id="btn-close-wrapped-intro"
         >

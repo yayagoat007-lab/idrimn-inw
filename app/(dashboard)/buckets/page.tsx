@@ -257,12 +257,18 @@ export default function BucketsPage({
             className="px-3 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold text-slate-700 focus:outline-hidden"
           >
             <option value="all">Toutes catégories</option>
-            <option value="food">Alimentation</option>
-            <option value="housing">Logement & Factures</option>
+            <option value="alimentation">Alimentation</option>
+            <option value="logement">Logement</option>
             <option value="transport">Transport</option>
-            <option value="leisure">Loisirs & Café</option>
+            <option value="telecom">Télécom</option>
+            <option value="factures">Factures</option>
+            <option value="sante">Santé</option>
+            <option value="education">Éducation</option>
+            <option value="loisirs">Loisirs & Café</option>
+            <option value="epargne">Épargne</option>
             <option value="tontine">Tontine (Daret)</option>
-            <option value="savings">Épargne</option>
+            <option value="impots">Impôts & Cotisations</option>
+            <option value="non_categorise">Autre / Divers</option>
           </select>
 
           <select
