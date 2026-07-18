@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useBuckets } from '../../../../hooks/use-buckets';
 import { useBudgetSettings } from '../../../../hooks/use-budget-settings';
+import { useAuth } from '../../../../hooks/use-auth';
 import { AllocationRulesEditor } from '../../../../components/buckets/AllocationRulesEditor';
 import { BucketForm } from '../../../../components/buckets/BucketForm';
 import { formatCurrency } from '../../../../lib/utils';
@@ -18,7 +19,9 @@ export default function BucketsSettingsPage({
   language = 'fr',
   onNavigate
 }: BucketsSettingsPageProps) {
-  const { buckets, createBucket, updateBucket, deleteBucket } = useBuckets();
+  const { profile } = useAuth();
+  const userId = profile?.id || "mock-user-id-9999";
+  const { buckets, createBucket, updateBucket, deleteBucket } = useBuckets(userId);
   const { 
     incomes, 
     alerts, 
@@ -27,7 +30,7 @@ export default function BucketsSettingsPage({
     updateAllocationRules, 
     applyTemplateRules, 
     updateAlertSettings 
-  } = useBudgetSettings();
+  } = useBudgetSettings(userId);
 
   const [activeFormBucket, setActiveFormBucket] = useState<any | null>(null);
   const [showBucketCreator, setShowBucketCreator] = useState(false);

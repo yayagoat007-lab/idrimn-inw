@@ -47,6 +47,12 @@ export function useSidiProactive() {
         // Avoid duplicate alerts in memory
         const existingIds = new Set(prev.map(p => p.ruleName));
         const filteredNew = newAlerts.filter(a => !existingIds.has(a.ruleName));
+        
+        if (filteredNew.length > 0) {
+          const event = new CustomEvent('floussi_sidi_proactive_added', { detail: { messages: filteredNew } });
+          window.dispatchEvent(event);
+        }
+
         const combined = [...prev, ...filteredNew];
         
         try {

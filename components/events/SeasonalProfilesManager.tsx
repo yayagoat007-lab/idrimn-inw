@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { useSeasonalProfiles, SeasonalProfile } from '../../hooks/use-seasonal-profiles';
+import { useAuth } from '../../hooks/use-auth';
 import { formatCurrency } from '../../lib/utils';
 import { Sparkles, CalendarDays, CheckCircle, RefreshCw, Eye, ArrowRight, Check } from 'lucide-react';
 
 export function SeasonalProfilesManager() {
-  const { profiles, history, activateProfile, deactivateAllProfiles, getPreviewAdjustments } = useSeasonalProfiles();
+  const { profile } = useAuth();
+  const userId = profile?.id || "mock-user-id-9999";
+  const { profiles, history, activateProfile, deactivateAllProfiles, getPreviewAdjustments } = useSeasonalProfiles(userId);
   const [selectedProfile, setSelectedProfile] = useState<string | null>(null);
 
   const formatMAD = (val: number) => formatCurrency(val, 'fr').replace('MAD', 'DH');

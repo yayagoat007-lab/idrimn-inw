@@ -7,10 +7,12 @@ import {
 } from 'lucide-react';
 import { useBuckets } from '../../../hooks/use-buckets';
 import { useBucketStats } from '../../../hooks/use-bucket-stats';
+import { useAuth } from '../../../hooks/use-auth';
 import { BucketCard } from '../../../components/buckets/BucketCard';
 import { TransferModal } from '../../../components/buckets/TransferModal';
 import { QuickAddExpense } from '../../../components/buckets/QuickAddExpense';
 import { PlanLimitBanner } from '../../../components/shared/PlanLimitBanner';
+import { SkeletonCard } from '../../../components/shared/SkeletonCard';
 import { formatCurrency } from '../../../lib/utils';
 import { Language, getTranslation } from '../../../lib/i18n';
 import { motion, AnimatePresence } from 'motion/react';
@@ -34,6 +36,8 @@ export default function BucketsPage({
   language = 'fr',
   onNavigate
 }: BucketsPageProps) {
+  const { profile } = useAuth();
+  const userId = profile?.id || "mock-user-id-9999";
   const { 
     buckets: hookBuckets, 
     loading, 
@@ -44,9 +48,9 @@ export default function BucketsPage({
     transferBetweenBuckets, 
     quickAddExpense, 
     autoAllocate: hookAutoAllocate 
-  } = useBuckets();
+  } = useBuckets(userId);
 
-  const { stats, loading: statsLoading, refreshStats } = useBucketStats();
+  const { stats, loading: statsLoading, refreshStats } = useBucketStats(userId);
 
   // Support props fallbacks
   const activeBuckets = passedBuckets || hookBuckets;
@@ -274,7 +278,13 @@ export default function BucketsPage({
       </div>
 
       {/* List / Hierarchical Display Grid */}
-      {rootBuckets.length === 0 ? (
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+        </div>
+      ) : rootBuckets.length === 0 ? (
         <div className="p-8 bg-white border border-slate-100 rounded-3xl text-center space-y-2">
           <AlertCircle size={28} className="text-slate-300 mx-auto" />
           <h4 className="font-extrabold text-xs text-slate-800 uppercase tracking-wide">Aucun sandoq trouvé</h4>

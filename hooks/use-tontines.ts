@@ -11,6 +11,7 @@ export function useTontines(userId: string = "mock-user-id-9999") {
   const loadTontines = async () => {
     setLoading(true);
     let data: Tontine[] | null = null;
+    let localData = await OfflineDB.get<Tontine[]>('tontines') || [];
     try {
       const { data: remoteData, error } = await supabase
         .from('tontines')
@@ -19,14 +20,14 @@ export function useTontines(userId: string = "mock-user-id-9999") {
       if (error) throw error;
       data = remoteData;
     } catch (_) {
-      // Fallback offline
-      data = await OfflineDB.get<Tontine[]>('tontines');
+      // Fallback offline: filter by creator_id
+      data = localData.filter(t => t.creator_id === userId);
     }
 
     if (!data || data.length === 0) {
       const fallback: Tontine[] = [
         {
-          id: "tontine-1",
+          id: `tontine-1-${userId}`,
           creator_id: userId,
           name: "Jmâa El Kheir (Darb Sultan)",
           description: "Solidarité familiale et voisinage pour l'ameublement ou les vacances d'été.",
@@ -40,7 +41,9 @@ export function useTontines(userId: string = "mock-user-id-9999") {
           updated_at: new Date().toISOString()
         }
       ];
-      await OfflineDB.set('tontines', fallback);
+      // Merge with other users' tontines
+      const merged = [...localData.filter(t => t.creator_id !== userId), ...fallback];
+      await OfflineDB.set('tontines', merged);
       data = fallback;
     }
     setTontines(data);
@@ -60,9 +63,12 @@ export function useTontines(userId: string = "mock-user-id-9999") {
       updated_at: new Date().toISOString()
     };
 
+    const allTontines = await OfflineDB.get<Tontine[]>('tontines') || [];
+    const otherUsersTontines = allTontines.filter(t => t.creator_id !== userId);
     const updated = [...tontines, newTontine];
+    
     setTontines(updated);
-    await OfflineDB.set('tontines', updated);
+    await OfflineDB.set('tontines', [...otherUsersTontines, ...updated]);
 
     try {
       await supabase.from('tontines').insert(newTontine);
@@ -71,9 +77,12 @@ export function useTontines(userId: string = "mock-user-id-9999") {
   };
 
   const updateTontineStatus = async (id: string, status: Tontine['status']) => {
+    const allTontines = await OfflineDB.get<Tontine[]>('tontines') || [];
+    const otherUsersTontines = allTontines.filter(t => t.creator_id !== userId);
     const updated = tontines.map(t => t.id === id ? { ...t, status, updated_at: new Date().toISOString() } : t);
+    
     setTontines(updated);
-    await OfflineDB.set('tontines', updated);
+    await OfflineDB.set('tontines', [...otherUsersTontines, ...updated]);
 
     try {
       await supabase.from('tontines').update({ status }).eq('id', id);
@@ -81,9 +90,12 @@ export function useTontines(userId: string = "mock-user-id-9999") {
   };
 
   const deleteTontine = async (id: string) => {
+    const allTontines = await OfflineDB.get<Tontine[]>('tontines') || [];
+    const otherUsersTontines = allTontines.filter(t => t.creator_id !== userId);
     const updated = tontines.filter(t => t.id !== id);
+    
     setTontines(updated);
-    await OfflineDB.set('tontines', updated);
+    await OfflineDB.set('tontines', [...otherUsersTontines, ...updated]);
 
     try {
       await supabase.from('tontines').delete().eq('id', id);

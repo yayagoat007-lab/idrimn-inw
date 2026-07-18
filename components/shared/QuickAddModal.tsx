@@ -9,6 +9,7 @@ import { TagInput } from './TagInput';
 import { ReceiptUploader } from './ReceiptUploader';
 import { Bucket } from '../../types';
 import { useOcr } from '../../hooks/use-ocr';
+import { useFocusTrap } from '../../hooks/use-focus-trap';
 
 interface QuickAddModalProps {
   isOpen: boolean;
@@ -40,6 +41,8 @@ export function QuickAddModal({
 
   // OCR
   const { scanning: isScanning, scanReceipt } = useOcr();
+
+  const modalRef = useFocusTrap<HTMLDivElement>({ isOpen, onClose });
 
   if (!isOpen) return null;
 
@@ -123,7 +126,7 @@ export function QuickAddModal({
 
   return (
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white border border-slate-100 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-slideUp font-sans">
+      <div ref={modalRef} className="bg-white border border-slate-100 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-slideUp font-sans">
         
         {/* Header */}
         <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
@@ -135,6 +138,7 @@ export function QuickAddModal({
           </div>
           <button
             onClick={onClose}
+            aria-label="Fermer la fenêtre d'enregistrement"
             className="p-1.5 hover:bg-slate-150 text-slate-400 hover:text-slate-700 rounded-xl transition-all cursor-pointer"
           >
             <X size={18} />

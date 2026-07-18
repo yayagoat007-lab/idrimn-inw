@@ -21,6 +21,7 @@ export const LEVEL_THRESHOLDS = [0, 100, 500, 2000, 5000];
 
 export const ALL_BADGES: Badge[] = [
   { id: 'first_trans', title: 'Première transaction', description: 'Ajouter une première entrée de masrouf ou de revenu.', emoji: '🌱', xpValue: 10, category: 'onboarding' },
+  { id: 'first_goal_created', title: 'Premier Objectif Lancé', description: 'Créer son tout premier projet d’épargne.', emoji: '🎯', xpValue: 50, category: 'onboarding' },
   { id: 'streak_3', title: 'Régulier d\'or', description: 'Maintenir un streak de saisie de 3 jours.', emoji: '🔥', xpValue: 30, category: 'streak' },
   { id: 'streak_7', title: 'Sérénité Hebdo', description: 'Maintenir un streak de saisie de 7 jours consécutifs.', emoji: '⚡', xpValue: 70, category: 'streak' },
   { id: 'streak_30', title: 'Pilier du Budget', description: 'Atteindre 30 jours de streak consécutifs.', emoji: '🌟', xpValue: 300, category: 'streak' },

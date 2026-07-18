@@ -13,7 +13,7 @@ import { getBenchmarkBySalary, REGIONAL_BENCHMARKS } from '../lib/benchmarks';
 
 export function useAIInsights(userId: string = "mock-user-id-9999", lang: 'fr' | 'darija' = 'fr') {
   const { transactions, stats: insightStats, loading: insightsLoading } = useInsights(userId);
-  const { buckets, loading: bucketsLoading } = useBuckets();
+  const { buckets, loading: bucketsLoading } = useBuckets(userId);
   const { goals, loading: goalsLoading } = useGoals(userId);
   const { totalAssets, totalLiabilities, loading: netWorthLoading } = useNetWorth(userId);
 

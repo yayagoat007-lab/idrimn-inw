@@ -7,23 +7,33 @@ import { useAuth } from './use-auth';
  */
 export function useOnboardingStep() {
   const [step, setStep] = useState<number>(1);
+  const [selectedPersona, setSelectedPersona] = useState<string | null>(null);
 
-  // Load step from localStorage on initial load
+  // Load step and persona from localStorage on initial load
   useEffect(() => {
     const savedStep = localStorage.getItem('floussi_onboarding_step');
     if (savedStep) {
       const parsed = parseInt(savedStep, 10);
-      if (parsed >= 1 && parsed <= 4) {
+      if (parsed >= 1 && parsed <= 5) {
         setStep(parsed);
       }
+    }
+    const savedPersona = localStorage.getItem('floussi_selected_persona');
+    if (savedPersona) {
+      setSelectedPersona(savedPersona);
     }
   }, []);
 
   const setOnboardingStep = useCallback((newStep: number) => {
-    if (newStep >= 1 && newStep <= 4) {
+    if (newStep >= 1 && newStep <= 5) {
       setStep(newStep);
       localStorage.setItem('floussi_onboarding_step', newStep.toString());
     }
+  }, []);
+
+  const setPersona = useCallback((personaId: string) => {
+    setSelectedPersona(personaId);
+    localStorage.setItem('floussi_selected_persona', personaId);
   }, []);
 
   const nextStep = useCallback(() => {
@@ -36,7 +46,9 @@ export function useOnboardingStep() {
 
   const resetOnboardingSteps = useCallback(() => {
     setStep(1);
+    setSelectedPersona(null);
     localStorage.removeItem('floussi_onboarding_step');
+    localStorage.removeItem('floussi_selected_persona');
   }, []);
 
   return {
@@ -44,7 +56,9 @@ export function useOnboardingStep() {
     setStep: setOnboardingStep,
     nextStep,
     prevStep,
-    resetOnboardingSteps
+    resetOnboardingSteps,
+    selectedPersona,
+    setPersona
   };
 }
 
@@ -64,6 +78,7 @@ export function useCompleteOnboarding() {
     incomeAmount: number;
     incomeSource: string;
     payDay: number;
+    personaType?: string;
   }) => {
     setIsLoading(true);
     setError(null);
@@ -74,12 +89,14 @@ export function useCompleteOnboarding() {
         phone: data.phone,
         city: data.city,
         preferred_language: data.language,
+        persona_type: data.personaType || null,
         // Mark onboarding complete by filling fields
         updated_at: new Date().toISOString()
       });
 
       // Clear onboarding step cache
       localStorage.removeItem('floussi_onboarding_step');
+      localStorage.removeItem('floussi_selected_persona');
       
       return { success: true };
     } catch (err: any) {

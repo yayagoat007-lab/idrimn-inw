@@ -50,15 +50,23 @@ export function useGoals(userId: string = "mock-user-id-9999") {
 
   const loadGoalsData = useCallback(async () => {
     setLoading(true);
-    let localGoals = await OfflineDB.get<Goal[]>('goals');
+    let localGoals = await OfflineDB.get<Goal[]>('goals') || [];
 
-    if (!localGoals || localGoals.length === 0) {
-      localGoals = DEFAULT_GOALS.map(g => ({ ...g, user_id: userId }));
-      await OfflineDB.set('goals', localGoals);
-      localStorage.setItem('floussi_table_goals', JSON.stringify(localGoals));
+    let userGoals = localGoals.filter(g => g.user_id === userId);
+
+    if (userGoals.length === 0) {
+      const userDefaultGoals = DEFAULT_GOALS.map(g => ({ 
+        ...g, 
+        id: g.id.includes(userId) ? g.id : `${g.id}-${userId}`,
+        user_id: userId 
+      }));
+      const merged = [...localGoals.filter(g => g.user_id !== userId), ...userDefaultGoals];
+      await OfflineDB.set('goals', merged);
+      localStorage.setItem('floussi_table_goals', JSON.stringify(merged));
+      userGoals = userDefaultGoals;
     }
 
-    setGoals(localGoals || []);
+    setGoals(userGoals);
 
     // Load contribution logs from IndexedDB (fallback to storage)
     let logs = await OfflineDB.get<GoalContributionLog[]>('goal_contributions');
@@ -97,9 +105,13 @@ export function useGoals(userId: string = "mock-user-id-9999") {
   }, [loadGoalsData]);
 
   const saveGoals = async (newGoals: Goal[]) => {
+    const allGoals = await OfflineDB.get<Goal[]>('goals') || [];
+    const otherUsersGoals = allGoals.filter(g => g.user_id !== userId);
+    const merged = [...otherUsersGoals, ...newGoals];
+    
     setGoals(newGoals);
-    await OfflineDB.set('goals', newGoals);
-    localStorage.setItem('floussi_table_goals', JSON.stringify(newGoals));
+    await OfflineDB.set('goals', merged);
+    localStorage.setItem('floussi_table_goals', JSON.stringify(merged));
   };
 
   const createGoal = async (goalData: Omit<Goal, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
@@ -297,6 +309,7 @@ export function useGoals(userId: string = "mock-user-id-9999") {
       const nextTxs = [newTx, ...currentTxs];
       await OfflineDB.set('transactions', nextTxs);
       localStorage.setItem('floussi_table_transactions', JSON.stringify(nextTxs));
+      window.dispatchEvent(new Event('floussi_transactions_updated'));
 
       try {
         await supabase.from('transactions').insert(newTx);

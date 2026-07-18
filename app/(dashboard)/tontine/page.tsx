@@ -12,6 +12,8 @@ import { TontinePaymentTracker } from '../../../components/tontine/TontinePaymen
 import { TontineTimeline } from '../../../components/tontine/TontineTimeline';
 import { TontineInviteModal } from '../../../components/tontine/TontineInviteModal';
 import { PlanGate } from '../../../components/shared/PlanGate';
+import { SkeletonCard } from '../../../components/shared/SkeletonCard';
+import { EmptyState } from '../../../components/shared/EmptyState';
 import { PiggyBank, Plus, HelpCircle, Users, ArrowLeft } from 'lucide-react';
 import { getTranslation, Language } from '../../../lib/i18n';
 import { Tontine, TontineStatus } from '../../../types';
@@ -186,16 +188,20 @@ export default function TontinePage({ language }: TontinePageProps) {
 
             {/* Tontine list Grid */}
             {tontinesLoading ? (
-              <div className="text-center py-10">Chargement des cercles...</div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <SkeletonCard />
+                <SkeletonCard />
+                <SkeletonCard />
+              </div>
             ) : tontines.length === 0 ? (
-              <div className="text-center py-12 border border-dashed border-slate-200 rounded-3xl">
-                <p className="text-xs font-bold text-slate-400">Vous ne participez à aucune Jmâa pour le moment.</p>
-                <button
-                  onClick={() => setShowForm(true)}
-                  className="mt-4 bg-slate-800 hover:bg-slate-900 text-white font-black text-[10px] uppercase py-2 px-4 rounded-xl transition-all"
-                >
-                  Lancer la première Daret
-                </button>
+              <div className="py-6">
+                <EmptyState
+                  title={language === 'darija' ? "La Jmâa khawia" : "Aucun cercle actif"}
+                  description={language === 'darija' ? "Mazal makhcheti f tal chi Jmâa / Daret." : "Vous ne participez à aucune Jmâa (Daret) pour le moment."}
+                  icon={Users}
+                  actionLabel={language === 'darija' ? "Bda daret jdid" : "Créer un cercle"}
+                  onAction={() => setShowForm(true)}
+                />
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

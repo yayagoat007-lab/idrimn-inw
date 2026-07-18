@@ -5,8 +5,10 @@ import {
   Layers, 
   Settings,
   PiggyBank,
-  CreditCard
+  CreditCard,
+  Globe
 } from 'lucide-react';
+import { getMREPreference } from '../../lib/currency-exchange';
 
 interface MobileNavProps {
   currentRoute: string;
@@ -15,12 +17,17 @@ interface MobileNavProps {
 }
 
 export function MobileNav({ currentRoute, onNavigate, onQuickAdd }: MobileNavProps) {
+  const isMRE = typeof window !== 'undefined' ? getMREPreference().enabled : false;
+
   const navItems = [
     { id: 'dashboard', label: 'Tawjih', icon: LayoutDashboard },
     { id: 'wallet', label: 'Mihfada', icon: CreditCard },
     { id: 'buckets', label: 'Sanadiq', icon: Layers },
-    { id: 'tontine', label: 'Daret', icon: PiggyBank },
+    isMRE 
+      ? { id: 'mre', label: 'MRE 🌍', icon: Globe }
+      : { id: 'tontine', label: 'Daret', icon: PiggyBank },
   ];
+
 
   return (
     <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-100 flex items-center justify-around px-4 py-2 pb-safe shadow-lg">

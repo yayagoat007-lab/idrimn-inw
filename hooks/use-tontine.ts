@@ -129,14 +129,54 @@ export function useTontine(userId: string = "mock-user-id-9999") {
     async function loadTontineData() {
       setLoading(true);
       
-      let localTontines = await OfflineDB.get<Tontine[]>('tontines');
-      let localMembers = await OfflineDB.get<TontineMember[]>('tontine_members');
-      let localPayments = await OfflineDB.get<TontinePayment[]>('tontine_payments');
+      let localTontines = await OfflineDB.get<Tontine[]>('tontines') || [];
+      let localMembers = await OfflineDB.get<TontineMember[]>('tontine_members') || [];
+      let localPayments = await OfflineDB.get<TontinePayment[]>('tontine_payments') || [];
 
-      if (!localTontines || localTontines.length === 0) {
-        localTontines = DEFAULT_TONTINES.map(t => ({ ...t, creator_id: userId }));
-        localMembers = DEFAULT_MEMBERS;
-        localPayments = DEFAULT_PAYMENTS;
+      let userTontines = localTontines.filter(t => t.creator_id === userId);
+
+      if (userTontines.length === 0) {
+        const userDefaultTontines = DEFAULT_TONTINES.map(t => ({ 
+          ...t, 
+          id: t.id.includes(userId) ? t.id : `${t.id}-${userId}`,
+          creator_id: userId 
+        }));
+        
+        // Also map default members to use user-specific tontine ID and user ID
+        const userDefaultMembers = DEFAULT_MEMBERS.map(m => {
+          if (m.user_id === "mock-user-id-9999") {
+            return {
+              ...m,
+              id: `${m.id}-${userId}`,
+              tontine_id: `${m.tontine_id}-${userId}`,
+              user_id: userId
+            };
+          }
+          return {
+            ...m,
+            tontine_id: `${m.tontine_id}-${userId}`
+          };
+        });
+
+        const userDefaultPayments = DEFAULT_PAYMENTS.map(p => {
+          if (p.member_id === "tm-1") {
+            return {
+              ...p,
+              id: `${p.id}-${userId}`,
+              tontine_id: `${p.tontine_id}-${userId}`,
+              member_id: `tm-1-${userId}`
+            };
+          }
+          return {
+            ...p,
+            tontine_id: `${p.tontine_id}-${userId}`
+          };
+        });
+
+        localTontines = [...localTontines.filter(t => t.creator_id !== userId), ...userDefaultTontines];
+        // Merge members and payments as well to avoid over-writing
+        localMembers = [...localMembers.filter(m => !userDefaultMembers.some(um => um.id === m.id)), ...userDefaultMembers];
+        localPayments = [...localPayments.filter(p => !userDefaultPayments.some(up => up.id === p.id)), ...userDefaultPayments];
 
         await OfflineDB.set('tontines', localTontines);
         await OfflineDB.set('tontine_members', localMembers);
@@ -145,11 +185,18 @@ export function useTontine(userId: string = "mock-user-id-9999") {
         localStorage.setItem('floussi_table_tontines', JSON.stringify(localTontines));
         localStorage.setItem('floussi_table_tontine_members', JSON.stringify(localMembers));
         localStorage.setItem('floussi_table_tontine_payments', JSON.stringify(localPayments));
+
+        userTontines = userDefaultTontines;
       }
 
-      setTontines(localTontines);
-      setMembers(localMembers || []);
-      setPayments(localPayments || []);
+      // Filter members and payments that belong to the active user's tontines
+      const userTontineIds = userTontines.map(t => t.id);
+      const filteredMembers = localMembers.filter(m => userTontineIds.includes(m.tontine_id));
+      const filteredPayments = localPayments.filter(p => userTontineIds.includes(p.tontine_id));
+
+      setTontines(userTontines);
+      setMembers(filteredMembers);
+      setPayments(filteredPayments);
       setLoading(false);
     }
 
@@ -161,13 +208,24 @@ export function useTontine(userId: string = "mock-user-id-9999") {
     setMembers(newMembers);
     setPayments(newPayments);
     
-    await OfflineDB.set('tontines', newTontines);
-    await OfflineDB.set('tontine_members', newMembers);
-    await OfflineDB.set('tontine_payments', newPayments);
+    // Merge back to preserve other users' records
+    const allTontines = await OfflineDB.get<Tontine[]>('tontines') || [];
+    const allMembers = await OfflineDB.get<TontineMember[]>('tontine_members') || [];
+    const allPayments = await OfflineDB.get<TontinePayment[]>('tontine_payments') || [];
 
-    localStorage.setItem('floussi_table_tontines', JSON.stringify(newTontines));
-    localStorage.setItem('floussi_table_tontine_members', JSON.stringify(newMembers));
-    localStorage.setItem('floussi_table_tontine_payments', JSON.stringify(newPayments));
+    const mergedTontines = [...allTontines.filter(t => t.creator_id !== userId), ...newTontines];
+    
+    const userTontineIds = newTontines.map(t => t.id);
+    const mergedMembers = [...allMembers.filter(m => !userTontineIds.includes(m.tontine_id)), ...newMembers];
+    const mergedPayments = [...allPayments.filter(p => !userTontineIds.includes(p.tontine_id)), ...newPayments];
+
+    await OfflineDB.set('tontines', mergedTontines);
+    await OfflineDB.set('tontine_members', mergedMembers);
+    await OfflineDB.set('tontine_payments', mergedPayments);
+
+    localStorage.setItem('floussi_table_tontines', JSON.stringify(mergedTontines));
+    localStorage.setItem('floussi_table_tontine_members', JSON.stringify(mergedMembers));
+    localStorage.setItem('floussi_table_tontine_payments', JSON.stringify(mergedPayments));
   };
 
   const getNextCollection = () => {

@@ -18,9 +18,11 @@ import {
   Gift,
   Calculator,
   TrendingUp,
-  GraduationCap
+  GraduationCap,
+  Globe
 } from 'lucide-react';
 import { getTranslation, Language } from '../../lib/i18n';
+import { getMREPreference } from '../../lib/currency-exchange';
 
 interface SidebarProps {
   currentRoute: string;
@@ -30,6 +32,8 @@ interface SidebarProps {
 }
 
 export function Sidebar({ currentRoute, onNavigate, language, subscriptionTier }: SidebarProps) {
+  const isMRE = typeof window !== 'undefined' ? getMREPreference().enabled : false;
+
   const sections = [
     {
       title: language === 'darija' ? 'Ra\'issi' : 'Principal',
@@ -47,6 +51,7 @@ export function Sidebar({ currentRoute, onNavigate, language, subscriptionTier }
       items: [
         { id: 'academy', label: language === 'darija' ? 'Akadimiya Floussi 🎓' : 'Académie Floussi 🎓', icon: GraduationCap },
         { id: 'wallet', label: getTranslation('wallet', language), icon: CreditCard },
+        { id: 'mre', label: language === 'darija' ? 'وضعية مغاربة العالم 🌍' : 'Mode MRE 🌍', icon: Globe },
         { id: 'tontine', label: getTranslation('tontine', language), icon: PiggyBank },
         { id: 'community', label: getTranslation('community', language), icon: Users },
         { id: 'calculators', label: getTranslation('calculators', language), icon: Calculator },

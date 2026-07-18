@@ -3,10 +3,12 @@
 import React, { useState } from 'react';
 import { useGoals } from '../../../hooks/use-goals';
 import { useGoalStats } from '../../../hooks/use-goal-stats';
+import { useAuth } from '../../../hooks/use-auth';
 import { GoalCard } from '../../../components/goals/GoalCard';
 import { GoalForm } from '../../../components/goals/GoalForm';
 import { GoalContributionModal } from '../../../components/goals/GoalContributionModal';
 import { ConfettiAnimation } from '../../../components/shared/ConfettiAnimation';
+import { SkeletonCard } from '../../../components/shared/SkeletonCard';
 import { getTranslation, Language } from '../../../lib/i18n';
 import { formatCurrency } from '../../../lib/utils';
 import { Plus, Target, Award, Sparkles, TrendingUp, HelpCircle } from 'lucide-react';
@@ -16,6 +18,8 @@ interface GoalsPageProps {
 }
 
 export default function GoalsPage({ language = 'fr' }: GoalsPageProps) {
+  const { profile } = useAuth();
+  const userId = profile?.id || "mock-user-id-9999";
   const { 
     goals, 
     contributions, 
@@ -24,9 +28,9 @@ export default function GoalsPage({ language = 'fr' }: GoalsPageProps) {
     updateGoal, 
     deleteGoal, 
     contributeToGoal 
-  } = useGoals();
+  } = useGoals(userId);
 
-  const { stats, loading: statsLoading, modelScenario, refreshStats } = useGoalStats();
+  const { stats, loading: statsLoading, modelScenario, refreshStats } = useGoalStats(userId);
 
   // Local navigation/modals states
   const [showGoalCreator, setShowGoalCreator] = useState(false);
@@ -35,6 +39,18 @@ export default function GoalsPage({ language = 'fr' }: GoalsPageProps) {
   
   // Confetti celebration trigger
   const [showCelebration, setShowCelebration] = useState(false);
+
+  // Listen to global open-goal-creator event
+  React.useEffect(() => {
+    const handleOpenGoal = () => {
+      setShowGoalCreator(true);
+      setActiveFormGoal(null);
+    };
+    window.addEventListener('open-goal-creator', handleOpenGoal);
+    return () => {
+      window.removeEventListener('open-goal-creator', handleOpenGoal);
+    };
+  }, []);
 
   const handleCreateOrUpdateGoal = async (data: any) => {
     if (activeFormGoal) {
@@ -130,7 +146,13 @@ export default function GoalsPage({ language = 'fr' }: GoalsPageProps) {
       </div>
 
       {/* Main Grid display of Goal Cards */}
-      {goals.length === 0 ? (
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+        </div>
+      ) : goals.length === 0 ? (
         <div className="p-12 bg-white border border-slate-100 rounded-3xl text-center space-y-3">
           <Target size={36} className="text-slate-300 mx-auto" />
           <h4 className="font-extrabold text-xs text-slate-800 uppercase tracking-wide">Aucun objectif en cours</h4>

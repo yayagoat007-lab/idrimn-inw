@@ -137,6 +137,13 @@ export function useWinBack(userId: string = "mock-user-id-9999") {
 
   const hasBeenShownThisTier = lastShownTier === currentTier;
 
+  useEffect(() => {
+    if (winBackMessage) {
+      const event = new CustomEvent('floussi_winback_triggered', { detail: { message: winBackMessage } });
+      window.dispatchEvent(event);
+    }
+  }, [winBackMessage]);
+
   return {
     winBackMessage,
     dismissWinBack,

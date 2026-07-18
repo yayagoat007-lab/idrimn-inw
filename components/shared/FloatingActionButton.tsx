@@ -89,6 +89,7 @@ export function FloatingActionButton({
 
       <button
         onClick={handleToggle}
+        aria-label={isOpen ? "Fermer le menu d'ajout rapide" : "Ouvrir le menu d'ajout rapide"}
         className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-xl transition-all hover:scale-105 cursor-pointer ${isOpen ? 'bg-slate-800 rotate-45' : 'bg-emerald-600 hover:bg-emerald-700'}`}
       >
         {isOpen ? <X size={24} /> : <Plus size={24} />}

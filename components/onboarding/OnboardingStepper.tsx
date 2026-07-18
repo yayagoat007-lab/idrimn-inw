@@ -9,13 +9,15 @@ interface OnboardingStepperProps {
 
 export function OnboardingStepper({ currentStep, language }: OnboardingStepperProps) {
   const stepsFr = [
+    { title: 'Profil', desc: 'Type' },
     { title: 'Langue', desc: 'Choix' },
-    { title: 'Profil', desc: 'Identité' },
+    { title: 'Compte', desc: 'Identité' },
     { title: 'Revenus', desc: 'Budget' },
     { title: 'Enveloppes', desc: 'Répartition' }
   ];
 
   const stepsDarija = [
+    { title: 'البروفايل', desc: 'النوع' },
     { title: 'اللوغة', desc: 'اللغة' },
     { title: 'الحساب', desc: 'المعلومات' },
     { title: 'الخلصة', desc: 'الميزانية' },
@@ -25,7 +27,12 @@ export function OnboardingStepper({ currentStep, language }: OnboardingStepperPr
   const steps = language === 'darija' ? stepsDarija : stepsFr;
 
   return (
-    <div className="w-full py-4 px-2 font-sans select-none">
+    <div className="w-full py-2 px-2 font-sans select-none">
+      <div className="text-center mb-3 text-[10px] font-black uppercase text-slate-400 tracking-widest">
+        {language === 'darija' 
+          ? `المرحلة ${currentStep} من أصل 5` 
+          : `Étape ${currentStep} sur 5`}
+      </div>
       <div className="flex items-center justify-between relative max-w-xl mx-auto">
         {/* Horizontal background connector line */}
         <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-slate-100 -translate-y-1/2 z-0" />

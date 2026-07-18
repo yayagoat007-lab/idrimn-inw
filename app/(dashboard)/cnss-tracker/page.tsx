@@ -6,6 +6,7 @@ import {
   ActType, 
   TNR_TABLE 
 } from '../../../lib/cnss-calculator';
+import { EmptyState } from '../../../components/shared/EmptyState';
 import { 
   ShieldAlert, 
   Plus, 
@@ -450,8 +451,14 @@ export default function CnssTrackerPage({ language }: { language: 'fr' | 'darija
           </h2>
 
           {dossiers.length === 0 ? (
-            <div className="p-12 text-center text-slate-400 uppercase font-black text-xs">
-              Aucun dossier de remboursement enregistré.
+            <div className="py-6">
+              <EmptyState
+                title={language === 'darija' ? "Dossierat khawyin" : "Aucun dossier trouvé"}
+                description={language === 'darija' ? "Mazal madakhalti tal chi dossier dial CNSS / AMO." : "Commencez à enregistrer vos dossiers CNSS ou AMO pour suivre l'estimation de vos remboursements."}
+                icon={FileText}
+                actionLabel={language === 'darija' ? "Zid dossier" : "Ajouter un dossier"}
+                onAction={() => setShowForm(true)}
+              />
             </div>
           ) : (
             <div className="space-y-3.5">

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useGoals } from '../../hooks/use-goals';
+import { useAuth } from '../../hooks/use-auth';
 import { X, Sparkles, Lightbulb, HelpCircle, Send } from 'lucide-react';
 
 interface CreatePostModalProps {
@@ -10,7 +11,9 @@ interface CreatePostModalProps {
 }
 
 export function CreatePostModal({ isOpen, onClose, lang, onCreatePost }: CreatePostModalProps) {
-  const { goals } = useGoals();
+  const { profile } = useAuth();
+  const userId = profile?.id || "mock-user-id-9999";
+  const { goals } = useGoals(userId);
   const [content, setContent] = useState('');
   const [type, setType] = useState<'tip' | 'question'>('tip');
   const [selectedGoalId, setSelectedGoalId] = useState('');

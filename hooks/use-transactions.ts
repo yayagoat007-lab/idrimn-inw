@@ -3,6 +3,7 @@ import { Transaction } from '../types';
 import { OfflineDB } from '../lib/offline-db';
 import { supabase } from '../lib/supabase';
 import { generateId } from '../lib/utils';
+import { unlockGlobalBadge } from '../lib/gamification';
 
 const SEED_TRANSACTIONS: Transaction[] = [
   {
@@ -103,12 +104,26 @@ export function useTransactions(userId: string = "mock-user-id-9999", onBucketUp
     }
     
     loadTransactions();
+
+    const handleUpdate = () => {
+      OfflineDB.get<Transaction[]>('transactions').then(localTxs => {
+        if (localTxs) {
+          setTransactions(localTxs);
+        }
+      });
+    };
+
+    window.addEventListener('floussi_transactions_updated', handleUpdate);
+    return () => {
+      window.removeEventListener('floussi_transactions_updated', handleUpdate);
+    };
   }, [userId]);
 
   const saveTransactions = async (newTxs: Transaction[]) => {
     setTransactions(newTxs);
     await OfflineDB.set('transactions', newTxs);
     localStorage.setItem('floussi_table_transactions', JSON.stringify(newTxs));
+    window.dispatchEvent(new Event('floussi_transactions_updated'));
   };
 
   /**
@@ -124,6 +139,7 @@ export function useTransactions(userId: string = "mock-user-id-9999", onBucketUp
     });
     await OfflineDB.set('buckets', recomputedBuckets);
     localStorage.setItem('floussi_table_buckets', JSON.stringify(recomputedBuckets));
+    window.dispatchEvent(new Event('floussi_buckets_updated'));
     
     if (onBucketUpdate) {
       onBucketUpdate();
@@ -145,6 +161,10 @@ export function useTransactions(userId: string = "mock-user-id-9999", onBucketUp
     const list = [newTx, ...transactions];
     await saveTransactions(list);
     await triggerLocalBucketRecalculation(list);
+
+    if (transactions.length === 0) {
+      unlockGlobalBadge(userId, 'first_trans');
+    }
 
     // Sync to Supabase
     try {

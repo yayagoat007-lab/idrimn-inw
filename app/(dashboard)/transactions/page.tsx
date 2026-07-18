@@ -12,6 +12,7 @@ import { TransactionFilters } from '../../../components/transactions/Transaction
 import { DateRangePicker } from '../../../components/shared/DateRangePicker';
 import { QuickAddModal } from '../../../components/shared/QuickAddModal';
 import { SyncStatusBadge } from '../../../components/shared/SyncStatusBadge';
+import { SkeletonCard } from '../../../components/shared/SkeletonCard';
 import { AdBanner } from '../../../components/ads/AdBanner';
 
 import { formatCurrency } from '../../../lib/utils';
@@ -35,7 +36,7 @@ export default function TransactionsPage({
   const userId = user?.id || "mock-user-id-9999";
 
   const { buckets } = useBuckets(userId);
-  const { transactions, createTransaction, deleteTransaction, getCashRatio } = useTransactions(userId);
+  const { transactions, loading: txsLoading, createTransaction, deleteTransaction, getCashRatio } = useTransactions(userId);
   const { isOnline, isSyncing } = useOffline();
 
   // Modals state
@@ -244,13 +245,21 @@ export default function TransactionsPage({
       />
 
       {/* Main transactions list table */}
-      <TransactionTable
-        transactions={filteredTransactions}
-        language={language}
-        onDelete={deleteTransaction}
-        onDuplicate={handleDuplicate}
-        onSplit={handleSplit}
-      />
+      {txsLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+        </div>
+      ) : (
+        <TransactionTable
+          transactions={filteredTransactions}
+          language={language}
+          onDelete={deleteTransaction}
+          onDuplicate={handleDuplicate}
+          onSplit={handleSplit}
+        />
+      )}
 
       {/* Banner Ad Sense */}
       <AdBanner unitId="transactions-footer-banner" userTier={userTier as any} />

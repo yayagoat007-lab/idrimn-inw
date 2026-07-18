@@ -6,9 +6,10 @@ interface Step1LanguageProps {
   selectedLanguage: Language;
   onSelectLanguage: (lang: Language) => void;
   onNext: () => void;
+  onPrev?: () => void;
 }
 
-export function Step1Language({ selectedLanguage, onSelectLanguage, onNext }: Step1LanguageProps) {
+export function Step1Language({ selectedLanguage, onSelectLanguage, onNext, onPrev }: Step1LanguageProps) {
   return (
     <div className="space-y-6 font-sans">
       <div className="text-center space-y-2">
@@ -74,15 +75,25 @@ export function Step1Language({ selectedLanguage, onSelectLanguage, onNext }: St
       </div>
 
       <div className="p-3.5 bg-slate-50 border border-slate-100 rounded-xl text-[10px] text-slate-500 font-medium leading-relaxed">
-        💡 <span className="font-bold text-slate-700">Info :</span> L'application Floussi intègre un dictionnaire hybride conçu spécialement pour le marché marocain, mélangeant des termes en Darija et en Français pour une compréhension intuitive et naturelle.
+        💡 <span className="font-bold text-slate-700">Info :</span> L'application Floussi intègre un dictionnaire hybride conçu spécialement pour le marché marocain, mélangeant des termes en Darija et en Français pour une compréhension intuitionnelle et naturelle.
       </div>
 
-      <button
-        onClick={onNext}
-        className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md shadow-emerald-600/15 transition-all hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
-      >
-        Continuer / زيدي للقدام
-      </button>
+      <div className="flex gap-3">
+        {onPrev && (
+          <button
+            onClick={onPrev}
+            className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all cursor-pointer"
+          >
+            {selectedLanguage === 'darija' ? 'رجوع' : 'Retour'}
+          </button>
+        )}
+        <button
+          onClick={onNext}
+          className={`${onPrev ? 'flex-1' : 'w-full'} py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md shadow-emerald-600/15 transition-all hover:-translate-y-0.5 active:translate-y-0 cursor-pointer`}
+        >
+          {selectedLanguage === 'darija' ? 'الاستمرار' : 'Continuer'}
+        </button>
+      </div>
     </div>
   );
 }

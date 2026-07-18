@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useBuckets } from '../../../../hooks/use-buckets';
 import { useTransactions } from '../../../../hooks/use-transactions';
+import { useAuth } from '../../../../hooks/use-auth';
 import { formatCurrency, formatDate } from '../../../../lib/utils';
 import { Language, getTranslation } from '../../../../lib/i18n';
 import { ArrowLeft, ArrowRightLeft, ArrowRight, Sparkles, AlertCircle, History, Info } from 'lucide-react';
@@ -16,8 +17,10 @@ export default function BucketsTransferPage({
   language = 'fr',
   onNavigate
 }: BucketsTransferPageProps) {
-  const { buckets, transferBetweenBuckets } = useBuckets();
-  const { transactions } = useTransactions();
+  const { profile } = useAuth();
+  const userId = profile?.id || "mock-user-id-9999";
+  const { buckets, transferBetweenBuckets } = useBuckets(userId);
+  const { transactions } = useTransactions(userId);
 
   // Form states
   const [fromId, setFromId] = useState('');

@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { OnboardingStepper } from '../../components/onboarding/OnboardingStepper';
+import { Step0Persona } from '../../components/onboarding/Step0Persona';
 import { Step1Language } from '../../components/onboarding/Step1Language';
 import { Step2Account } from '../../components/onboarding/Step2Account';
 import { Step3Income } from '../../components/onboarding/Step3Income';
@@ -17,7 +18,7 @@ interface OnboardingPageProps {
 
 export default function OnboardingPage({ onComplete }: OnboardingPageProps) {
   const { profile } = useAuth();
-  const { step, setStep, nextStep, prevStep } = useOnboardingStep();
+  const { step, setStep, nextStep, prevStep, selectedPersona, setPersona } = useOnboardingStep();
   const { mutateAsync: completeOnboarding, isLoading: completing } = useCompleteOnboarding();
   const { mutateAsync: skipOnboarding, isLoading: skipping } = useSkipOnboarding();
 
@@ -44,13 +45,20 @@ export default function OnboardingPage({ onComplete }: OnboardingPageProps) {
         language,
         incomeAmount,
         incomeSource,
-        payDay
+        payDay,
+        personaType: selectedPersona || undefined
       });
 
-      // 2. Also simulate writing the initial buckets to localStorage or offline DB
+      // 2. Pre-activate MRE mode if MRE persona was chosen
+      if (selectedPersona === 'mre') {
+        localStorage.setItem('floussi_mre_enabled', 'true');
+        localStorage.setItem('floussi_mre_pref_currency', 'EUR');
+      }
+
+      // 3. Also simulate writing the initial buckets to localStorage or offline DB
       localStorage.setItem('floussi_initial_buckets', JSON.stringify(bucketAllocations));
       
-      // 3. Callback redirect
+      // 4. Callback redirect
       onComplete();
     } catch (err) {
       console.error('[Onboarding Finish] Error:', err);
@@ -97,19 +105,36 @@ export default function OnboardingPage({ onComplete }: OnboardingPageProps) {
         {/* Stepper progress */}
         <div className="bg-white rounded-2xl border border-slate-100 p-2 shadow-xs mb-4">
           <OnboardingStepper currentStep={step} language={language} />
+          
+          {/* Subtle persistent 2 minutes indicator */}
+          <div className="border-t border-slate-50/50 mt-1 pt-1.5 pb-0.5 flex justify-center items-center gap-1.5 text-[9px] font-black text-slate-400 uppercase tracking-widest">
+            <span className="inline-flex items-center gap-1 text-emerald-600 font-extrabold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100/40">
+              ⏱️ {language === 'darija' ? 'Taqriban 2 dqaïq' : 'Environ 2 minutes'}
+            </span>
+          </div>
         </div>
 
         {/* Main Content card */}
         <div className="bg-white py-6 px-5 sm:py-8 sm:px-6 shadow-xl shadow-slate-100/85 rounded-3xl border border-slate-100 relative">
           {step === 1 && (
-            <Step1Language
-              selectedLanguage={language}
-              onSelectLanguage={handleSelectLanguage}
+            <Step0Persona
+              selectedPersona={selectedPersona}
+              onSelectPersona={setPersona}
+              language={language}
               onNext={nextStep}
             />
           )}
 
           {step === 2 && (
+            <Step1Language
+              selectedLanguage={language}
+              onSelectLanguage={handleSelectLanguage}
+              onNext={nextStep}
+              onPrev={prevStep}
+            />
+          )}
+
+          {step === 3 && (
             <Step2Account
               fullName={fullName}
               setFullName={setFullName}
@@ -123,7 +148,7 @@ export default function OnboardingPage({ onComplete }: OnboardingPageProps) {
             />
           )}
 
-          {step === 3 && (
+          {step === 4 && (
             <Step3Income
               incomeAmount={incomeAmount}
               setIncomeAmount={setIncomeAmount}
@@ -137,10 +162,11 @@ export default function OnboardingPage({ onComplete }: OnboardingPageProps) {
             />
           )}
 
-          {step === 4 && (
+          {step === 5 && (
             <Step4Buckets
               incomeAmount={incomeAmount}
               language={language}
+              personaId={selectedPersona}
               onPrev={prevStep}
               onFinish={handleFinish}
               submitting={completing || skipping}

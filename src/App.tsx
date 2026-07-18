@@ -10,6 +10,9 @@ import { useWinBack } from '../hooks/use-winback';
 import { WinBackModal } from '../components/winback/WinBackModal';
 import { useAccountAnniversary } from '../hooks/use-account-anniversary';
 import { AnniversaryModal } from '../components/anniversary/AnniversaryModal';
+import { useGlobalSearch } from '../hooks/use-global-search';
+import { GlobalSearchModal } from '../components/search/GlobalSearchModal';
+import { SkeletonCard } from '../components/shared/SkeletonCard';
 
 // Pages
 import DashboardPage from '../app/(dashboard)/page';
@@ -20,18 +23,20 @@ import InsightsPage from '../app/(dashboard)/insights/page';
 import GoalsPage from '../app/(dashboard)/goals/page';
 import TontinePage from '../app/(dashboard)/tontine/page';
 import FamilyPage from '../app/(dashboard)/family/page';
+import MREPage from '../app/(dashboard)/mre/page';
 import NetWorthPage from '../app/(dashboard)/net-worth/page';
 import ReportsPage from '../app/(dashboard)/reports/page';
 import SettingsPage from '../app/(dashboard)/settings/page';
 import { WalletPage } from '../components/wallet/WalletPage';
-import { CommunityPage } from '../components/community/CommunityPage';
 import HajjPlannerPage from '../app/(dashboard)/hajj-planner/page';
 import CalculatorsPage from '../app/(dashboard)/calculators/page';
 import CnssTrackerPage from '../app/(dashboard)/cnss-tracker/page';
 import AidProgramsPage from '../app/(dashboard)/aid-programs/page';
-import WrappedPage from '../app/(dashboard)/wrapped/page';
-import LifePlanPage from '../app/(dashboard)/life-plan/page';
-import AcademyPage from '../app/(dashboard)/academy/page';
+
+const CommunityPage = React.lazy(() => import('../components/community/CommunityPage').then(m => ({ default: m.CommunityPage })));
+const WrappedPage = React.lazy(() => import('../app/(dashboard)/wrapped/page'));
+const LifePlanPage = React.lazy(() => import('../app/(dashboard)/life-plan/page'));
+const AcademyPage = React.lazy(() => import('../app/(dashboard)/academy/page'));
 
 // Public/Auth Pages
 import LandingPage from '../app/(public)/page';
@@ -39,6 +44,8 @@ import PricingPage from '../app/(public)/pricing/page';
 import LoginPage from '../app/(auth)/login/page';
 import RegisterPage from '../app/(auth)/register/page';
 import ForgotPasswordPage from '../app/(auth)/forgot-password/page';
+import WelcomePage from '../app/welcome/page';
+import OnboardingPage from '../app/onboarding/page';
 
 // Layout & Forms
 import Header from '../components/layout/Header';
@@ -103,6 +110,58 @@ export default function App() {
   const [showBucketModal, setShowBucketModal] = useState(false);
   const [showOcrModal, setShowOcrModal] = useState(false);
 
+  // Global Universal Search Hook
+  const {
+    query: searchQuery,
+    setQuery: setSearchQuery,
+    results: searchResults,
+    recentSearches,
+    clearRecentSearches,
+    addRecentSearch,
+    isOpen: isSearchOpen,
+    openSearch,
+    closeSearch
+  } = useGlobalSearch(user?.id || 'mock-user-id-9999');
+
+  // Listen for Cmd+K / Ctrl+K keyboard shortcut
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const isK = e.key.toLowerCase() === 'k';
+      const isCtrlOrCmd = e.ctrlKey || e.metaKey;
+
+      if (isK && isCtrlOrCmd) {
+        const activeEl = document.activeElement;
+        if (activeEl) {
+          const tagName = activeEl.tagName.toLowerCase();
+          const isEditable = activeEl.getAttribute('contenteditable') === 'true';
+          if (tagName === 'input' || tagName === 'textarea' || isEditable) {
+            return;
+          }
+        }
+
+        e.preventDefault();
+        openSearch();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [openSearch]);
+
+  // Global listeners for modals
+  useEffect(() => {
+    const handleOpenTx = () => setShowTransactionModal(true);
+    const handleOpenBucket = () => setShowBucketModal(true);
+    
+    window.addEventListener('open-transaction-modal', handleOpenTx);
+    window.addEventListener('open-bucket-modal', handleOpenBucket);
+    
+    return () => {
+      window.removeEventListener('open-transaction-modal', handleOpenTx);
+      window.removeEventListener('open-bucket-modal', handleOpenBucket);
+    };
+  }, []);
+
   // Simulated scan state
   const [scannedResult, setScannedResult] = useState<any | null>(null);
 
@@ -116,14 +175,20 @@ export default function App() {
   useEffect(() => {
     if (session) {
       if (currentScreen === 'landing' || currentScreen === 'login' || currentScreen === 'register') {
-        setCurrentScreen('dashboard');
+        const hasCompletedOnboarding = localStorage.getItem('floussi_onboarding_completed') === 'true' || profile?.persona_type;
+        if (!hasCompletedOnboarding) {
+          const hasSeenWelcome = localStorage.getItem('floussi_welcome_seen') === 'true';
+          setCurrentScreen(hasSeenWelcome ? 'onboarding' : 'welcome');
+        } else {
+          setCurrentScreen('dashboard');
+        }
       }
     } else {
       if (currentScreen !== 'landing' && currentScreen !== 'pricing' && currentScreen !== 'login' && currentScreen !== 'register' && currentScreen !== 'forgot-password') {
         setCurrentScreen('landing');
       }
     }
-  }, [session]);
+  }, [session, profile, currentScreen]);
 
   const handleNavigate = (screen: string) => {
     setCurrentScreen(screen);
@@ -256,7 +321,11 @@ export default function App() {
       case 'wallet':
         return <WalletPage lang={language} />;
       case 'community':
-        return <CommunityPage lang={language} />;
+        return (
+          <React.Suspense fallback={<div className="grid grid-cols-1 md:grid-cols-3 gap-6"><SkeletonCard /><SkeletonCard /><SkeletonCard /></div>}>
+            <CommunityPage lang={language} />
+          </React.Suspense>
+        );
       case 'calculators':
         return <CalculatorsPage language={language} />;
       case 'hajj-planner':
@@ -266,15 +335,29 @@ export default function App() {
       case 'aid-programs':
         return <AidProgramsPage language={language} />;
       case 'wrapped':
-        return <WrappedPage />;
+        return (
+          <React.Suspense fallback={<div className="grid grid-cols-1 md:grid-cols-3 gap-6"><SkeletonCard /><SkeletonCard /><SkeletonCard /></div>}>
+            <WrappedPage />
+          </React.Suspense>
+        );
       case 'family':
         return <FamilyPage language={language} />;
+      case 'mre':
+        return <MREPage language={language} />;
       case 'net-worth':
         return <NetWorthPage language={language} />;
       case 'life-plan':
-        return <LifePlanPage language={language} />;
+        return (
+          <React.Suspense fallback={<div className="grid grid-cols-1 md:grid-cols-3 gap-6"><SkeletonCard /><SkeletonCard /><SkeletonCard /></div>}>
+            <LifePlanPage language={language} />
+          </React.Suspense>
+        );
       case 'academy':
-        return <AcademyPage language={language} />;
+        return (
+          <React.Suspense fallback={<div className="grid grid-cols-1 md:grid-cols-3 gap-6"><SkeletonCard /><SkeletonCard /><SkeletonCard /></div>}>
+            <AcademyPage language={language} />
+          </React.Suspense>
+        );
       case 'reports':
         return <ReportsPage language={language} />;
       case 'settings':
@@ -285,6 +368,7 @@ export default function App() {
             onUpgrade={upgradeSubscription}
             language={language}
             setLanguage={setLanguage}
+            onNavigate={handleNavigate}
           />
         );
       default:
@@ -319,6 +403,46 @@ export default function App() {
     return <LandingPage onEnterApp={() => setCurrentScreen('login')} onNavigatePricing={() => setCurrentScreen('pricing')} />;
   }
 
+  // Intercept for Onboarding / Welcome sequence if not completed yet
+  const hasCompletedOnboarding = localStorage.getItem('floussi_onboarding_completed') === 'true' || profile?.persona_type;
+  if (!hasCompletedOnboarding) {
+    if (currentScreen === 'welcome') {
+      return (
+        <WelcomePage 
+          onComplete={() => setCurrentScreen('onboarding')} 
+        />
+      );
+    }
+    if (currentScreen === 'onboarding') {
+      return (
+        <OnboardingPage 
+          onComplete={() => {
+            localStorage.setItem('floussi_onboarding_completed', 'true');
+            setCurrentScreen('dashboard');
+          }} 
+        />
+      );
+    }
+    // Default fallback
+    const hasSeenWelcome = localStorage.getItem('floussi_welcome_seen') === 'true';
+    if (!hasSeenWelcome) {
+      return (
+        <WelcomePage 
+          onComplete={() => setCurrentScreen('onboarding')} 
+        />
+      );
+    } else {
+      return (
+        <OnboardingPage 
+          onComplete={() => {
+            localStorage.setItem('floussi_onboarding_completed', 'true');
+            setCurrentScreen('dashboard');
+          }} 
+        />
+      );
+    }
+  }
+
   const totalBalance = buckets.reduce((sum, b) => sum + (b.allocated_amount - b.spent_amount), 0);
   const monthlyIncome = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
   const monthlySpent = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
@@ -349,6 +473,7 @@ export default function App() {
           setLanguage={setLanguage}
           onNavigate={handleNavigate}
           onScanClick={() => setShowOcrModal(true)}
+          onSearchClick={openSearch}
         />
 
         {/* Ads banner for Free tier users */}
@@ -643,6 +768,20 @@ export default function App() {
 
       {/* Floating Sidi Floussi Assistant */}
       <SidiFAB />
+
+      {/* Global Universal Search Command Palette */}
+      <GlobalSearchModal
+        isOpen={isSearchOpen}
+        onClose={closeSearch}
+        query={searchQuery}
+        setQuery={setSearchQuery}
+        results={searchResults}
+        recentSearches={recentSearches}
+        clearRecentSearches={clearRecentSearches}
+        addRecentSearch={addRecentSearch}
+        language={language as 'fr' | 'darija'}
+        onNavigate={handleNavigate}
+      />
 
     </div>
   );

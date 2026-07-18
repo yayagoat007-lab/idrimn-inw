@@ -3,6 +3,7 @@ import { useAIInsights } from '../../hooks/use-ai-insights';
 import { useBuckets } from '../../hooks/use-buckets';
 import { useGoals } from '../../hooks/use-goals';
 import { useTransactions } from '../../hooks/use-transactions';
+import { useAuth } from '../../hooks/use-auth';
 import { getFinHealthScoreDescription } from '../../lib/benchmarks';
 import { 
   Sparkles, ShieldAlert, CheckCircle, TrendingUp, HelpCircle, 
@@ -27,11 +28,13 @@ export function AIInsightsDashboard({ lang }: AIInsightsDashboardProps) {
   // Navigation inside the AI dashboard
   const [subTab, setSubTab] = useState<'profile' | 'forecast' | 'optimizations' | 'anomalies'>('profile');
 
-  // Load existing data hooks
-  const { transactions, createTransaction, deleteTransaction } = useTransactions("mock-user-id-9999");
-  const { buckets, loading: bucketsLoading } = useBuckets();
-  const { goals, loading: goalsLoading } = useGoals("mock-user-id-9999");
-  const { aiResults, loading: aiLoading } = useAIInsights("mock-user-id-9999", lang);
+  // Load existing data hooks with correct userId
+  const { profile } = useAuth();
+  const userId = profile?.id || "mock-user-id-9999";
+  const { transactions, createTransaction, deleteTransaction } = useTransactions(userId);
+  const { buckets, loading: bucketsLoading } = useBuckets(userId);
+  const { goals, loading: goalsLoading } = useGoals(userId);
+  const { aiResults, loading: aiLoading } = useAIInsights(userId, lang);
 
   // Success alert state for simulated actions
   const [successToast, setSuccessToast] = useState<string | null>(null);

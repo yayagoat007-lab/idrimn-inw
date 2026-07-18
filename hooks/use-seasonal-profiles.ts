@@ -57,10 +57,10 @@ const DEFAULT_PROFILES: SeasonalProfile[] = [
   }
 ];
 
-export function useSeasonalProfiles() {
+export function useSeasonalProfiles(userId: string = "mock-user-id-9999") {
   const [profiles, setProfiles] = useState<SeasonalProfile[]>([]);
   const [history, setHistory] = useState<{ id: string; activatedAt: string; profileName: string }[]>([]);
-  const { buckets, updateBucket } = useBuckets();
+  const { buckets, updateBucket } = useBuckets(userId);
 
   useEffect(() => {
     async function loadProfiles() {

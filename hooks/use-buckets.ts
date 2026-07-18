@@ -64,27 +64,55 @@ export function useBuckets(userId: string = "mock-user-id-9999") {
 
   const loadBuckets = useCallback(async () => {
     setLoading(true);
-    let localBuckets = await OfflineDB.get<Bucket[]>('buckets');
+    let localBuckets = await OfflineDB.get<Bucket[]>('buckets') || [];
     
-    if (!localBuckets || localBuckets.length === 0) {
-      localBuckets = DEFAULT_BUCKETS.map(b => ({ ...b, user_id: userId }));
-      await OfflineDB.set('buckets', localBuckets);
-      localStorage.setItem('floussi_table_buckets', JSON.stringify(localBuckets));
+    // Filter buckets for this specific user
+    let userBuckets = localBuckets.filter(b => b.user_id === userId);
+    
+    if (userBuckets.length === 0) {
+      // Seed default buckets specifically for this user!
+      const userDefaultBuckets = DEFAULT_BUCKETS.map(b => ({ 
+        ...b, 
+        id: b.id.includes(userId) ? b.id : `${b.id}-${userId}`,
+        user_id: userId 
+      }));
+      // Merge with existing buckets from other users
+      const merged = [...localBuckets.filter(b => b.user_id !== userId), ...userDefaultBuckets];
+      await OfflineDB.set('buckets', merged);
+      localStorage.setItem('floussi_table_buckets', JSON.stringify(merged));
+      userBuckets = userDefaultBuckets;
     }
     
-    // Filter out archived ones for the active view, but we keep them available if needed
-    setBuckets(localBuckets || []);
+    setBuckets(userBuckets);
     setLoading(false);
   }, [userId]);
 
   useEffect(() => {
     loadBuckets();
-  }, [loadBuckets]);
+
+    const handleUpdate = () => {
+      OfflineDB.get<Bucket[]>('buckets').then(localBuckets => {
+        if (localBuckets) {
+          setBuckets(localBuckets.filter(b => b.user_id === userId));
+        }
+      });
+    };
+
+    window.addEventListener('floussi_buckets_updated', handleUpdate);
+    return () => {
+      window.removeEventListener('floussi_buckets_updated', handleUpdate);
+    };
+  }, [loadBuckets, userId]);
 
   const saveBuckets = async (newBuckets: Bucket[]) => {
+    const allBuckets = await OfflineDB.get<Bucket[]>('buckets') || [];
+    const otherUsersBuckets = allBuckets.filter(b => b.user_id !== userId);
+    const merged = [...otherUsersBuckets, ...newBuckets];
+    
     setBuckets(newBuckets);
-    await OfflineDB.set('buckets', newBuckets);
-    localStorage.setItem('floussi_table_buckets', JSON.stringify(newBuckets));
+    await OfflineDB.set('buckets', merged);
+    localStorage.setItem('floussi_table_buckets', JSON.stringify(merged));
+    window.dispatchEvent(new Event('floussi_buckets_updated'));
   };
 
   /**
@@ -92,17 +120,20 @@ export function useBuckets(userId: string = "mock-user-id-9999") {
    */
   const recalculateSpent = useCallback(async () => {
     const transactions = await OfflineDB.get<Transaction[]>('transactions') || [];
-    const activeBuckets = await OfflineDB.get<Bucket[]>('buckets') || [];
+    const allBuckets = await OfflineDB.get<Bucket[]>('buckets') || [];
     
-    const recomputed = activeBuckets.map(b => {
+    const recomputed = allBuckets.map(b => {
       const totalSpent = transactions
         .filter(t => t.bucket_id === b.id && t.type === 'expense')
         .reduce((sum, t) => sum + t.amount, 0);
       return { ...b, spent_amount: Math.round(totalSpent * 100) / 100 };
     });
     
-    await saveBuckets(recomputed);
-  }, []);
+    await OfflineDB.set('buckets', recomputed);
+    localStorage.setItem('floussi_table_buckets', JSON.stringify(recomputed));
+    setBuckets(recomputed.filter(b => b.user_id === userId));
+    window.dispatchEvent(new Event('floussi_buckets_updated'));
+  }, [userId]);
 
   /**
    * Create a new bucket

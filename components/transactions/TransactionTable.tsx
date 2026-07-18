@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Transaction } from '../../types';
 import { TransactionRow } from './TransactionRow';
 import { Language } from '../../lib/i18n';
+import { EmptyState } from '../shared/EmptyState';
 import { ChevronUp, ChevronDown, Eye, AlertCircle } from 'lucide-react';
 
 interface TransactionTableProps {
@@ -76,14 +77,12 @@ export function TransactionTable({
 
   if (transactions.length === 0) {
     return (
-      <div className="bg-white border border-slate-100 rounded-3xl p-12 text-center space-y-3 shadow-xs">
-        <div className="w-12 h-12 bg-slate-50 border border-slate-100 text-slate-400 rounded-2xl flex items-center justify-center mx-auto">
-          <AlertCircle size={24} />
-        </div>
-        <h4 className="font-extrabold text-sm text-slate-800">Aucune transaction trouvée</h4>
-        <p className="text-xs text-slate-400 max-w-sm mx-auto">
-          Commencez à enregistrer vos dépenses et revenus pour voir l'historique de vos flux.
-        </p>
+      <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-xs">
+        <EmptyState
+          title={language === 'darija' ? "Walo mouamalat" : "Aucune transaction"}
+          description={language === 'darija' ? "Mazal madakhalti tal chi mouamala (Dépense awla Revenu)." : "Commencez à enregistrer vos dépenses et revenus pour voir l'historique de vos flux."}
+          icon={AlertCircle}
+        />
       </div>
     );
   }

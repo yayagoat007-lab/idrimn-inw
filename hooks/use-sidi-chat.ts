@@ -68,6 +68,7 @@ export function useSidiChat() {
     setMessages(nextMsgs);
     try {
       localStorage.setItem(historyKey, JSON.stringify(nextMsgs));
+      window.dispatchEvent(new Event('floussi_sidi_history_updated'));
     } catch (_) {}
   }, [historyKey]);
 

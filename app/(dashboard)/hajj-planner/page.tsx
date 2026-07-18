@@ -37,7 +37,7 @@ export default function HajjPlannerPage({ language }: HajjPlannerPageProps) {
   // Load hooks
   const { profile } = useAuth();
   const userId = profile?.id || "mock-user-id-9999";
-  const { goals, createGoal, contributeToGoal, loading: goalsLoading } = useGoals();
+  const { goals, createGoal, contributeToGoal, loading: goalsLoading } = useGoals(userId);
   const { familyGroup } = useFamily();
   const { members, loading: familyLoading } = useFamilyMembers(familyGroup?.id || '');
 

@@ -84,6 +84,7 @@ export function SidiFAB() {
         {/* The FAB Trigger Circle */}
         <button
           id="sidi-fab-trigger"
+          data-tour-id="sidi-fab"
           onClick={() => setIsOpen(!isOpen)}
           className="relative w-14 h-14 rounded-full bg-emerald-600 hover:bg-emerald-700 hover:rotate-12 hover:scale-110 shadow-2xl flex items-center justify-center transition-all duration-300 focus:outline-none group border border-emerald-500/30"
         >

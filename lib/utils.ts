@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { getMREPreference, formatDualCurrency } from "./currency-exchange";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -9,7 +10,14 @@ export function cn(...inputs: ClassValue[]) {
  * Formats a number into Moroccan Dirham currency representation.
  * Format: "1 250,00 DH"
  */
-export function formatCurrency(amount: number, _language?: string): string {
+export function formatCurrency(amount: number, _language?: string, forceDisableDual?: boolean): string {
+  if (!forceDisableDual && typeof window !== 'undefined') {
+    const pref = getMREPreference();
+    if (pref.enabled) {
+      return formatDualCurrency(amount, pref.currency);
+    }
+  }
+
   const formatter = new Intl.NumberFormat("fr-MA", {
     style: "decimal",
     minimumFractionDigits: 2,

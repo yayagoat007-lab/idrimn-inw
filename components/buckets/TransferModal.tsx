@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Bucket } from '../../types';
 import { formatCurrency } from '../../lib/utils';
+import { useFocusTrap } from '../../hooks/use-focus-trap';
 import { X, ArrowRight, ArrowRightLeft } from 'lucide-react';
 
 interface TransferModalProps {
@@ -23,6 +24,8 @@ export function TransferModal({
   const [amount, setAmount] = useState<number>(0);
   const [note, setNote] = useState('');
   const [error, setError] = useState('');
+
+  const modalRef = useFocusTrap<HTMLDivElement>({ isOpen, onClose });
 
   useEffect(() => {
     if (sourceBucket) {
@@ -83,7 +86,7 @@ export function TransferModal({
 
   return (
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 font-sans animate-fade-in">
-      <div className="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl border border-slate-100 flex flex-col">
+      <div ref={modalRef} className="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl border border-slate-100 flex flex-col">
         
         {/* Header */}
         <div className="flex justify-between items-center px-6 py-5 border-b border-slate-50">
@@ -102,6 +105,7 @@ export function TransferModal({
           </div>
           <button 
             onClick={onClose}
+            aria-label="Fermer la fenêtre de transfert"
             className="p-1.5 hover:bg-slate-50 text-slate-400 hover:text-slate-600 rounded-xl transition-colors cursor-pointer"
           >
             <X size={18} />

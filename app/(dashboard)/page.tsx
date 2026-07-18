@@ -10,6 +10,7 @@ import { useTontine } from '../../hooks/use-tontine';
 import { useOffline } from '../../hooks/use-offline';
 import { useDashboardStats } from '../../hooks/use-dashboard-stats';
 import { useAds } from '../../hooks/use-ads';
+import { useBudgetSettings } from '../../hooks/use-budget-settings';
 
 import { StatCard } from '../../components/dashboard/StatCard';
 import { BucketCard } from '../../components/dashboard/BucketCard';
@@ -24,6 +25,15 @@ import { PartnerOfferBanner } from '../../components/shared/PartnerOfferBanner';
 import { useWrapped } from '../../hooks/use-wrapped';
 import { WrappedIntroModal } from '../../components/wrapped/WrappedIntroModal';
 import { DailyCheckinCard } from '../../components/checkin/DailyCheckinCard';
+import { FirstGoalQuickWin } from '../../components/onboarding/FirstGoalQuickWin';
+import { useFirstTransactionMoment } from '../../hooks/use-first-transaction-moment';
+import { FirstTransactionCelebration } from '../../components/onboarding/FirstTransactionCelebration';
+import { SetupChecklistCard } from '../../components/checklist/SetupChecklistCard';
+
+import { useGuidedTour } from '../../hooks/use-guided-tour';
+import { dashboardTourDefinition } from '../../lib/dashboard-tour-definition';
+import { SpotlightOverlay } from '../../components/tour/SpotlightOverlay';
+import { TourTooltip } from '../../components/tour/TourTooltip';
 
 import { formatCurrency } from '../../lib/utils';
 import { Language, getTranslation } from '../../lib/i18n';
@@ -69,6 +79,7 @@ export default function DashboardPage({
   const { buckets, updateBucket } = useBuckets(userId);
   const { transactions, createTransaction } = useTransactions(userId);
   const { goals, contributeToGoal } = useGoals(userId);
+  const { totalMonthlyIncome } = useBudgetSettings(userId);
   const { events, getDaysRemaining, getEventStatus, contributeToEvent } = useMoroccanEvents(userId);
   const { getNextCollection, payContribution } = useTontine(userId);
   const { isOnline, isSyncing, triggerSync, getSyncQueue } = useOffline();
@@ -82,15 +93,40 @@ export default function DashboardPage({
   // Load ads config
   const { shouldShowAds, trackImpression } = useAds();
 
+  // Guided Tour Hook
+  const tour = useGuidedTour(userId, dashboardTourDefinition);
+
+  // First Transaction Quick Win Moment
+  const { isFirstTransactionCelebration, dismissCelebration } = useFirstTransactionMoment(userId);
+
   // Floussi Wrapped Season check & state
   const { isWrappedSeasonActive, hasSeenThisYearWrapped, markAsSeen: markWrappedAsSeen } = useWrapped(userId);
   const [isWrappedIntroOpen, setIsWrappedIntroOpen] = useState(false);
+  const [showQuickWin, setShowQuickWin] = useState(
+    typeof window !== 'undefined' && localStorage.getItem('floussi_first_goal_quickwin_completed') !== 'true'
+  );
 
   React.useEffect(() => {
     if (isWrappedSeasonActive && !hasSeenThisYearWrapped) {
       setIsWrappedIntroOpen(true);
     }
   }, [isWrappedSeasonActive, hasSeenThisYearWrapped]);
+
+  // Handle manual tour restart from settings
+  React.useEffect(() => {
+    if (typeof window !== 'undefined' && localStorage.getItem('floussi_restart_dashboard_tour') === 'true') {
+      localStorage.removeItem('floussi_restart_dashboard_tour');
+      tour.startTour();
+    }
+  }, [tour]);
+
+  // Handle active balance display based on selected tab and trigger wallet discovery
+  React.useEffect(() => {
+    if (activeAccountTab !== 'total') {
+      localStorage.setItem('floussi_wallet_discovered', 'true');
+      window.dispatchEvent(new Event('floussi_wallet_discovered_updated'));
+    }
+  }, [activeAccountTab]);
 
   // Handle active balance display based on selected tab
   const getDisplayBalance = () => {
@@ -155,7 +191,7 @@ export default function DashboardPage({
               <p className="text-[11px] text-emerald-100 font-bold uppercase tracking-widest">Solde Disponible Actif</p>
               
               {/* Massive Balance Counter */}
-              <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight leading-none animate-fadeIn">
+              <h1 data-tour-id="solde" className="text-3xl sm:text-4xl font-black text-white tracking-tight leading-none animate-fadeIn">
                 {formatCurrency(getDisplayBalance())}
               </h1>
             </div>
@@ -196,6 +232,7 @@ export default function DashboardPage({
             <div className="flex gap-2 w-full md:w-auto">
               <button
                 onClick={onQuickAdd}
+                data-tour-id="add-quick"
                 className="flex-1 md:flex-none px-4 py-2.5 bg-white text-emerald-950 hover:bg-emerald-50 rounded-xl font-extrabold text-xs transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <Plus size={14} />
@@ -217,11 +254,14 @@ export default function DashboardPage({
       {/* Daily Ritual Checkin Card */}
       <DailyCheckinCard userId={userId} language={language as 'fr' | 'darija'} />
 
+      {/* Setup Checklist Card */}
+      <SetupChecklistCard userId={userId} language={language} onNavigate={onNavigate} />
+
       {/* 2. SECTION FREE-TO-SPEND */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         
         {/* Free to spend gauge */}
-        <div className="bg-white border border-slate-100 p-5 rounded-3xl shadow-xs space-y-3">
+        <div data-tour-id="free-to-spend" className="bg-white border border-slate-100 p-5 rounded-3xl shadow-xs space-y-3">
           <div className="flex justify-between items-start">
             <div>
               <span className="text-[9px] font-black uppercase tracking-wider text-slate-400">Mo مصروف Flex (Free-to-Spend)</span>
@@ -301,7 +341,7 @@ export default function DashboardPage({
         <div className="lg:col-span-2 space-y-6">
           
           {/* COMPARTIMENTS (Sanadiq) */}
-          <div className="space-y-3">
+          <div data-tour-id="buckets-section" className="space-y-3">
             <div className="flex justify-between items-center">
               <div>
                 <h3 className="font-extrabold text-sm text-slate-800 uppercase tracking-wider">Vos Sanadiq Actifs</h3>
@@ -394,6 +434,40 @@ export default function DashboardPage({
             />
           </div>
 
+          {/* VOS OBJECTIFS (Ahdaf) */}
+          <div data-tour-id="goals-section" className="space-y-3">
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="font-extrabold text-sm text-slate-800 uppercase tracking-wider">Objectifs d'Épargne</h3>
+                <p className="text-xs text-slate-400 font-semibold">Projets d'avenir et épargne ciblée</p>
+              </div>
+              <button 
+                onClick={() => onNavigate('goals')}
+                className="text-xs font-extrabold text-emerald-600 hover:text-emerald-700 flex items-center gap-0.5 cursor-pointer"
+              >
+                <span>Gérer</span>
+                <ChevronRight size={14} />
+              </button>
+            </div>
+
+            {goals && goals.length > 0 ? (
+              <div className="space-y-3">
+                {goals.slice(0, 1).map(g => (
+                  <GoalCard
+                    key={g.id}
+                    goal={g}
+                    onContribute={contributeToGoal}
+                    language={language as 'fr' | 'darija'}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="bg-white border border-slate-100 p-4 rounded-3xl text-center text-xs text-slate-400 font-medium">
+                Aucun objectif d'épargne actif. Créez-en un pour commencer !
+              </div>
+            )}
+          </div>
+
           {/* RECENT SAISIES */}
           <div className="space-y-3">
             <div className="flex justify-between items-center">
@@ -448,6 +522,51 @@ export default function DashboardPage({
         }}
         language={language}
       />
+
+      {/* Guided Tour Spotlight & Tooltip Overlay */}
+      {tour.isActive && tour.currentStep && (
+        <>
+          <SpotlightOverlay
+            targetSelector={tour.currentStep.targetSelector}
+            isActive={tour.isActive}
+          />
+          <TourTooltip
+            targetSelector={tour.currentStep.targetSelector}
+            title={tour.currentStep.title}
+            description={tour.currentStep.description}
+            placement={tour.currentStep.placement}
+            currentStepIndex={tour.currentStepIndex}
+            totalSteps={tour.totalSteps}
+            language={language}
+            onNext={tour.nextStep}
+            onPrevious={tour.previousStep}
+            onSkip={tour.skipTour}
+          />
+        </>
+      )}
+
+      {showQuickWin && (
+        <FirstGoalQuickWin
+          userId={userId}
+          persona={profile?.persona_type || 'salarie'}
+          monthlyIncome={totalMonthlyIncome || 8000}
+          language={language}
+          onResolve={() => {
+            setShowQuickWin(false);
+            if (tour.shouldAutoStart) {
+              tour.startTour();
+            }
+          }}
+        />
+      )}
+
+      {isFirstTransactionCelebration && (
+        <FirstTransactionCelebration
+          userId={userId}
+          language={language}
+          onClose={dismissCelebration}
+        />
+      )}
 
     </div>
   );

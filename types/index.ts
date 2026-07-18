@@ -21,6 +21,7 @@ export interface Profile {
   currency: 'MAD';
   subscription_tier: SubscriptionTier;
   subscription_expires_at: string | null;
+  persona_type?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -430,6 +431,23 @@ export interface DailyCheckin {
   transactionsConfirmed: boolean;
   streakDay: number;
 }
+
+export interface RemittanceRecord {
+  id: string;
+  userId: string;
+  amountForeign: number;
+  foreignCurrency: string;
+  amountMAD: number;
+  exchangeRateUsed: number;
+  recipientName: string;
+  recipientRelation: 'parent' | 'conjoint' | 'enfant' | 'autre';
+  method: 'virement' | 'wafacash' | 'cashplus' | 'autre';
+  purpose?: string;
+  date: string;
+  isRecurring: boolean;
+  recurringFrequency?: string;
+}
+
 
 
 

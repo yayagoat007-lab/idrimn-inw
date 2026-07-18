@@ -6,6 +6,7 @@ import {
   EligibleResult 
 } from '../../../lib/aid-programs';
 import { useGoals } from '../../../hooks/use-goals';
+import { useAuth } from '../../../hooks/use-auth';
 import { 
   ShieldAlert, 
   Sliders, 
@@ -24,7 +25,9 @@ import {
 } from 'lucide-react';
 
 export default function AidProgramsPage({ language }: { language: 'fr' | 'darija' }) {
-  const { createGoal } = useGoals();
+  const { profile } = useAuth();
+  const userId = profile?.id || "mock-user-id-9999";
+  const { createGoal } = useGoals(userId);
 
   // Score RSU (Standard threshold for direct aid is 9.743)
   const [rsuScore, setRsuScore] = useState<number>(9.5);

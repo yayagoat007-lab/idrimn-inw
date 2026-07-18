@@ -3,6 +3,8 @@ import { getTranslation, Language } from '../../lib/i18n';
 import { Profile } from '../../types';
 import { formatCurrency } from '../../lib/utils';
 import { useState } from 'react';
+import { NotificationBell } from '../notifications/NotificationBell';
+import { SearchTriggerButton } from '../search/SearchTriggerButton';
 
 interface HeaderProps {
   profile: Profile | null;
@@ -15,6 +17,7 @@ interface HeaderProps {
   setLanguage: (lang: Language) => void;
   onNavigate: (route: string) => void;
   onScanClick?: () => void;
+  onSearchClick: () => void;
 }
 
 export function Header({
@@ -27,15 +30,10 @@ export function Header({
   language,
   setLanguage,
   onNavigate,
-  onScanClick
+  onScanClick,
+  onSearchClick
 }: HeaderProps) {
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
-
-  const notifications = [
-    { id: 1, title: "Daret active", text: "La tontine du mois de Juillet a débuté. Cotisation de 500 DH due.", time: "Il y a 2h" },
-    { id: 2, title: "Rappel budget", text: "Votre bucket 'Alimentation' a dépassé 80% de son allocation.", time: "Il y a 1 jour" }
-  ];
 
   return (
     <header className="sticky top-0 z-40 bg-white border-b border-gray-100 px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -96,6 +94,9 @@ export function Header({
 
       {/* Actions */}
       <div className="flex items-center justify-end gap-3 self-end md:self-center">
+        {/* Search trigger */}
+        <SearchTriggerButton onClick={onSearchClick} language={language} />
+
         {/* Scan receipt button */}
         {onScanClick && (
           <button
@@ -138,35 +139,11 @@ export function Header({
         </div>
 
         {/* Notifications */}
-        <div className="relative">
-          <button 
-            onClick={() => setShowNotifications(!showNotifications)}
-            className="relative p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-50 rounded-xl transition-colors"
-          >
-            <Bell size={18} />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full" />
-          </button>
-
-          {showNotifications && (
-            <div className="absolute right-0 mt-2 w-72 bg-white border border-gray-100 rounded-xl shadow-lg p-2 z-50">
-              <div className="px-3 py-1.5 border-b border-gray-50 flex items-center justify-between">
-                <span className="text-xs font-bold text-gray-900">Notifications</span>
-                <span className="text-[10px] text-emerald-600 font-semibold cursor-pointer">Tout marquer lu</span>
-              </div>
-              <div className="divide-y divide-gray-50">
-                {notifications.map(n => (
-                  <div key={n.id} className="p-3 hover:bg-gray-50 transition-colors">
-                    <div className="flex items-center justify-between mb-0.5">
-                      <span className="text-xs font-semibold text-gray-800">{n.title}</span>
-                      <span className="text-[10px] text-gray-400">{n.time}</span>
-                    </div>
-                    <p className="text-[11px] text-gray-500 leading-relaxed">{n.text}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
+        <NotificationBell
+          userId={profile?.id || "mock-user-id-9999"}
+          language={language}
+          onNavigate={onNavigate}
+        />
 
         {/* Avatar */}
         <button 
