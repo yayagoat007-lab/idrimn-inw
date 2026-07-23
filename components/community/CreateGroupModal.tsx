@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { X, Sparkles, Plus, Calendar, Coins } from 'lucide-react';
 import { useFocusTrap } from '../../hooks/use-focus-trap';
+import { Language } from '../../lib/i18n';
 
 interface CreateGroupModalProps {
   isOpen: boolean;
   onClose: () => void;
-  lang: 'fr' | 'darija';
+  language: Language;
   onCreateGroup: (name: string, targetAmount: number, deadline: string, invitedMembers: string[]) => void;
 }
 
-export function CreateGroupModal({ isOpen, onClose, lang, onCreateGroup }: CreateGroupModalProps) {
+export function CreateGroupModal({ isOpen, onClose, language, onCreateGroup }: CreateGroupModalProps) {
   const [name, setName] = useState('');
   const [targetAmount, setTargetAmount] = useState('');
   const [deadline, setDeadline] = useState('');
@@ -26,16 +27,18 @@ export function CreateGroupModal({ isOpen, onClose, lang, onCreateGroup }: Creat
     { id: 'friend-4', name: 'Nadia_Marrakech', city: 'Marrakech' }
   ];
 
+  const isDarija = language === 'darija';
+
   const t = {
-    title: lang === 'darija' ? 'Fe7el Group d l-Epargne' : 'Créer un groupe d\'épargne',
-    nameLabel: lang === 'darija' ? 'Smiya d l-Group :' : 'Nom du projet / Groupe :',
-    namePlaceholder: lang === 'darija' ? 'Ex: Krawel d l-Aïd 🐑' : 'Ex: Voyage d\'été 🏖️ ou Cadeau de Reda 🎁',
-    targetLabel: lang === 'darija' ? 'Hadaf dyal l-flous (DH) :' : 'Objectif de la cagnotte (DH) :',
-    deadlineLabel: lang === 'darija' ? 'Ajel (Date limite) :' : 'Date de fin / Échéance :',
-    inviteLabel: lang === 'darija' ? '3red 3la s7abek (Inviter des amis) :' : 'Inviter des membres de la communauté (Optionnel) :',
-    submit: lang === 'darija' ? 'Sabit l-Group' : 'Lancer le groupe',
-    cancel: lang === 'darija' ? 'Ilgha2' : 'Annuler',
-    errorAlert: lang === 'darija' ? '3emmer ga3 l-khanat.' : 'Veuillez renseigner tous les champs obligatoires.'
+    title: isDarija ? 'Fe7el Group d l-Epargne' : 'Créer un groupe d\'épargne',
+    nameLabel: isDarija ? 'Smiya d l-Group :' : 'Nom du projet / Groupe :',
+    namePlaceholder: isDarija ? 'Ex: Krawel d l-Aïd 🐑' : 'Ex: Voyage d\'été 🏖️ ou Cadeau de Reda 🎁',
+    targetLabel: isDarija ? 'Hadaf dyal l-flous (DH) :' : 'Objectif de la cagnotte (DH) :',
+    deadlineLabel: isDarija ? 'Ajel (Date limite) :' : 'Date de fin / Échéance :',
+    inviteLabel: isDarija ? '3red 3la s7abek (Inviter des amis) :' : 'Inviter des membres de la communauté (Optionnel) :',
+    submit: isDarija ? 'Sabit l-Group' : 'Lancer le groupe',
+    cancel: isDarija ? 'Ilgha2' : 'Annuler',
+    errorAlert: isDarija ? '3emmer ga3 l-khanat.' : 'Veuillez renseigner tous les champs obligatoires.'
   };
 
   const handleToggleFriend = (friendName: string) => {

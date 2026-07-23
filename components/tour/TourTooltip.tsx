@@ -131,7 +131,7 @@ export function TourTooltip({
       {/* Header with step count and Skip */}
       <div className="flex justify-between items-center mb-3">
         <span className="text-[10px] font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-100/50 px-2 py-0.5 rounded-full uppercase tracking-wider">
-          Étape {currentStepIndex + 1} / {totalSteps}
+          {language === 'darija' ? 'Mar7ala' : 'Étape'} {currentStepIndex + 1} / {totalSteps}
         </span>
         <button
           onClick={onSkip}

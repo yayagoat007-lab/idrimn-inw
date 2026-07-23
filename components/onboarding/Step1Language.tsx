@@ -17,10 +17,10 @@ export function Step1Language({ selectedLanguage, onSelectLanguage, onNext, onPr
           <Languages size={24} />
         </div>
         <h3 className="text-lg font-black text-slate-900 tracking-tight leading-none">
-          Marhaban bikoum! • Bienvenue!
+          {selectedLanguage === 'darija' ? 'Marhaban bikoum! • Merhba bikoum!' : 'Marhaban bikoum! • Bienvenue!'}
         </h3>
         <p className="text-xs font-semibold text-slate-400">
-          Choisissez votre langue préférée pour l'application Floussi.
+          {selectedLanguage === 'darija' ? "Khtar l-logha dyalk li t-bghi t-khdem biha f Floussi." : "Choisissez votre langue préférée pour l'application Floussi."}
         </p>
       </div>
 
@@ -45,7 +45,9 @@ export function Step1Language({ selectedLanguage, onSelectLanguage, onNext, onPr
           </div>
           <div>
             <h4 className="font-extrabold text-sm text-slate-900">Français</h4>
-            <p className="text-[10px] text-slate-400 font-bold mt-0.5">Interface standard en langue française.</p>
+            <p className="text-[10px] text-slate-400 font-bold mt-0.5">
+              {selectedLanguage === 'darija' ? "Interface standard b l-Fransawiya." : "Interface standard en langue française."}
+            </p>
           </div>
         </button>
 
@@ -69,13 +71,15 @@ export function Step1Language({ selectedLanguage, onSelectLanguage, onNext, onPr
           </div>
           <div>
             <h4 className="font-extrabold text-sm text-slate-900">الدارجة المغربية</h4>
-            <p className="text-[10px] text-slate-400 font-bold mt-0.5">Interface adaptée en Darija marocaine.</p>
+            <p className="text-[10px] text-slate-400 font-bold mt-0.5">
+              {selectedLanguage === 'darija' ? "Interface m-9ada b l-Darija l-Maghribiya." : "Interface adaptée en Darija marocaine."}
+            </p>
           </div>
         </button>
       </div>
 
       <div className="p-3.5 bg-slate-50 border border-slate-100 rounded-xl text-[10px] text-slate-500 font-medium leading-relaxed">
-        💡 <span className="font-bold text-slate-700">Info :</span> L'application Floussi intègre un dictionnaire hybride conçu spécialement pour le marché marocain, mélangeant des termes en Darija et en Français pour une compréhension intuitionnelle et naturelle.
+        💡 <span className="font-bold text-slate-700">{selectedLanguage === 'darija' ? "Ma3louma :" : "Info :"}</span> {selectedLanguage === 'darija' ? "Floussi fiha dictionnaire khass b l-Maghrib, fih l-Fransawiya o l-Darija m-khelltin bach i-koun s-sehl f l-fehm." : "L'application Floussi intègre un dictionnaire hybride conçu spécialement pour le marché marocain, mélangeant des termes en Darija et en Français pour une compréhension intuitionnelle et naturelle."}
       </div>
 
       <div className="flex gap-3">

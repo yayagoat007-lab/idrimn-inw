@@ -262,6 +262,7 @@ export function FirstGoalQuickWin({
                     created_at: '',
                     updated_at: ''
                   }}
+                  language={language}
                   onSubmit={handleCustomSubmit}
                   onCancel={() => setIsCustomizing(false)}
                 />

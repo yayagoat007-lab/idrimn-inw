@@ -1,15 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Share2, ChevronLeft, ChevronRight, Download, RefreshCw, Volume2, VolumeX } from 'lucide-react';
+import { useTranslation } from '../../hooks/use-translation';
 
 interface WrappedSlideViewerProps {
   isOpen: boolean;
   slides: string[];
   onClose: () => void;
   loading?: boolean;
-  language: 'fr' | 'darija';
+  language?: 'fr' | 'darija';
 }
 
-export function WrappedSlideViewer({ isOpen, slides, onClose, loading = false, language }: WrappedSlideViewerProps) {
+export function WrappedSlideViewer({ isOpen, slides, onClose, loading = false, language: propLanguage }: WrappedSlideViewerProps) {
+  const { lang } = useTranslation();
+  const language = propLanguage || lang;
+
   if (!isOpen) return null;
 
   const [currentIndex, setCurrentIndex] = useState(0);

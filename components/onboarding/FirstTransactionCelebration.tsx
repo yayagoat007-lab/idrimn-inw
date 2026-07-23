@@ -82,7 +82,9 @@ export function FirstTransactionCelebration({
                 className="flex items-center gap-2 text-emerald-600 bg-white border border-emerald-100 px-5 py-2.5 rounded-2xl shadow-sm"
               >
                 <Star size={18} className="fill-current animate-spin-slow" />
-                <span className="text-lg font-black tracking-tight">+10 XP Débloqués !</span>
+                <span className="text-lg font-black tracking-tight">
+                  {language === 'darija' ? "+10 XP Rbehtiha !" : "+10 XP Débloqués !"}
+                </span>
               </motion.div>
             </div>
 

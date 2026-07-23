@@ -11,18 +11,22 @@ import {
 } from 'recharts';
 import { ComparisonScenario, ComparisonDataPoint } from '../../lib/scenario-comparison';
 import { TrendingUp, Info } from 'lucide-react';
+import { formatCurrency } from '../../lib/utils';
+import { useTranslation } from '../../hooks/use-translation';
 
 interface ScenarioComparisonChartProps {
   chartData: ComparisonDataPoint[];
   scenarios: ComparisonScenario[];
-  language: 'fr' | 'darija';
+  language?: 'fr' | 'darija';
 }
 
 export function ScenarioComparisonChart({
   chartData,
   scenarios,
-  language,
+  language: propLanguage,
 }: ScenarioComparisonChartProps) {
+  const { lang } = useTranslation();
+  const language = propLanguage || lang;
   
   const formatYAxis = (val: number) => {
     if (val >= 1000000) {
@@ -35,7 +39,7 @@ export function ScenarioComparisonChart({
   };
 
   const formatTooltipValue = (val: number) => {
-    return `${val.toLocaleString(language === 'fr' ? 'fr-FR' : 'ar-MA')} DH`;
+    return formatCurrency(val, language);
   };
 
   const t = {

@@ -2,7 +2,7 @@ import React from 'react';
 import { Transaction } from '../../types';
 import { formatCurrency, formatDate } from '../../lib/utils';
 import { getCategoryById, getCategoryName } from '../../lib/categories';
-import { Language } from '../../lib/i18n';
+import { Language, t } from '../../lib/i18n';
 import * as Icons from 'lucide-react';
 
 interface TransactionRowProps {
@@ -58,7 +58,7 @@ export function TransactionRow({
             </h4>
             <div className="flex items-center gap-2 mt-0.5">
               <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">
-                {transaction.merchant || 'Commerce'}
+                {transaction.merchant || t('commerce', language)}
               </span>
               <span className="w-1 h-1 bg-slate-300 rounded-full" />
               <span className="text-[10px] font-semibold text-slate-400">
@@ -67,7 +67,7 @@ export function TransactionRow({
               {isPendingSync && (
                 <span className="px-1.5 py-0.5 bg-amber-50 border border-amber-200 text-amber-800 rounded-md text-[8px] font-black uppercase tracking-wider flex items-center gap-0.5">
                   <Icons.RefreshCw size={8} className="animate-spin" />
-                  Offline
+                  {t('offline', language)}
                 </span>
               )}
             </div>
@@ -79,7 +79,7 @@ export function TransactionRow({
             {amountSign}{formatCurrency(transaction.amount)}
           </p>
           <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">
-            {transaction.account_id === 'acc-cash' ? 'Cash' : 'Carte'}
+            {transaction.account_id === 'acc-cash' ? t('cash', language) : t('carte', language)}
           </span>
         </div>
       </div>
@@ -101,7 +101,7 @@ export function TransactionRow({
       <td className="px-5 py-4 whitespace-nowrap text-xs font-bold text-slate-600">
         <div className="flex items-center gap-1.5">
           <div className={`w-1.5 h-1.5 rounded-full ${transaction.account_id === 'acc-cash' ? 'bg-amber-500' : 'bg-blue-500'}`} />
-          <span className="capitalize">{transaction.account_id === 'acc-cash' ? 'Cash' : transaction.account_id === 'acc-checking' ? 'Courant' : 'Épargne'}</span>
+          <span className="capitalize">{transaction.account_id === 'acc-cash' ? t('cash', language) : transaction.account_id === 'acc-checking' ? t('courant', language) : t('epargne', language)}</span>
         </div>
       </td>
 
@@ -122,7 +122,7 @@ export function TransactionRow({
           style={{ backgroundColor: categoryData?.color || '#94A3B8' }}
         >
           <IconComponent size={11} />
-          <span>{categoryData ? getCategoryName(categoryData, language) : 'Autre'}</span>
+          <span>{categoryData ? getCategoryName(categoryData, language) : t('autre', language)}</span>
         </span>
       </td>
 
@@ -135,18 +135,18 @@ export function TransactionRow({
           <div className="flex items-center gap-1.5 mt-0.5">
             {transaction.is_recurring && (
               <span className="px-1.5 py-0.5 bg-indigo-50 border border-indigo-100 text-indigo-700 rounded-md text-[8px] font-bold uppercase tracking-wider">
-                Récurrent
+                {t('recurrent', language)}
               </span>
             )}
             {transaction.bucket_id && (
               <span className="px-1.5 py-0.5 bg-slate-50 border border-slate-200 text-slate-500 rounded-md text-[8px] font-bold uppercase tracking-wider">
-                Compartiment
+                {t('sanadiq', language)}
               </span>
             )}
             {isPendingSync && (
               <span className="px-1.5 py-0.5 bg-amber-50 border border-amber-200 text-amber-700 rounded-md text-[8px] font-black uppercase tracking-wider flex items-center gap-0.5">
                 <Icons.RefreshCw size={8} className="animate-spin" />
-                Attente
+                {t('attente', language)}
               </span>
             )}
           </div>
@@ -160,7 +160,7 @@ export function TransactionRow({
             <button
               onClick={() => onDuplicate(transaction)}
               className="p-1.5 hover:bg-slate-100 text-slate-500 hover:text-slate-900 rounded-lg transition-colors cursor-pointer"
-              title="Dupliquer"
+              title={t('dupliquer', language)}
             >
               <Icons.Copy size={14} />
             </button>
@@ -169,7 +169,7 @@ export function TransactionRow({
             <button
               onClick={() => onSplit(transaction)}
               className="p-1.5 hover:bg-slate-100 text-slate-500 hover:text-indigo-600 rounded-lg transition-colors cursor-pointer"
-              title="Répartir (Split)"
+              title={t('repartir', language)}
             >
               <Icons.Percent size={14} />
             </button>
@@ -178,7 +178,7 @@ export function TransactionRow({
             <button
               onClick={() => onEdit(transaction)}
               className="p-1.5 hover:bg-slate-100 text-slate-500 hover:text-blue-600 rounded-lg transition-colors cursor-pointer"
-              title="Modifier"
+              title={t('edit', language)}
             >
               <Icons.Edit3 size={14} />
             </button>
@@ -187,7 +187,7 @@ export function TransactionRow({
             <button
               onClick={() => onDelete(transaction.id)}
               className="p-1.5 hover:bg-rose-50 text-slate-400 hover:text-rose-600 rounded-lg transition-colors cursor-pointer"
-              title="Supprimer"
+              title={t('delete', language)}
             >
               <Icons.Trash2 size={14} />
             </button>

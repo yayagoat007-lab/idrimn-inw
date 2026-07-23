@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Goal } from '../../types';
 import { formatCurrency } from '../../lib/utils';
 import * as Icons from 'lucide-react';
+import { Language, t } from '../../lib/i18n';
 
 interface GoalFormProps {
   goal?: Goal | null;
   onSubmit: (data: any) => void;
   onCancel: () => void;
+  language: Language;
 }
 
 const AVAILABLE_COLORS = [
@@ -72,7 +74,8 @@ const MOROCCAN_PRESETS: PresetTemplate[] = [
 export function GoalForm({
   goal,
   onSubmit,
-  onCancel
+  onCancel,
+  language
 }: GoalFormProps) {
   const [name, setName] = useState('');
   const [targetAmount, setTargetAmount] = useState<number>(0);
@@ -125,11 +128,11 @@ export function GoalForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
-      alert("Le nom de l'objectif est obligatoire.");
+      alert(t('goalNameRequired', language));
       return;
     }
     if (targetAmount <= 0) {
-      alert("Le montant cible doit être supérieur à 0 DH.");
+      alert(t('targetAmountRequired', language));
       return;
     }
 
@@ -152,10 +155,10 @@ export function GoalForm({
       <form onSubmit={handleSubmit} className="lg:col-span-2 bg-white border border-slate-100 p-6 rounded-3xl space-y-5 shadow-xs">
         <div>
           <h3 className="font-extrabold text-sm text-slate-800 uppercase tracking-wider">
-            {goal ? "Modifier l'Objectif" : "Nouvel Objectif (Hadaf)"}
+            {goal ? t('editGoal', language) : t('newGoal', language)}
           </h3>
           <p className="text-xs text-slate-400 font-semibold mt-0.5">
-            Planifiez un projet d'épargne important
+            {t('configureGoal', language)}
           </p>
         </div>
 
@@ -163,25 +166,39 @@ export function GoalForm({
         {!goal && (
           <div className="space-y-2">
             <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">
-              Modèles Marocains Populaires (Presets)
+              {t('moroccanPresetsLabel', language)}
             </span>
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-              {MOROCCAN_PRESETS.map(p => (
-                <button
-                  key={p.name}
-                  type="button"
-                  onClick={() => selectPreset(p)}
-                  className="p-3 border border-slate-100 bg-slate-50/40 hover:border-emerald-200 hover:bg-emerald-50/10 rounded-2xl flex flex-col items-center justify-center text-center transition-all cursor-pointer space-y-1.5"
-                >
-                  <div 
-                    className="p-2 rounded-xl text-white flex items-center justify-center shrink-0 shadow-xs"
-                    style={{ backgroundColor: p.color }}
+              {MOROCCAN_PRESETS.map(preset => {
+                const isDarija = language === 'darija';
+                let presetName = preset.name;
+                if (isDarija) {
+                  if (preset.name.includes("Achat d'Or")) presetName = "Dhab (Gold)";
+                  else if (preset.name.includes("Omra")) presetName = "Omra/Hajj";
+                  else if (preset.name.includes("Mouton")) presetName = "Hawli d-Aïd";
+                  else if (preset.name.includes("Mariage")) presetName = "L'Aars (Festa)";
+                  else if (preset.name.includes("Apport Logement")) presetName = "Sakan (Dar)";
+                } else {
+                  presetName = preset.name.split(' (')[0];
+                }
+
+                return (
+                  <button
+                    key={preset.name}
+                    type="button"
+                    onClick={() => selectPreset(preset)}
+                    className="p-3 border border-slate-100 bg-slate-50/40 hover:border-emerald-200 hover:bg-emerald-50/10 rounded-2xl flex flex-col items-center justify-center text-center transition-all cursor-pointer space-y-1.5"
                   >
-                    {React.createElement((Icons as any)[p.icon] || Icons.HelpCircle, { size: 14 })}
-                  </div>
-                  <span className="text-[9px] font-black uppercase text-slate-700 leading-tight block line-clamp-1">{p.name.split(' (')[0]}</span>
-                </button>
-              ))}
+                    <div 
+                      className="p-2 rounded-xl text-white flex items-center justify-center shrink-0 shadow-xs"
+                      style={{ backgroundColor: preset.color }}
+                    >
+                      {React.createElement((Icons as any)[preset.icon] || Icons.HelpCircle, { size: 14 })}
+                    </div>
+                    <span className="text-[9px] font-black uppercase text-slate-700 leading-tight block line-clamp-1">{presetName}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
@@ -189,20 +206,20 @@ export function GoalForm({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Nom */}
           <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase text-slate-400">Nom de l'Objectif</label>
+            <label className="text-[10px] font-black uppercase text-slate-400">{t('goalNameLabel', language)}</label>
             <input
               type="text"
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="ex: Omra d'Lwalidin"
+              placeholder={t('placeholderOmra', language)}
               className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold text-slate-800 focus:outline-hidden focus:ring-1 focus:ring-emerald-500"
             />
           </div>
 
           {/* Cible */}
           <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase text-slate-400">Montant Cible (DH)</label>
+            <label className="text-[10px] font-black uppercase text-slate-400">{t('targetAmountLabel', language)}</label>
             <input
               type="number"
               required
@@ -218,7 +235,7 @@ export function GoalForm({
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {/* Épargne initiale */}
           <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase text-slate-400">Épargne Initiale Déjà Constituée (DH)</label>
+            <label className="text-[10px] font-black uppercase text-slate-400">{t('initialSavingsLabel', language)}</label>
             <input
               type="number"
               min="0"
@@ -231,7 +248,7 @@ export function GoalForm({
 
           {/* Échéance */}
           <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase text-slate-400">Échéance de Cible</label>
+            <label className="text-[10px] font-black uppercase text-slate-400">{t('targetDeadlineLabel', language)}</label>
             <input
               type="date"
               required
@@ -243,13 +260,13 @@ export function GoalForm({
 
           {/* Effort mensuel */}
           <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase text-slate-400">Effort Mensuel Estimé (DH)</label>
+            <label className="text-[10px] font-black uppercase text-slate-400">{t('estimatedMonthlyEffortLabel', language)}</label>
             <input
               type="number"
               min="0"
               value={autoContributeAmount || ''}
               onChange={(e) => setAutoContributeAmount(Number(e.target.value))}
-              placeholder={`Recommandé : ${monthlyNeeded} DH`}
+              placeholder={`${t('recommendedEffort', language)}${monthlyNeeded} DH`}
               className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-black text-slate-800 focus:outline-hidden focus:ring-1 focus:ring-emerald-500"
             />
           </div>
@@ -258,7 +275,7 @@ export function GoalForm({
         {/* Color and Icon selection */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase text-slate-400">Couleur Visuelle</label>
+            <label className="text-[10px] font-black uppercase text-slate-400">{t('visualColor', language)}</label>
             <div className="flex flex-wrap gap-2">
               {AVAILABLE_COLORS.map(c => (
                 <button
@@ -273,7 +290,7 @@ export function GoalForm({
           </div>
 
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase text-slate-400">Icône Illustrative</label>
+            <label className="text-[10px] font-black uppercase text-slate-400">{t('illustrativeIcon', language)}</label>
             <div className="flex flex-wrap gap-1.5">
               {AVAILABLE_ICONS.map(i => {
                 const CurIcon = (Icons as any)[i] || Icons.HelpCircle;
@@ -300,13 +317,13 @@ export function GoalForm({
             onClick={onCancel}
             className="px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-extrabold text-xs uppercase tracking-wider rounded-2xl transition-colors cursor-pointer"
           >
-            Annuler
+            {t('cancel', language)}
           </button>
           <button
             type="submit"
             className="px-5.5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs uppercase tracking-wider rounded-2xl transition-all shadow-md cursor-pointer"
           >
-            {goal ? "Enregistrer" : "Créer l'Objectif"}
+            {goal ? t('save', language) : t('createGoal', language)}
           </button>
         </div>
 
@@ -315,29 +332,29 @@ export function GoalForm({
       {/* Live calculations sidebar */}
       <div className="space-y-4">
         <div>
-          <h4 className="font-extrabold text-xs text-slate-800 uppercase tracking-wider">Plan de Financement</h4>
-          <p className="text-[10px] text-slate-400 font-bold">Calcul en temps réel de votre effort</p>
+          <h4 className="font-extrabold text-xs text-slate-800 uppercase tracking-wider">{t('financingPlan', language)}</h4>
+          <p className="text-[10px] text-slate-400 font-bold">{t('financingPlanDesc', language)}</p>
         </div>
 
         <div className="bg-gradient-to-br from-emerald-900 to-emerald-950 text-white border rounded-3xl p-5 shadow-md space-y-4">
           <div className="space-y-1">
-            <span className="text-[9px] font-black uppercase text-emerald-300 tracking-wider">Effort mensuel requis</span>
+            <span className="text-[9px] font-black uppercase text-emerald-300 tracking-wider">{t('requiredMonthlyEffort', language)}</span>
             <p className="text-2xl font-black">{formatCurrency(monthlyNeeded)}</p>
           </div>
 
           <div className="space-y-3 pt-3 border-t border-white/10 text-xs font-semibold text-emerald-100">
             <div className="flex justify-between">
-              <span>Date d'achèvement :</span>
-              <span className="font-extrabold text-white">{deadline ? deadline : "Non définie"}</span>
+              <span>{t('completionDateLabel', language)}</span>
+              <span className="font-extrabold text-white">{deadline ? deadline : t('notDefined', language)}</span>
             </div>
             
             <div className="flex justify-between">
-              <span>Capital à constituer :</span>
+              <span>{t('capitalToBuildLabel', language)}</span>
               <span className="font-extrabold text-white">{formatCurrency(targetAmount - currentAmount)}</span>
             </div>
 
             <div className="bg-white/10 p-3 rounded-2xl text-[10px] font-bold text-emerald-200 leading-normal">
-              Floussi calcule automatiquement cet effort en divisant le capital restant par le nombre de mois restants d'ici l'échéance.
+              {t('financingCalculationsNotice', language)}
             </div>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { MoroccanEvent } from '../../types';
 import { convertGregorianToHijri } from '../../lib/hijri';
+import { useTranslation } from '../../hooks/use-translation';
 import { CountdownBadge } from '../shared/CountdownBadge';
 import { HijriDateDisplay } from '../shared/HijriDateDisplay';
 import { Calendar, Filter, Sparkles, Plus, Layers, ArrowRight } from 'lucide-react';
@@ -11,6 +12,7 @@ interface EventsCalendarProps {
   getEventStatus: (event: MoroccanEvent) => 'active' | 'upcoming' | 'past';
   onCreateNew: () => void;
   onSelectEvent: (event: MoroccanEvent) => void;
+  language?: 'fr' | 'darija';
 }
 
 export function EventsCalendar({
@@ -18,8 +20,11 @@ export function EventsCalendar({
   getDaysRemaining,
   getEventStatus,
   onCreateNew,
-  onSelectEvent
+  onSelectEvent,
+  language: propLanguage
 }: EventsCalendarProps) {
+  const { lang } = useTranslation();
+  const language = propLanguage || lang;
   const [filterType, setFilterType] = useState<string>('all');
 
   const filteredEvents = events.filter(e => {
@@ -34,10 +39,12 @@ export function EventsCalendar({
         <div>
           <h3 className="text-sm font-black text-slate-800 tracking-tight flex items-center gap-1.5">
             <Calendar className="w-4 h-4 text-emerald-600" />
-            <span>Calendrier des Célébrations & Saisons</span>
+            <span>
+              {language === 'darija' ? "Touariikh d l-A3yad o l-Monasabat" : "Calendrier des Célébrations & Saisons"}
+            </span>
           </h3>
           <p className="text-[10px] text-slate-400 font-semibold">
-            Suivi des grands événements religieux et fêtes traditionnelles marocaines.
+            {language === 'darija' ? "Tabba3 l-a3yad l-diniya o l-monasabat l-maghribiya." : "Suivi des grands événements religieux et fêtes traditionnelles marocaines."}
           </p>
         </div>
 
@@ -48,19 +55,19 @@ export function EventsCalendar({
               onClick={() => setFilterType('all')}
               className={`text-[9px] font-black px-2.5 py-1.5 rounded-lg transition-all ${filterType === 'all' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`}
             >
-              Tous
+              {language === 'darija' ? "Kolchi" : "Tous"}
             </button>
             <button
               onClick={() => setFilterType('religious')}
               className={`text-[9px] font-black px-2.5 py-1.5 rounded-lg transition-all ${filterType === 'religious' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`}
             >
-              Religieux
+              {language === 'darija' ? "Dini" : "Religieux"}
             </button>
             <button
               onClick={() => setFilterType('custom')}
               className={`text-[9px] font-black px-2.5 py-1.5 rounded-lg transition-all ${filterType === 'custom' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`}
             >
-              Familiaux / Perso
+              {language === 'darija' ? "Khass" : "Familiaux / Perso"}
             </button>
           </div>
 
@@ -69,7 +76,7 @@ export function EventsCalendar({
             className="bg-slate-800 hover:bg-slate-900 text-white rounded-lg py-1.5 px-2.5 text-[9px] font-black flex items-center gap-1 transition-all"
           >
             <Plus className="w-3 h-3" />
-            <span>Créer</span>
+            <span>{language === 'darija' ? "Zid" : "Créer"}</span>
           </button>
         </div>
       </div>
@@ -79,7 +86,9 @@ export function EventsCalendar({
         {filteredEvents.length === 0 ? (
           <div className="md:col-span-2 text-center py-10 text-slate-400 border border-dashed border-slate-100 rounded-2xl">
             <Calendar className="w-8 h-8 text-slate-200 mx-auto mb-2" />
-            <p className="text-xs font-bold">Aucun événement ne correspond à ce filtre.</p>
+            <p className="text-xs font-bold">
+              {language === 'darija' ? "Hatta monasaba ma mnasba m3a had l-filtre." : "Aucun événement ne correspond à ce filtre."}
+            </p>
           </div>
         ) : (
           filteredEvents.map(ev => {
@@ -114,20 +123,24 @@ export function EventsCalendar({
                   </h4>
 
                   <p className="text-[10px] text-slate-400 font-bold mt-1">
-                    Du {new Date(ev.start_date).toLocaleDateString('fr-FR')} au {new Date(ev.end_date).toLocaleDateString('fr-FR')}
+                    {language === 'darija' 
+                      ? `Mn ${new Date(ev.start_date).toLocaleDateString('fr-FR')} 7tal ${new Date(ev.end_date).toLocaleDateString('fr-FR')}`
+                      : `Du ${new Date(ev.start_date).toLocaleDateString('fr-FR')} au ${new Date(ev.end_date).toLocaleDateString('fr-FR')}`}
                   </p>
                 </div>
 
                 <div className="mt-4 pt-3 border-t border-slate-100 flex items-end justify-between gap-3">
                   <div className="space-y-0.5">
-                    <span className="block text-[8px] uppercase font-bold text-slate-400">Date Hijri</span>
+                    <span className="block text-[8px] uppercase font-bold text-slate-400">
+                      {language === 'darija' ? "Tarikh Hijri" : "Date Hijri"}
+                    </span>
                     <span className="text-[10px] font-extrabold text-emerald-800 font-mono">
                       {hijri.formattedFr}
                     </span>
                   </div>
 
                   <div className="text-right flex items-center gap-1 text-[10px] font-black text-slate-500 group-hover:text-emerald-600 transition-all">
-                    <span>Voir Détails</span>
+                    <span>{language === 'darija' ? "Chouf details" : "Voir Détails"}</span>
                     <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-all" />
                   </div>
                 </div>

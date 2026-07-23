@@ -118,7 +118,7 @@ export function classifyBehaviorProfile(metrics: BehavioralMetrics, transactions
   return 'depensier_occasionnel';
 }
 
-const PROFILE_DETAILS_MAP: Record<BehaviorProfile, ProfileDetails> = {
+export const PROFILE_DETAILS_MAP: Record<BehaviorProfile, ProfileDetails> = {
   epargnant_discipline: {
     id: 'epargnant_discipline',
     nameFr: "Épargnant Discipliné (Tawfir Dahabi)",

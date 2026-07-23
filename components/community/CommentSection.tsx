@@ -1,22 +1,24 @@
 import React, { useState } from 'react';
 import { Comment } from '../../types';
 import { Send, MessageSquare, Calendar } from 'lucide-react';
+import { Language } from '../../lib/i18n';
 
 interface CommentSectionProps {
   postId: string;
   comments: Comment[];
-  lang: 'fr' | 'darija';
+  language: Language;
   onAddComment: (content: string) => void;
 }
 
-export function CommentSection({ postId, comments = [], lang, onAddComment }: CommentSectionProps) {
+export function CommentSection({ postId, comments = [], language, onAddComment }: CommentSectionProps) {
+  const isDarija = language === 'darija';
   const [text, setText] = useState('');
 
   const t = {
-    placeholder: lang === 'darija' ? 'Kteb chi ta3liq...' : 'Écrire un commentaire...',
-    noComments: lang === 'darija' ? 'Makan ta ta3liq had l-weqt. Kteb l-owl!' : 'Aucun commentaire pour l\'instant. Soyez le premier !',
-    submit: lang === 'darija' ? 'Sifat' : 'Envoyer',
-    commentsTitle: lang === 'darija' ? 'Ta3liqat' : 'Commentaires'
+    placeholder: isDarija ? 'Kteb chi ta3liq...' : 'Écrire un commentaire...',
+    noComments: isDarija ? 'Makan ta ta3liq had l-weqt. Kteb l-owl!' : 'Aucun commentaire pour l\'instant. Soyez le premier !',
+    submit: isDarija ? 'Sifat' : 'Envoyer',
+    commentsTitle: isDarija ? 'Ta3liqat' : 'Commentaires'
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -66,7 +68,7 @@ export function CommentSection({ postId, comments = [], lang, onAddComment }: Co
         <button
           type="submit"
           disabled={!text.trim()}
-          className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-2xl cursor-pointer transition-all flex items-center justify-center shrink-0 shadow-sm"
+          className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-2xl cursor-pointer transition-all flex items-center justify-center shrink-0 shadow-sm text-left"
         >
           <Send size={13} />
         </button>

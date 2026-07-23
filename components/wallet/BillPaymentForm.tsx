@@ -3,13 +3,15 @@ import { useBillPayment } from '../../hooks/use-bill-payment';
 import { useWallet } from '../../hooks/use-wallet';
 import { BillProvider } from '../../types';
 import { CheckCircle2, FileText, Landmark, User, CreditCard, Sparkles } from 'lucide-react';
+import { Language } from '../../lib/i18n';
 
 interface BillPaymentFormProps {
-  lang: 'fr' | 'darija';
+  language: Language;
   onSuccess?: () => void;
 }
 
-export function BillPaymentForm({ lang, onSuccess }: BillPaymentFormProps) {
+export function BillPaymentForm({ language, onSuccess }: BillPaymentFormProps) {
+  const isDarija = language === 'darija';
   const { balance } = useWallet();
   const { payBill } = useBillPayment();
 
@@ -33,14 +35,14 @@ export function BillPaymentForm({ lang, onSuccess }: BillPaymentFormProps) {
   ];
 
   const t = {
-    providerLabel: lang === 'darija' ? 'Khtar Mouassassa :' : 'Sélectionner le fournisseur :',
-    refLabel: lang === 'darija' ? 'Raqm l-3aqd / Réf contrat :' : 'Référence contrat / Réf de compte :',
+    providerLabel: isDarija ? 'Khtar Mouassassa :' : 'Sélectionner le fournisseur :',
+    refLabel: isDarija ? 'Raqm l-3aqd / Réf contrat :' : 'Référence contrat / Réf de compte :',
     refPlaceholder: 'Ex: 19847293',
-    amountLabel: lang === 'darija' ? 'L-qadr d l-fatoura (DH) :' : 'Montant de la facture (DH) :',
-    submitBtn: lang === 'darija' ? 'Khless l-fatoura (Simulation)' : 'Payer la facture (Simulation)',
-    successMsg: lang === 'darija' ? 'Khalass t-temm b l-khir!' : 'Facture payée avec succès !',
-    simNote: lang === 'darija' ? 'Hada ghir tajriba, l-flous real ma ghay-mchiwch.' : 'Simulation locale - aucun débit bancaire réel ne sera effectué.',
-    insufficient: lang === 'darija' ? 'Ma3ndekch l-baraka kafi f l-wallet' : 'Solde de portefeuille virtuel insuffisant.'
+    amountLabel: isDarija ? 'L-qadr d l-fatoura (DH) :' : 'Montant de la facture (DH) :',
+    submitBtn: isDarija ? 'Khless l-fatoura (Simulation)' : 'Payer la facture (Simulation)',
+    successMsg: isDarija ? 'Khalass t-temm b l-khir!' : 'Facture payée avec succès !',
+    simNote: isDarija ? 'Hada ghir tajriba, l-flous real ma ghay-mchiwch.' : 'Simulation locale - aucun débit bancaire réel ne sera effectué.',
+    insufficient: isDarija ? 'Ma3ndekch l-baraka kafi f l-wallet' : 'Solde de portefeuille virtuel insuffisant.'
   };
 
   const handlePay = async (e: React.FormEvent) => {
@@ -50,11 +52,11 @@ export function BillPaymentForm({ lang, onSuccess }: BillPaymentFormProps) {
 
     const parsedAmount = parseFloat(amount);
     if (!reference.trim()) {
-      setError(lang === 'darija' ? 'Kteb raqm l-3aqd.' : 'Veuillez saisir votre référence contrat.');
+      setError(isDarija ? 'Kteb raqm l-3aqd.' : 'Veuillez saisir votre référence contrat.');
       return;
     }
     if (isNaN(parsedAmount) || parsedAmount <= 0) {
-      setError(lang === 'darija' ? 'Kteb taman s7i7.' : 'Veuillez renseigner un montant de facture valide.');
+      setError(isDarija ? 'Kteb taman s7i7.' : 'Veuillez renseigner un montant de facture valide.');
       return;
     }
     if (balance && balance.balance < parsedAmount) {
@@ -92,19 +94,19 @@ export function BillPaymentForm({ lang, onSuccess }: BillPaymentFormProps) {
 
         <div className="bg-white border border-slate-100 rounded-2xl p-4 text-left text-xs space-y-2">
           <div className="flex justify-between">
-            <span className="text-slate-400 font-bold">Fournisseur</span>
+            <span className="text-slate-400 font-bold">{isDarija ? "L-Mousassasa" : "Fournisseur"}</span>
             <span className="text-slate-800 font-black">{success.provider}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-slate-400 font-bold">Référence contrat</span>
+            <span className="text-slate-400 font-bold">{isDarija ? "Raqm l-3aqd" : "Référence contrat"}</span>
             <span className="text-slate-800 font-mono font-bold">{success.accountReference}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-slate-400 font-bold">Montant réglé</span>
+            <span className="text-slate-400 font-bold">{isDarija ? "L-mablagh" : "Montant réglé"}</span>
             <span className="text-emerald-700 font-black font-mono">-{success.amount.toFixed(2)} DH</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-slate-400 font-bold">Date de paiement</span>
+            <span className="text-slate-400 font-bold">{isDarija ? "Tarikh dyal l-khalass" : "Date de paiement"}</span>
             <span className="text-slate-600 font-medium">{new Date(success.paidAt).toLocaleDateString()}</span>
           </div>
         </div>
@@ -113,7 +115,7 @@ export function BillPaymentForm({ lang, onSuccess }: BillPaymentFormProps) {
           onClick={() => setSuccess(null)}
           className="w-full py-2 bg-slate-800 text-white text-[10px] font-black uppercase tracking-wider rounded-xl cursor-pointer"
         >
-          Payer une autre facture
+          {isDarija ? "Khless fatoura khora" : "Payer une autre facture"}
         </button>
       </div>
     );
@@ -202,7 +204,7 @@ export function BillPaymentForm({ lang, onSuccess }: BillPaymentFormProps) {
         disabled={loading}
         className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-widest rounded-2xl shadow-md cursor-pointer transition-all active:scale-98"
       >
-        {loading ? 'Connexion sécurisée...' : t.submitBtn}
+        {loading ? (isDarija ? 'Kntteb b l-aman...' : 'Connexion sécurisée...') : t.submitBtn}
       </button>
     </form>
   );

@@ -55,6 +55,7 @@ const TRANSLATIONS = {
     noResults: "Aucun résultat trouvé pour",
     searchTips: "Conseils : Tapez 'ajouter' pour une transaction ou 'sidi' pour l'assistant.",
     quickActions: "Actions rapides",
+    tipSub: "Vérifiez l'orthographe ou essayez d'autres mots-clés comme \"mizaniya\" ou \"sidi\".",
     groupHeaders: {
       transaction: "Transactions",
       bucket: "Enveloppes (Buckets)",
@@ -73,6 +74,7 @@ const TRANSLATIONS = {
     noResults: "Hatta Natija ma lqina l-",
     searchTips: "Nasiha: Kteb 'ajouter' bach t-zid chi mouamala aw 'sidi' bach t-hder m3ah.",
     quickActions: "Ijra'at sariaa",
+    tipSub: "T'haqqeq m-l-kteba aw jerrab kalimat khrin bhal \"mizaniya\" aw \"sidi\".",
     groupHeaders: {
       transaction: "Mouamalat d-flouss",
       bucket: "Zrouf (Buckets)",
@@ -274,7 +276,7 @@ export function GlobalSearchModal({
               aria-label="Fermer la recherche globale / إغلاق البحث الشامل"
               className="text-xs font-black uppercase text-slate-400 hover:text-slate-800 md:hidden ml-2 cursor-pointer"
             >
-              Fermer
+              {language === 'darija' ? "Sedd" : "Fermer"}
             </button>
             {/* Desktop shortcut tip */}
             <span className="hidden md:inline-flex items-center gap-1 text-[10px] font-black text-slate-400 bg-slate-100 px-2 py-0.5 rounded-lg border border-slate-200">
@@ -325,7 +327,7 @@ export function GlobalSearchModal({
                 <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-2xs space-y-2">
                   <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
                     <Sparkles className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
-                    Conseil Floussi
+                    {language === 'darija' ? "Nasiha Floussi" : "Conseil Floussi"}
                   </h4>
                   <p className="text-[11px] font-semibold text-slate-500 leading-relaxed">
                     {t.searchTips}
@@ -415,7 +417,7 @@ export function GlobalSearchModal({
                   {t.noResults} <span className="text-amber-600">"{query}"</span>
                 </p>
                 <p className="text-[10px] font-bold text-slate-400 max-w-xs mx-auto">
-                  Vérifiez l'orthographe ou essayez d'autres mots-clés comme "mizaniya" ou "sidi".
+                  {t.tipSub}
                 </p>
               </div>
             )}
@@ -426,20 +428,22 @@ export function GlobalSearchModal({
             <div className="flex items-center gap-4">
               <span className="flex items-center gap-1">
                 <span className="bg-white border border-slate-200 rounded px-1.5 py-0.5 shadow-3xs">↑↓</span>
-                Navigate
+                {language === 'darija' ? 'Tajah' : 'Navigate'}
               </span>
               <span className="flex items-center gap-1">
                 <span className="bg-white border border-slate-200 rounded px-1.5 py-0.5 shadow-3xs">ENTER</span>
-                Select
+                {language === 'darija' ? 'Ikhtar' : 'Select'}
               </span>
               <span className="flex items-center gap-1">
                 <span className="bg-white border border-slate-200 rounded px-1.5 py-0.5 shadow-3xs">ESC</span>
-                Close
+                {language === 'darija' ? 'Sedd' : 'Close'}
               </span>
             </div>
             {query.trim() && (
               <div>
-                {orderedResults.length} {orderedResults.length > 1 ? 'résultats trouvés' : 'résultat trouvé'}
+                {language === 'darija'
+                  ? `${orderedResults.length} ${orderedResults.length > 1 ? "nata'ij lqina" : "natija lqina"}`
+                  : `${orderedResults.length} ${orderedResults.length > 1 ? 'résultats trouvés' : 'résultat trouvé'}`}
               </div>
             )}
           </div>

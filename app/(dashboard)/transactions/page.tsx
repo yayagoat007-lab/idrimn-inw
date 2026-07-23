@@ -239,6 +239,7 @@ export default function TransactionsPage({
       {/* Filters search component */}
       <TransactionFilters
         buckets={buckets}
+        language={language}
         activeFilters={filters}
         onFilterChange={setFilters}
         onReset={handleResetFilters}

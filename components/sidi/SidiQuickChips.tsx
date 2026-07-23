@@ -1,10 +1,11 @@
 import React from 'react';
+import { useTranslation } from '../../hooks/use-translation';
 
 interface SidiQuickChipsProps {
   onChipClick: (text: string) => void;
 }
 
-const CHIPS = [
+const CHIPS_FR = [
   { label: "Voir mon solde 💰", text: "Chhal andi flouss ?" },
   { label: "Ajouter dépense 💸", text: "Sraft 45 DH f l'makla" },
   { label: "Prochaine Jmâa 🤝", text: "Quand est ma prochaine tontine daret ?" },
@@ -13,14 +14,26 @@ const CHIPS = [
   { label: "Comment économiser ? 💡", text: "Donne moi des conseils d'épargne" }
 ];
 
+const CHIPS_DARIJA = [
+  { label: "Chouf r-rassid 💰", text: "Chhal andi flouss ?" },
+  { label: "Zid masrouf 💸", text: "Sraft 45 DH f l'makla" },
+  { label: "Daret l-jayya 🤝", text: "Quand est ma prochaine tontine daret ?" },
+  { label: "Ahdaf dyali 🕋", text: "Progrès de mon objectif épargne" },
+  { label: "Awed lya nokta ! 😂", text: "Raconte moi une blague sidi floussi !" },
+  { label: "Kifach n-khbi l-flouss ? 💡", text: "Donne moi des conseils d'épargne" }
+];
+
 export function SidiQuickChips({ onChipClick }: SidiQuickChipsProps) {
+  const { lang } = useTranslation();
+  const chips = lang === 'darija' ? CHIPS_DARIJA : CHIPS_FR;
+
   return (
     <div
       className="flex items-center gap-2 overflow-x-auto pb-2 px-4 no-scrollbar scroll-smooth"
       style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       id="sidi-quick-chips"
     >
-      {CHIPS.map((chip, idx) => (
+      {chips.map((chip, idx) => (
         <button
           key={idx}
           id={`quick-chip-${idx}`}

@@ -1,26 +1,29 @@
 import React from 'react';
 import { ExtendedFamilyMember } from '../../hooks/use-family-members';
 import { Shield, Eye, ToggleLeft, ToggleRight, Settings } from 'lucide-react';
+import { t, Language } from '../../lib/i18n';
 
 interface FamilyPermissionEditorProps {
   members: ExtendedFamilyMember[];
   buckets: string[];
   onTogglePermission: (memberId: string, bucketName: string) => void;
+  language: Language;
 }
 
-export function FamilyPermissionEditor({ members, buckets, onTogglePermission }: FamilyPermissionEditorProps) {
+export function FamilyPermissionEditor({ members, buckets, onTogglePermission, language }: FamilyPermissionEditorProps) {
+  const isDarija = language === 'darija';
   return (
     <div className="border border-slate-150 rounded-2xl bg-white p-5 shadow-xs">
       <div className="flex items-center gap-1.5 border-b border-slate-100 pb-3 mb-4">
         <Settings className="w-4 h-4 text-emerald-600" />
-        <h4 className="text-xs font-black text-slate-800 tracking-tight">Permissions de Sandoqs Partagés</h4>
+        <h4 className="text-xs font-black text-slate-800 tracking-tight">{t('permissionsPageTitle', language)}</h4>
       </div>
 
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="border-b border-slate-100">
-              <th className="py-2 text-[9px] font-bold text-slate-400 uppercase tracking-wider">Membre</th>
+              <th className="py-2 text-[9px] font-bold text-slate-400 uppercase tracking-wider">{t('memberColumn', language)}</th>
               {buckets.map((b) => (
                 <th key={b} className="py-2 text-[9px] font-bold text-slate-400 uppercase tracking-wider text-center">{b}</th>
               ))}
@@ -39,7 +42,9 @@ export function FamilyPermissionEditor({ members, buckets, onTogglePermission }:
                     />
                     <div>
                       <div className="text-[10px] font-black text-slate-800 leading-tight">{member.name.split(' ')[0]}</div>
-                      <div className="text-[8px] text-slate-400 font-bold uppercase tracking-wide">{member.role}</div>
+                      <div className="text-[8px] text-slate-400 font-bold uppercase tracking-wide">
+                        {member.role === 'member' ? (isDarija ? 'Membru' : 'Membre') : member.role}
+                      </div>
                     </div>
                   </div>
                 </td>
@@ -52,13 +57,13 @@ export function FamilyPermissionEditor({ members, buckets, onTogglePermission }:
                     <td key={bucket} className="py-2.5 text-center">
                       {member.role === 'admin' ? (
                         <span className="text-[8px] font-extrabold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md uppercase">
-                          Admin complet
+                          {isDarija ? 'أدمين كامل' : 'Admin complet'}
                         </span>
                       ) : (
                         <button
                           type="button"
                           onClick={() => onTogglePermission(member.id, bucket)}
-                          className="focus:outline-none"
+                          className="focus:outline-none cursor-pointer"
                         >
                           {hasAccess ? (
                             <ToggleRight className="w-6 h-6 text-emerald-600" />

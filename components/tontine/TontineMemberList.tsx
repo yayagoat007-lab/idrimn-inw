@@ -1,22 +1,25 @@
 import React from 'react';
 import { TontineMember } from '../../types';
 import { ArrowUp, ArrowDown, Shield, CheckCircle, Clock } from 'lucide-react';
+import { t, Language } from '../../lib/i18n';
 
 interface TontineMemberListProps {
   members: TontineMember[];
   onMoveUp: (id: string) => void;
   onMoveDown: (id: string) => void;
   isAdmin: boolean;
+  language: Language;
 }
 
-export function TontineMemberList({ members, onMoveUp, onMoveDown, isAdmin }: TontineMemberListProps) {
+export function TontineMemberList({ members, onMoveUp, onMoveDown, isAdmin, language }: TontineMemberListProps) {
+  const isDarija = language === 'darija';
   // Sort members by position (position_in_queue)
   const sortedMembers = [...members].sort((a, b) => a.position_in_queue - b.position_in_queue);
 
   return (
     <div className="border border-slate-150 rounded-2xl bg-white p-5 shadow-xs">
       <h4 className="text-xs font-black text-slate-800 mb-3 uppercase tracking-wider">
-        Membres & Ordre de Répartition (Queue)
+        {isDarija ? "A3da' o Tartib dyal t-teqssim (Queue)" : "Membres & Ordre de Répartition (Queue)"}
       </h4>
 
       <div className="space-y-2">
@@ -48,7 +51,9 @@ export function TontineMemberList({ members, onMoveUp, onMoveDown, isAdmin }: To
                     )}
                   </div>
                   <span className="text-[8px] font-bold text-slate-400 block uppercase tracking-wide">
-                    {isNext ? "Prochain bénéficiaire" : "En attente"}
+                    {isNext 
+                      ? (isDarija ? "Bénéficiaire lli jay" : "Prochain bénéficiaire") 
+                      : (isDarija ? "F'l-intidar" : "En attente")}
                   </span>
                 </div>
               </div>
@@ -60,16 +65,16 @@ export function TontineMemberList({ members, onMoveUp, onMoveDown, isAdmin }: To
                   <button
                     disabled={idx === 0}
                     onClick={() => onMoveUp(m.id)}
-                    className="p-1 border border-slate-200 rounded-md hover:bg-slate-50 disabled:opacity-40"
-                    title="Monter la priorité"
+                    className="p-1 border border-slate-200 rounded-md hover:bg-slate-50 disabled:opacity-40 cursor-pointer"
+                    title={isDarija ? "Tl'e3" : "Monter la priorité"}
                   >
                     <ArrowUp className="w-3.5 h-3.5 text-slate-500" />
                   </button>
                   <button
                     disabled={idx === sortedMembers.length - 1}
                     onClick={() => onMoveDown(m.id)}
-                    className="p-1 border border-slate-200 rounded-md hover:bg-slate-50 disabled:opacity-40"
-                    title="Baisser la priorité"
+                    className="p-1 border border-slate-200 rounded-md hover:bg-slate-50 disabled:opacity-40 cursor-pointer"
+                    title={isDarija ? "Hbet" : "Baisser la priorité"}
                   >
                     <ArrowDown className="w-3.5 h-3.5 text-slate-500" />
                   </button>

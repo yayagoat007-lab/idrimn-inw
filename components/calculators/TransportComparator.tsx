@@ -72,7 +72,7 @@ export function TransportComparator({ lang }: TransportComparatorProps) {
           : `Privilégiez le Grand Taxi collectif au lieu de votre voiture. Économie estimée : ${diff} DH !`;
       }
       return lang === 'darija'
-        ? "Le Grand Taxi reste la solution collective la plus optimisée sur cet axe."
+        ? "Le Grand Taxi hwa l-hall l-moustahsan bin l-moudoun f had t-triq."
         : "Le Grand Taxi collectif reste l'option intermédiaire idéale pour ce trajet.";
     } else {
       const taxiDiff = Math.max(0, costTaxi - costTram);
@@ -82,7 +82,7 @@ export function TransportComparator({ lang }: TransportComparatorProps) {
           : `Prenez le Tramway au lieu d'un Petit Taxi ! Vous économisez ${taxiDiff} DH sur ce trajet ! 💪`;
       }
       return lang === 'darija'
-        ? "Prenez le bus ou le tramway pour économiser sur vos déplacements quotidiens."
+        ? "Mzyan t-khdem b l-tramway wla l-tobis bach t-khaba3 f l-masrouf dyal d-dima."
         : "Les transports en commun (Tram/Bus) sont vivement conseillés pour vos trajets réguliers.";
     }
   };

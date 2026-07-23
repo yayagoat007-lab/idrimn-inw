@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Transaction } from '../../types';
 import { TransactionRow } from './TransactionRow';
-import { Language } from '../../lib/i18n';
+import { Language, t } from '../../lib/i18n';
 import { EmptyState } from '../shared/EmptyState';
 import { ChevronUp, ChevronDown, Eye, AlertCircle } from 'lucide-react';
 
@@ -79,8 +79,8 @@ export function TransactionTable({
     return (
       <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-xs">
         <EmptyState
-          title={language === 'darija' ? "Walo mouamalat" : "Aucune transaction"}
-          description={language === 'darija' ? "Mazal madakhalti tal chi mouamala (Dépense awla Revenu)." : "Commencez à enregistrer vos dépenses et revenus pour voir l'historique de vos flux."}
+          title={t('aucuneTransaction', language)}
+          description={t('aucuneTransactionDesc', language)}
           icon={AlertCircle}
         />
       </div>
@@ -97,29 +97,29 @@ export function TransactionTable({
                 className="px-5 py-4 cursor-pointer hover:text-slate-700 transition-colors"
                 onClick={() => handleSort('date')}
               >
-                Date <SortIcon field="date" />
+                {t('date', language)} <SortIcon field="date" />
               </th>
-              <th className="px-5 py-4">Compte</th>
+              <th className="px-5 py-4">{t('account', language)}</th>
               <th 
                 className="px-5 py-4 cursor-pointer hover:text-slate-700 transition-colors"
                 onClick={() => handleSort('merchant')}
               >
-                Bénéficiaire <SortIcon field="merchant" />
+                {t('beneficiaire', language)} <SortIcon field="merchant" />
               </th>
-              <th className="px-5 py-4">Memo</th>
+              <th className="px-5 py-4">{t('memo', language)}</th>
               <th 
                 className="px-5 py-4 cursor-pointer hover:text-slate-700 transition-colors"
                 onClick={() => handleSort('category')}
               >
-                Catégorie <SortIcon field="category" />
+                {t('category', language)} <SortIcon field="category" />
               </th>
               <th 
                 className="px-5 py-4 text-right cursor-pointer hover:text-slate-700 transition-colors"
                 onClick={() => handleSort('amount')}
               >
-                Montant <SortIcon field="amount" />
+                {t('amount', language)} <SortIcon field="amount" />
               </th>
-              <th className="px-5 py-4 text-right">Actions</th>
+              <th className="px-5 py-4 text-right">{t('actions', language)}</th>
             </tr>
           </thead>
           <tbody>
@@ -129,7 +129,7 @@ export function TransactionTable({
                   {/* Sticky daily group header */}
                   <tr className="bg-slate-50/30 sticky top-0 z-10">
                     <td colSpan={7} className="px-5 py-2.5 border-y border-slate-100 text-[10px] font-black uppercase tracking-wider text-slate-500">
-                      {date} ({groupedTransactions[date].length} {groupedTransactions[date].length > 1 ? 'transactions' : 'transaction'})
+                      {date} ({groupedTransactions[date].length} {groupedTransactions[date].length > 1 ? t('transCount', language) : t('transSingle', language)})
                     </td>
                   </tr>
                   {groupedTransactions[date].map(t => (

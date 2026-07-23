@@ -4,6 +4,7 @@ import { useTransactions } from './use-transactions';
 import { useBuckets } from './use-buckets';
 import { useMoroccanEvents } from './use-moroccan-events';
 import { useTontines } from './use-tontines';
+import { useFloussiScore } from './use-floussi-score';
 import { evaluateProactiveTriggers, ProactiveMessage } from '../lib/sidi-proactive-rules';
 
 export function useSidiProactive() {
@@ -14,6 +15,7 @@ export function useSidiProactive() {
   const { buckets, loading: buckLoading } = useBuckets(userId);
   const { events, loading: evLoading } = useMoroccanEvents(userId);
   const { tontines, loading: tonLoading } = useTontines(userId);
+  const { score, isLoading: scoreLoading } = useFloussiScore(userId);
 
   const [pendingMessages, setPendingMessages] = useState<ProactiveMessage[]>([]);
   const checkIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -32,14 +34,16 @@ export function useSidiProactive() {
 
   // 2. Main function to evaluate triggers and update states
   const runEvaluation = useCallback(() => {
-    if (txLoading || buckLoading || evLoading || tonLoading) return;
+    if (txLoading || buckLoading || evLoading || tonLoading || scoreLoading) return;
 
     const newAlerts = evaluateProactiveTriggers({
       userId,
       transactions,
       buckets,
       events,
-      tontines
+      tontines,
+      floussiScoreTier: score?.tier,
+      subscriptionTier: profile?.subscription_tier
     });
 
     if (newAlerts.length > 0) {
@@ -62,7 +66,7 @@ export function useSidiProactive() {
         return combined;
       });
     }
-  }, [userId, txLoading, buckLoading, evLoading, tonLoading, transactions, buckets, events, tontines, storageKeyPending]);
+  }, [userId, txLoading, buckLoading, evLoading, tonLoading, scoreLoading, transactions, buckets, events, tontines, score?.tier, profile?.subscription_tier, storageKeyPending]);
 
   // Run evaluation when data changes (and is fully loaded)
   useEffect(() => {

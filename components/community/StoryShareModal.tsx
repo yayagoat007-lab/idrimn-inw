@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { generateAchievementStoryImage } from '../../lib/story-generator';
 import { X, Download, Share2, Sparkles, Loader2, CheckCircle2 } from 'lucide-react';
 import { useFocusTrap } from '../../hooks/use-focus-trap';
+import { Language } from '../../lib/i18n';
 
 interface StoryShareModalProps {
   isOpen: boolean;
@@ -9,7 +10,7 @@ interface StoryShareModalProps {
   goalName: string;
   targetAmount: number;
   themeId?: string;
-  lang: 'fr' | 'darija';
+  language: Language;
 }
 
 export function StoryShareModal({
@@ -18,21 +19,22 @@ export function StoryShareModal({
   goalName,
   targetAmount,
   themeId = 'default',
-  lang
+  language
 }: StoryShareModalProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [generating, setGenerating] = useState(true);
   const [shared, setShared] = useState(false);
 
   const modalRef = useFocusTrap<HTMLDivElement>({ isOpen, onClose });
+  const isDarija = language === 'darija';
 
   const t = {
-    title: lang === 'darija' ? 'Share d Story dyalk ! 🤳' : 'Partager ma Story 🤳',
-    subtitle: lang === 'darija' ? 'Fe7er b l-enjaz dyalk f Instagram, WhatsApp, or Facebook' : 'Célébrez votre discipline budgétaire avec vos amis sur vos réseaux favoris !',
-    download: lang === 'darija' ? 'Telecharger d d-Dar' : 'Télécharger l\'image',
-    shareMobile: lang === 'darija' ? 'Partager direct' : 'Partager la Story',
-    successMsg: lang === 'darija' ? 'Story t-downloadat m3a l-khir!' : 'Story prête pour le partage !',
-    generating: lang === 'darija' ? 'Kancheklo l-Story d l-batal...' : 'Génération de votre visuel Story...'
+    title: isDarija ? 'Share d Story dyalk ! 🤳' : 'Partager ma Story 🤳',
+    subtitle: isDarija ? 'Fe7er b l-enjaz dyalk f Instagram, WhatsApp, or Facebook' : 'Célébrez votre discipline budgétaire avec vos amis sur vos réseaux favoris !',
+    download: isDarija ? 'Telecharger d d-Dar' : 'Télécharger l\'image',
+    shareMobile: isDarija ? 'Partager direct' : 'Partager la Story',
+    successMsg: isDarija ? 'Story t-downloadat m3a l-khir!' : 'Story prête pour le partage !',
+    generating: isDarija ? 'Kancheklo l-Story d l-batal...' : 'Génération de votre visuel Story...'
   };
 
   // Generate the high-res canvas image whenever the goal details change

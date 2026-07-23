@@ -10,6 +10,7 @@ import {
   Camera, 
   Slash 
 } from 'lucide-react';
+import { Language } from '../../lib/i18n';
 
 interface EnrichedChallenge extends Challenge {
   joined: boolean;
@@ -20,21 +21,22 @@ interface EnrichedChallenge extends Challenge {
 
 interface ChallengeCardProps {
   challenge: EnrichedChallenge;
-  lang: 'fr' | 'darija';
+  language: Language;
   onJoin: (id: string) => void;
   onLeave: (id: string) => void;
 }
 
-export function ChallengeCard({ challenge, lang, onJoin, onLeave }: ChallengeCardProps) {
+export function ChallengeCard({ challenge, language, onJoin, onLeave }: ChallengeCardProps) {
+  const isDarija = language === 'darija';
   
   const t = {
-    join: lang === 'darija' ? 'N-sharek (Rejoindre)' : 'Participer',
-    leave: lang === 'darija' ? 'Nsse7eb (Quitter)' : 'Abandonner',
-    participants: lang === 'darija' ? 'moucharik' : 'participants',
-    completed: lang === 'darija' ? 'Kamal (Complété !)' : 'Défi Réussi !',
-    progress: lang === 'darija' ? 'Taqadom :' : 'Progression :',
-    reward: lang === 'darija' ? 'N9at XP' : 'XP à gagner',
-    daysLeft: lang === 'darija' ? 'Iyam ba9ya' : 'jours restants'
+    join: isDarija ? 'N-sharek (Rejoindre)' : 'Participer',
+    leave: isDarija ? 'Nsse7eb (Quitter)' : 'Abandonner',
+    participants: isDarija ? 'moucharik' : 'participants',
+    completed: isDarija ? 'Kamal (Complété !)' : 'Défi Réussi !',
+    progress: isDarija ? 'Taqadom :' : 'Progression :',
+    reward: isDarija ? 'N9at XP' : 'XP à gagner',
+    daysLeft: isDarija ? 'Iyam ba9ya' : 'jours restants'
   };
 
   const getChallengeIcon = () => {
@@ -105,7 +107,7 @@ export function ChallengeCard({ challenge, lang, onJoin, onLeave }: ChallengeCar
           <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-wider">
             <span>{t.progress}</span>
             <span className="font-mono font-black text-slate-700">
-              {challenge.currentValue.toFixed(0)} / {challenge.targetValue} {challenge.type === 'savings' ? 'DH' : challenge.type === 'no_spend' ? 'jours' : 'reçus'}
+              {challenge.currentValue.toFixed(0)} / {challenge.targetValue} {challenge.type === 'savings' ? 'DH' : challenge.type === 'no_spend' ? (isDarija ? 'iyyam' : 'jours') : (isDarija ? 'reçus' : 'reçus')}
             </span>
           </div>
 
@@ -125,7 +127,7 @@ export function ChallengeCard({ challenge, lang, onJoin, onLeave }: ChallengeCar
             </span>
           ) : (
             <span className="text-[9px] font-bold uppercase text-slate-400 block mt-1">
-              {challenge.progressPercent}% complété
+              {challenge.progressPercent}% {isDarija ? 'kamal' : 'complété'}
             </span>
           )}
         </div>
@@ -140,13 +142,13 @@ export function ChallengeCard({ challenge, lang, onJoin, onLeave }: ChallengeCar
 
         {challenge.completed ? (
           <div className="px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-black uppercase tracking-wider rounded-xl border border-emerald-100">
-            {lang === 'darija' ? 'Najeh 🎉' : 'Succès !'}
+            {isDarija ? 'Najeh 🎉' : 'Succès !'}
           </div>
         ) : challenge.joined ? (
           <button
             type="button"
             onClick={() => onLeave(challenge.id)}
-            className="px-3.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 text-[10px] font-black uppercase tracking-wider rounded-xl border border-rose-100 cursor-pointer transition-all"
+            className="px-3.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 text-[10px] font-black uppercase tracking-wider rounded-xl border border-rose-100 cursor-pointer transition-all text-left"
           >
             {t.leave}
           </button>
@@ -154,7 +156,7 @@ export function ChallengeCard({ challenge, lang, onJoin, onLeave }: ChallengeCar
           <button
             type="button"
             onClick={() => onJoin(challenge.id)}
-            className="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-[10px] font-black uppercase tracking-widest rounded-xl cursor-pointer transition-all shadow-xs active:scale-95"
+            className="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-[10px] font-black uppercase tracking-widest rounded-xl cursor-pointer transition-all shadow-xs active:scale-95 text-left"
           >
             {t.join}
           </button>

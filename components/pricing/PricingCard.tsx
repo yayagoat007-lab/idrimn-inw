@@ -1,6 +1,7 @@
 import React from 'react';
 import { Check, X, Sparkles } from 'lucide-react';
 import { SubscriptionTier } from '../../types';
+import { useTranslation } from '../../hooks/use-translation';
 
 export interface PricingCardProps {
   key?: React.Key;
@@ -28,6 +29,8 @@ export function PricingCard({
   isCurrent,
   onSelect
 }: PricingCardProps) {
+  const { lang } = useTranslation();
+
   return (
     <div className={`relative border rounded-3xl p-6 bg-white transition-all duration-300 flex flex-col justify-between h-full ${
       isPopular 
@@ -37,7 +40,7 @@ export function PricingCard({
       {isPopular && (
         <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-[10px] font-black uppercase px-3 py-1 rounded-full tracking-wider flex items-center gap-1">
           <Sparkles size={10} />
-          <span>Le plus populaire</span>
+          <span>{lang === 'darija' ? "Lli t-be3 bzzaf" : "Le plus populaire"}</span>
         </span>
       )}
 
@@ -79,8 +82,9 @@ export function PricingCard({
             : 'bg-slate-800 hover:bg-slate-900 text-white hover:shadow-md'
         }`}
       >
-        {isCurrent ? 'Plan Actuel' : ctaText}
+        {isCurrent ? (lang === 'darija' ? 'Plan Actuel' : 'Plan Actuel') : ctaText}
       </button>
     </div>
   );
 }
+export default PricingCard;

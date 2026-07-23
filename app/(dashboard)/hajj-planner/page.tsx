@@ -10,6 +10,7 @@ import { useGoals } from '../../../hooks/use-goals';
 import { useFamily } from '../../../hooks/use-family';
 import { useFamilyMembers } from '../../../hooks/use-family-members';
 import { useAuth } from '../../../hooks/use-auth';
+import { useTranslation } from '../../../hooks/use-translation';
 import { 
   Moon, 
   Target, 
@@ -23,12 +24,15 @@ import {
   TrendingUp,
   Award
 } from 'lucide-react';
+import { formatCurrency } from '../../../lib/utils';
 
 interface HajjPlannerPageProps {
-  language: 'fr' | 'darija';
+  language?: 'fr' | 'darija';
 }
 
-export default function HajjPlannerPage({ language }: HajjPlannerPageProps) {
+export default function HajjPlannerPage({ language: propLanguage }: HajjPlannerPageProps) {
+  const { lang } = useTranslation();
+  const language = propLanguage || lang;
   const [season, setSeason] = useState<HajjSeason>('hajj');
   const [proximity, setProximity] = useState<ProximityLevel>('mid');
   const [targetDate, setTargetDate] = useState<string>('2027-05-15');
@@ -301,10 +305,10 @@ export default function HajjPlannerPage({ language }: HajjPlannerPageProps) {
                 <div className="space-y-1">
                   <h4 className="text-xs font-black text-slate-700 uppercase tracking-wide flex items-center gap-1.5">
                     <Calendar size={13} />
-                    <span>Définir votre date cible</span>
+                    <span>{language === 'darija' ? 'Diyyar l-Ajal dyalek' : 'Définir votre date cible'}</span>
                   </h4>
                   <p className="text-[10px] text-slate-400 font-bold uppercase">
-                    Pour calibrer le compte à rebours et l'échéancier
+                    {language === 'darija' ? "Bach n9addou l-3add l-3aksi o l-jadwal dyal l-waqt" : "Pour calibrer le compte à rebours et l'échéancier"}
                   </p>
                 </div>
                 <input
@@ -322,10 +326,12 @@ export default function HajjPlannerPage({ language }: HajjPlannerPageProps) {
                   <div className="space-y-1">
                     <span className="text-[8px] uppercase tracking-widest font-black text-emerald-400 block">{t.estimatedTotal}</span>
                     <h3 className="text-xl sm:text-2xl font-black font-mono tracking-tight text-emerald-300">
-                      {estimate.total.min.toLocaleString('fr-FR')} - {estimate.total.max.toLocaleString('fr-FR')} DH
+                      {formatCurrency(estimate.total.min)} - {formatCurrency(estimate.total.max)}
                     </h3>
                     <p className="text-[9px] text-slate-300 font-bold uppercase">
-                      Calculé selon l'option choisie ({proximity === 'near' ? 'Hôtel Proche' : 'Hôtel Standard'}, {season === 'hajj' ? 'Saison Hajj' : 'Umrah'})
+                      {language === 'darija' 
+                        ? `7issab 3la 7sab l-khiyar dyalek (${proximity === 'near' ? 'Outil Qrib' : 'Outil Standard'}, ${season === 'hajj' ? 'Moussem d-Hajj' : 'Omra'})`
+                        : `Calculé selon l'option choisie (${proximity === 'near' ? 'Hôtel Proche' : 'Hôtel Standard'}, ${season === 'hajj' ? 'Saison Hajj' : 'Umrah'})`}
                     </p>
                   </div>
 
@@ -342,7 +348,7 @@ export default function HajjPlannerPage({ language }: HajjPlannerPageProps) {
                     <div className="bg-emerald-900/50 border border-emerald-800 p-3 rounded-2xl text-center shrink-0">
                       <span className="text-[9px] text-emerald-300 uppercase font-black flex items-center gap-1.5">
                         <Award size={12} />
-                        <span>Objectif Activé</span>
+                        <span>{language === 'darija' ? 'Hadaf Khaddam' : 'Objectif Activé'}</span>
                       </span>
                     </div>
                   )}
@@ -387,8 +393,8 @@ export default function HajjPlannerPage({ language }: HajjPlannerPageProps) {
                       />
                     </div>
                     <div className="flex justify-between items-center text-[10px] font-mono font-black text-slate-300">
-                      <span>{hajjGoal.current_amount.toLocaleString('fr-FR')} DH</span>
-                      <span>/ {hajjGoal.target_amount.toLocaleString('fr-FR')} DH</span>
+                      <span>{formatCurrency(hajjGoal.current_amount)}</span>
+                      <span>/ {formatCurrency(hajjGoal.target_amount)}</span>
                     </div>
                   </div>
                 </div>
@@ -409,7 +415,9 @@ export default function HajjPlannerPage({ language }: HajjPlannerPageProps) {
                 </div>
 
                 {familyLoading ? (
-                  <span className="text-[10px] text-slate-400 font-bold uppercase animate-pulse block">Chargement des membres de la famille...</span>
+                  <span className="text-[10px] text-slate-400 font-bold uppercase animate-pulse block">
+                    {language === 'darija' ? "Kandouro 3la a3da' l-3a'ila..." : "Chargement des membres de la famille..."}
+                  </span>
                 ) : (
                   <form onSubmit={handleContribute} className="space-y-3 pt-2">
                     {/* Select family member */}
@@ -433,7 +441,7 @@ export default function HajjPlannerPage({ language }: HajjPlannerPageProps) {
                     {/* Amount field */}
                     <div className="space-y-1">
                       <label className="text-[9px] uppercase font-black text-slate-400 tracking-wider block">
-                        Montant de la Contribution (DH)
+                        {language === 'darija' ? "Mablagh d-Mosahama (DH)" : "Montant de la Contribution (DH)"}
                       </label>
                       <input
                         type="number"
@@ -449,7 +457,7 @@ export default function HajjPlannerPage({ language }: HajjPlannerPageProps) {
                     {/* Note field */}
                     <div className="space-y-1">
                       <label className="text-[9px] uppercase font-black text-slate-400 tracking-wider block">
-                        Note ou Souhait (Optionnel)
+                        {language === 'darija' ? "Molahada aw Ragba (Ikhtiyari)" : "Note ou Souhait (Optionnel)"}
                       </label>
                       <input
                         type="text"
@@ -476,10 +484,12 @@ export default function HajjPlannerPage({ language }: HajjPlannerPageProps) {
             <div className="bg-white border border-slate-100 rounded-3xl p-5 shadow-3xs space-y-3">
               <h4 className="font-black text-slate-800 text-xs uppercase tracking-wider flex items-center gap-1.5">
                 <TrendingUp size={14} className="text-emerald-600" />
-                <span>Conseil Discipline</span>
+                <span>{language === 'darija' ? "Nassiha d l-Indibat" : "Conseil Discipline"}</span>
               </h4>
               <p className="text-[11px] text-slate-500 font-semibold leading-relaxed">
-                Le Hajj demande de la discipline. Activez les micro-virements automatiques sur Floussi (par exemple en arrondissant vos dépenses quotidiennes de café ou de taxi) pour accumuler votre budget sans vous en rendre compte.
+                {language === 'darija' 
+                  ? "Hajj khasso chwiya d l-indibat. Khdem l-virement automatique f Floussi (bhal t-khless b l-kard aw l-taxi o t-khali l-baqi) bach t-jme3 l-flous bla ma t-7ess."
+                  : "Le Hajj demande de la discipline. Activez les micro-virements automatiques sur Floussi (par exemple en arrondissant vos dépenses quotidiennes de café ou de taxi) pour accumuler votre budget sans vous en rendre compte."}
               </p>
             </div>
 

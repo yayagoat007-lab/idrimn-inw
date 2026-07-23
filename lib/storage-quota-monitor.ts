@@ -27,6 +27,7 @@ const CATEGORY_LABELS: Record<StorageCategory | 'unknown', { fr: string; darija:
   security: { fr: 'Sécurité, Session & Chiffrement', darija: 'S-Securité o L-Koudat' },
   onboarding: { fr: 'Tutoriels & Guides interactifs', darija: 'L-Guide dyal l-Bidaya' },
   cache_ephemeral: { fr: 'Cache & Fichiers éphémères', darija: 'Cache o l-M3loumat d-Diyala' },
+  academy: { fr: 'Académie & Leçons financières', darija: 'L-Academy o dorous l-maliya' },
   unknown: { fr: 'Autres données non répertoriées', darija: 'M3loumat khora ma 3roufach' }
 };
 
@@ -73,6 +74,7 @@ export function getStorageBreakdownByCategory(userId: string, language: 'fr' | '
     security: 0,
     onboarding: 0,
     cache_ephemeral: 0,
+    academy: 0,
     unknown: 0
   };
 

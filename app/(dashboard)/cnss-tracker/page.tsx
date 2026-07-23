@@ -7,6 +7,7 @@ import {
   TNR_TABLE 
 } from '../../../lib/cnss-calculator';
 import { EmptyState } from '../../../components/shared/EmptyState';
+import { useTranslation } from '../../../hooks/use-translation';
 import { 
   ShieldAlert, 
   Plus, 
@@ -20,6 +21,7 @@ import {
   Trash2,
   AlertTriangle
 } from 'lucide-react';
+import { formatCurrency } from '../../../lib/utils';
 
 interface Dossier {
   id: string;
@@ -32,7 +34,13 @@ interface Dossier {
   actualRefund?: number;
 }
 
-export default function CnssTrackerPage({ language }: { language: 'fr' | 'darija' }) {
+interface CnssTrackerPageProps {
+  language?: 'fr' | 'darija';
+}
+
+export default function CnssTrackerPage({ language: propLanguage }: CnssTrackerPageProps) {
+  const { lang } = useTranslation();
+  const language = propLanguage || lang;
   const [dossiers, setDossiers] = useState<Dossier[]>([]);
   const [showForm, setShowForm] = useState(false);
 
@@ -238,7 +246,7 @@ export default function CnssTrackerPage({ language }: { language: 'fr' | 'darija
             </div>
             <div>
               <span className="text-[8px] uppercase font-black text-slate-400 block">{t.statsPending}</span>
-              <span className="text-xl font-black font-mono text-amber-600">+{pendingRefundAmount.toLocaleString('fr-FR')} DH</span>
+              <span className="text-xl font-black font-mono text-amber-600">+{formatCurrency(pendingRefundAmount)}</span>
             </div>
           </div>
 
@@ -248,7 +256,7 @@ export default function CnssTrackerPage({ language }: { language: 'fr' | 'darija
             </div>
             <div>
               <span className="text-[8px] uppercase font-black text-slate-400 block">{t.statsRefunded}</span>
-              <span className="text-xl font-black font-mono text-emerald-600">{totalRefundedAmount.toLocaleString('fr-FR')} DH</span>
+              <span className="text-xl font-black font-mono text-emerald-600">{formatCurrency(totalRefundedAmount)}</span>
             </div>
           </div>
         </div>
@@ -267,12 +275,12 @@ export default function CnssTrackerPage({ language }: { language: 'fr' | 'darija
               <div className="md:col-span-1 space-y-4 border-r border-slate-100 pr-0 md:pr-6">
                 <div className="space-y-1">
                   <label className="text-[10px] uppercase font-black text-slate-400 tracking-wider">
-                    Nom du Dossier (Ex: Dentiste Imane)
+                    {language === 'darija' ? "Smiya d l-Dossier (Mital: Tbib d s-Snan Imane)" : "Nom du Dossier (Ex: Dentiste Imane)"}
                   </label>
                   <input
                     type="text"
                     required
-                    placeholder="Saisissez un titre explicite"
+                    placeholder={language === 'darija' ? "Kteb smiya dyal l-dossier" : "Saisissez un titre explicite"}
                     value={dossierName}
                     onChange={(e) => setDossierName(e.target.value)}
                     className="w-full bg-slate-50 border border-slate-150 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 focus:outline-hidden focus:border-emerald-500 transition-all"
@@ -293,7 +301,7 @@ export default function CnssTrackerPage({ language }: { language: 'fr' | 'darija
                           : 'bg-slate-50 border-slate-150 text-slate-600'
                       }`}
                     >
-                      CNSS (Salarie)
+                      {language === 'darija' ? 'CNSS (Khaddam)' : 'CNSS (Salarie)'}
                     </button>
                     <button
                       type="button"
@@ -304,14 +312,14 @@ export default function CnssTrackerPage({ language }: { language: 'fr' | 'darija
                           : 'bg-slate-50 border-slate-150 text-slate-600'
                       }`}
                     >
-                      CNOPS (Public)
+                      {language === 'darija' ? 'CNOPS (Moukaddem)' : 'CNOPS (Public)'}
                     </button>
                   </div>
                 </div>
 
                 <div className="space-y-1">
                   <label className="text-[10px] uppercase font-black text-slate-400 tracking-wider">
-                    Date de dépôt
+                    {language === 'darija' ? "Nhass d-dfa3" : "Date de dépôt"}
                   </label>
                   <input
                     type="date"
@@ -324,7 +332,9 @@ export default function CnssTrackerPage({ language }: { language: 'fr' | 'darija
 
               {/* Acts construction panel */}
               <div className="md:col-span-1 space-y-4">
-                <span className="text-[10px] uppercase font-black text-slate-400 tracking-widest block">Actes médicaux à inclure</span>
+                <span className="text-[10px] uppercase font-black text-slate-400 tracking-widest block">
+                  {language === 'darija' ? "L-a3mal l-tibbiya li ghadi t-zid" : "Actes médicaux à inclure"}
+                </span>
                 
                 <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 space-y-3">
                   <div className="space-y-1">
@@ -336,11 +346,11 @@ export default function CnssTrackerPage({ language }: { language: 'fr' | 'darija
                       onChange={(e) => setActType(e.target.value as ActType)}
                       className="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 text-xs font-semibold text-slate-700 focus:outline-hidden"
                     >
-                      <option value="generalist">Consultation Généraliste (TNR 80-150 DH)</option>
-                      <option value="specialist">Consultation Spécialiste (TNR 150-250 DH)</option>
-                      <option value="hospital_public">Hôpital Public (TNR 150 DH/jour)</option>
-                      <option value="hospital_private">Clinique Privée (TNR 600 DH/jour)</option>
-                      <option value="pharma">Pharmacie / Médicaments</option>
+                      <option value="generalist">{language === 'darija' ? "Consultation Généraliste (TNR 80-150 DH)" : "Consultation Généraliste (TNR 80-150 DH)"}</option>
+                      <option value="specialist">{language === 'darija' ? "Consultation Spécialiste (TNR 150-250 DH)" : "Consultation Spécialiste (TNR 150-250 DH)"}</option>
+                      <option value="hospital_public">{language === 'darija' ? "Sbitar l-Makhzen (TNR 150 DH/nhar)" : "Hôpital Public (TNR 150 DH/jour)"}</option>
+                      <option value="hospital_private">{language === 'darija' ? "Sbitar l-Khass (TNR 600 DH/nhar)" : "Clinique Privée (TNR 600 DH/jour)"}</option>
+                      <option value="pharma">{language === 'darija' ? "Pharma / Dwa" : "Pharmacie / Médicaments"}</option>
                     </select>
                   </div>
 
@@ -360,7 +370,7 @@ export default function CnssTrackerPage({ language }: { language: 'fr' | 'darija
                   {(actType === 'hospital_public' || actType === 'hospital_private') && (
                     <div className="space-y-1">
                       <label className="text-[9px] uppercase font-black text-slate-400 tracking-wider">
-                        Nombre de jours
+                        {language === 'darija' ? "3adad l-ayam" : "Nombre de jours"}
                       </label>
                       <input
                         type="number"
@@ -385,11 +395,15 @@ export default function CnssTrackerPage({ language }: { language: 'fr' | 'darija
               {/* Estimations Summary & Save */}
               <div className="md:col-span-1 space-y-4 flex flex-col justify-between">
                 <div>
-                  <span className="text-[10px] uppercase font-black text-slate-400 tracking-widest block mb-2">Simulateur de remboursement</span>
+                  <span className="text-[10px] uppercase font-black text-slate-400 tracking-widest block mb-2">
+                    {language === 'darija' ? "7issab d l-istirdad dyalek" : "Simulateur de remboursement"}
+                  </span>
                   
                   {currentActs.length === 0 ? (
                     <div className="bg-slate-50 border border-dashed border-slate-200 p-6 rounded-2xl text-center">
-                      <span className="text-[10px] text-slate-400 font-bold uppercase leading-relaxed">Aucun acte ajouté. Ajoutez des actes pour simuler.</span>
+                      <span className="text-[10px] text-slate-400 font-bold uppercase leading-relaxed">
+                        {language === 'darija' ? "Hta act mamazoudch. Zid chi act bach n9addou l-istirdad." : "Aucun acte ajouté. Ajoutez des actes pour simuler."}
+                      </span>
                     </div>
                   ) : (
                     <div className="space-y-3">
@@ -414,7 +428,7 @@ export default function CnssTrackerPage({ language }: { language: 'fr' | 'darija
                       {/* Display calculations */}
                       <div className="bg-emerald-950 text-white p-4 rounded-2xl space-y-2 relative overflow-hidden shadow-xs">
                         <div className="flex justify-between items-center text-[10px] font-mono text-emerald-300">
-                          <span>Total Payé:</span>
+                          <span>{language === 'darija' ? "Total khallasti:" : "Total Payé:"}</span>
                           <span className="font-bold">{currentCalc.totalPaid} DH</span>
                         </div>
                         <div className="flex justify-between items-center text-xs font-mono text-emerald-400 font-black">
@@ -435,7 +449,7 @@ export default function CnssTrackerPage({ language }: { language: 'fr' | 'darija
                   disabled={currentActs.length === 0}
                   className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black uppercase tracking-widest rounded-2xl cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
-                  Valider et Enregistrer le Dossier
+                  {language === 'darija' ? "Sajel o hfadh l-Dossier" : "Valider et Enregistrer le Dossier"}
                 </button>
               </div>
 
@@ -447,7 +461,11 @@ export default function CnssTrackerPage({ language }: { language: 'fr' | 'darija
         <div className="bg-white border border-slate-100 rounded-3xl p-5 shadow-3xs space-y-4" id="cnss-dossiers-list">
           <h2 className="font-black text-slate-800 text-xs uppercase tracking-wider flex items-center gap-2">
             <FileText size={16} className="text-emerald-600" />
-            <span>Vos dossiers en cours & historiques ({dossiers.length})</span>
+            <span>
+              {language === 'darija' 
+                ? `Dossierat dyalek o l-arshif (${dossiers.length})`
+                : `Vos dossiers en cours & historiques (${dossiers.length})`}
+            </span>
           </h2>
 
           {dossiers.length === 0 ? (
@@ -495,13 +513,17 @@ export default function CnssTrackerPage({ language }: { language: 'fr' | 'darija
                     <div className="flex items-center gap-6 shrink-0 flex-wrap md:flex-nowrap">
                       
                       <div className="text-right font-mono text-xs">
-                        <span className="text-[8px] uppercase font-black text-slate-400 block">Est. Remboursement</span>
+                        <span className="text-[8px] uppercase font-black text-slate-400 block">
+                          {language === 'darija' ? "T-9dir d-Rjou3" : "Est. Remboursement"}
+                        </span>
                         <span className="font-extrabold text-emerald-600">+{d.estimatedRefund} DH</span>
                       </div>
 
                       {d.status === 'refunded' && (
                         <div className="text-right font-mono text-xs">
-                          <span className="text-[8px] uppercase font-black text-slate-400 block">Montant Reçu</span>
+                          <span className="text-[8px] uppercase font-black text-slate-400 block">
+                            {language === 'darija' ? "Mablagh li rje3" : "Montant Reçu"}
+                          </span>
                           <span className="font-extrabold text-blue-600">+{actualVal} DH</span>
                         </div>
                       )}
@@ -513,7 +535,7 @@ export default function CnssTrackerPage({ language }: { language: 'fr' | 'darija
                             onClick={() => handleUpdateStatus(d.id, 'processing')}
                             className="px-2 py-1 rounded-md text-[9px] font-black uppercase bg-amber-50 text-amber-700 border border-amber-200 cursor-pointer"
                           >
-                            Passer en traitement
+                            {language === 'darija' ? "Passer en traitement" : "Passer en traitement"}
                           </button>
                         )}
                         {d.status === 'processing' && (
@@ -521,7 +543,7 @@ export default function CnssTrackerPage({ language }: { language: 'fr' | 'darija
                             onClick={() => handleUpdateStatus(d.id, 'refunded')}
                             className="px-2 py-1 rounded-md text-[9px] font-black uppercase bg-emerald-50 text-emerald-700 border border-emerald-200 cursor-pointer"
                           >
-                            Valider remboursement
+                            {language === 'darija' ? "Sadeq 3la r-rjou3" : "Valider remboursement"}
                           </button>
                         )}
                         {d.status === 'refunded' ? (
@@ -532,12 +554,12 @@ export default function CnssTrackerPage({ language }: { language: 'fr' | 'darija
                         ) : d.status === 'processing' ? (
                           <span className="px-2.5 py-1.5 rounded-full text-[9px] font-black uppercase bg-amber-100 text-amber-800 flex items-center gap-1">
                             <Clock size={10} />
-                            <span>AMO Traitement</span>
+                            <span>{language === 'darija' ? "AMO f l-Khidma" : "AMO Traitement"}</span>
                           </span>
                         ) : (
                           <span className="px-2.5 py-1.5 rounded-full text-[9px] font-black uppercase bg-slate-100 text-slate-600 flex items-center gap-1">
                             <Clock size={10} />
-                            <span>Dossier Déposé</span>
+                            <span>{language === 'darija' ? "Dossier Mdfou3" : "Dossier Déposé"}</span>
                           </span>
                         )}
 

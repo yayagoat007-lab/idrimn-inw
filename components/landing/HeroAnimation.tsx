@@ -1,6 +1,9 @@
 import React from 'react';
+import { useTranslation } from '../../hooks/use-translation';
 
 export function HeroAnimation() {
+  const { lang } = useTranslation();
+
   return (
     <div className="relative w-full max-w-md mx-auto aspect-square bg-gradient-to-br from-emerald-50 to-teal-50/40 rounded-3xl border border-emerald-100/50 p-6 flex flex-col justify-between overflow-hidden shadow-xs">
       
@@ -22,9 +25,11 @@ export function HeroAnimation() {
 
       <div className="text-center pt-8 z-10">
         <span className="text-[10px] bg-emerald-150 text-emerald-800 font-extrabold px-3 py-1 rounded-full uppercase tracking-widest border border-emerald-200">
-          Méthode des Enveloppes
+          {lang === 'darija' ? "Tariqat l-Enveloppes" : "Méthode des Enveloppes"}
         </span>
-        <h4 className="text-sm font-black text-slate-800 mt-2">Visualisez vos économies d'un coup d'œil</h4>
+        <h4 className="text-sm font-black text-slate-800 mt-2">
+          {lang === 'darija' ? "Chouf l-iddikhar dyalk b-chewfa wehda" : "Visualisez vos économies d'un coup d'œil"}
+        </h4>
       </div>
 
       {/* Labeled Buckets */}
@@ -32,7 +37,7 @@ export function HeroAnimation() {
         <div className="bg-white border border-slate-100 rounded-2xl p-3 text-center shadow-xs flex flex-col items-center justify-between h-32 hover:scale-105 transition-transform duration-300">
           <span className="text-xl">🥩</span>
           <div className="space-y-1">
-            <p className="text-[9px] font-black text-slate-700 uppercase tracking-tight">Masrouf</p>
+            <p className="text-[9px] font-black text-slate-700 uppercase tracking-tight">{lang === 'darija' ? "Masrouf" : "Masrouf"}</p>
             <p className="text-xs font-extrabold text-emerald-600">300 DH</p>
           </div>
           <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
@@ -43,7 +48,7 @@ export function HeroAnimation() {
         <div className="bg-white border border-slate-100 rounded-2xl p-3 text-center shadow-xs flex flex-col items-center justify-between h-32 hover:scale-105 transition-transform duration-300 relative">
           <span className="text-xl">🐏</span>
           <div className="space-y-1">
-            <p className="text-[9px] font-black text-slate-700 uppercase tracking-tight">Aïd Al Adha</p>
+            <p className="text-[9px] font-black text-slate-700 uppercase tracking-tight">{lang === 'darija' ? "Aïd Al Adha" : "Aïd Al Adha"}</p>
             <p className="text-xs font-extrabold text-amber-600">1 500 DH</p>
           </div>
           <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
@@ -54,7 +59,7 @@ export function HeroAnimation() {
         <div className="bg-white border border-slate-100 rounded-2xl p-3 text-center shadow-xs flex flex-col items-center justify-between h-32 hover:scale-105 transition-transform duration-300">
           <span className="text-xl">🏠</span>
           <div className="space-y-1">
-            <p className="text-[9px] font-black text-slate-700 uppercase tracking-tight">Kraydar</p>
+            <p className="text-[9px] font-black text-slate-700 uppercase tracking-tight">{lang === 'darija' ? "Kraydar" : "Kraydar"}</p>
             <p className="text-xs font-extrabold text-blue-600">2 000 DH</p>
           </div>
           <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">

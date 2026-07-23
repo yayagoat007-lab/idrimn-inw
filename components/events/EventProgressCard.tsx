@@ -1,6 +1,7 @@
 import React from 'react';
 import { MoroccanEvent } from '../../types';
 import { formatCurrency } from '../../lib/utils';
+import { useTranslation } from '../../hooks/use-translation';
 import { HijriDateDisplay } from '../shared/HijriDateDisplay';
 import { CountdownBadge } from '../shared/CountdownBadge';
 import { 
@@ -15,6 +16,7 @@ interface EventProgressCardProps {
   onDuplicate: (id: string) => void;
   onEdit: (event: MoroccanEvent) => void;
   onDelete: (id: string) => void;
+  language?: 'fr' | 'darija';
 }
 
 export function EventProgressCard({
@@ -23,9 +25,23 @@ export function EventProgressCard({
   onContribute,
   onDuplicate,
   onEdit,
-  onDelete
+  onDelete,
+  language: propLanguage
 }: EventProgressCardProps) {
+  const { lang } = useTranslation();
+  const language = propLanguage || lang;
   const formatMAD = (val: number) => formatCurrency(val, 'fr').replace('MAD', 'DH');
+
+  const getEventLabel = (type: string) => {
+    switch (type) {
+      case 'ramadan': return 'Ramadan';
+      case 'aid_al_fitr': return language === 'darija' ? 'Eid s-Sghir' : 'Aïd al-Fitr (Sghir)';
+      case 'aid_al_adha': return language === 'darija' ? 'Eid l-Kbir' : 'Aïd al-Adha (Kbir)';
+      case 'mawlid': return language === 'darija' ? 'Mawlid Nabawi' : 'Mawlid al-Nabawi';
+      case 'hijri_new_year': return language === 'darija' ? 'Fatih Moharram' : 'Nouvel an Hijri';
+      default: return language === 'darija' ? 'Monasaba khassa' : 'Événement Familial';
+    }
+  };
 
   const allocated = event.budget_allocated;
   const spent = event.budget_spent;
@@ -42,11 +58,11 @@ export function EventProgressCard({
       <div className="flex justify-between items-start gap-4 pb-3 border-b border-slate-100">
         <div>
           <span className="text-[9px] bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
-            {event.type}
+            {getEventLabel(event.type)}
           </span>
           <h3 className="text-sm font-black text-slate-800 tracking-tight mt-1">{event.name}</h3>
           <p className="text-[10px] text-slate-400 font-bold">
-            Période : {new Date(event.start_date).toLocaleDateString('fr-FR')} - {new Date(event.end_date).toLocaleDateString('fr-FR')}
+            {language === 'darija' ? "Modda : " : "Période : "} {new Date(event.start_date).toLocaleDateString('fr-FR')} - {new Date(event.end_date).toLocaleDateString('fr-FR')}
           </p>
         </div>
 
@@ -60,11 +76,15 @@ export function EventProgressCard({
       <div className="space-y-3">
         <div className="flex justify-between items-end text-xs font-bold">
           <div className="space-y-0.5">
-            <span className="block text-[9px] text-slate-400 uppercase font-bold">Masrouf dépensé</span>
+            <span className="block text-[9px] text-slate-400 uppercase font-bold">
+              {language === 'darija' ? "Lli tsref" : "Masrouf dépensé"}
+            </span>
             <span className="text-slate-800 font-mono font-black">{formatMAD(spent)}</span>
           </div>
           <div className="text-right space-y-0.5">
-            <span className="block text-[9px] text-slate-400 uppercase font-bold">Cagnotte allouée</span>
+            <span className="block text-[9px] text-slate-400 uppercase font-bold">
+              {language === 'darija' ? "L-Cagnotte dyal l-monasaba" : "Cagnotte allouée"}
+            </span>
             <span className="text-slate-700 font-mono font-black">{formatMAD(allocated)}</span>
           </div>
         </div>
@@ -78,14 +98,20 @@ export function EventProgressCard({
         </div>
 
         <div className="flex justify-between items-center text-[10px] font-bold">
-          <span className="text-slate-400">Reste : {formatMAD(remaining)}</span>
-          <span className={ratio > 100 ? "text-rose-500" : "text-emerald-600"}>{ratio.toFixed(0)}% consommé</span>
+          <span className="text-slate-400">
+            {language === 'darija' ? "Khass : " : "Reste : "}{formatMAD(remaining)}
+          </span>
+          <span className={ratio > 100 ? "text-rose-500" : "text-emerald-600"}>
+            {ratio.toFixed(0)}% {language === 'darija' ? "tsref" : "consommé"}
+          </span>
         </div>
       </div>
 
       {event.notes && (
         <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 text-xs">
-          <span className="block text-[9px] uppercase font-bold text-slate-400 mb-1">Détails d'organisation</span>
+          <span className="block text-[9px] uppercase font-bold text-slate-400 mb-1">
+            {language === 'darija' ? "Details d t-tandim" : "Détails d'organisation"}
+          </span>
           <p className="text-slate-600 font-semibold leading-relaxed">{event.notes}</p>
         </div>
       )}
@@ -98,7 +124,7 @@ export function EventProgressCard({
           className="flex-1 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-xl py-2 px-3 text-xs font-black tracking-wide shadow-md shadow-emerald-500/10 hover:opacity-95 transition-all flex items-center justify-center gap-1.5"
         >
           <PiggyBank className="w-4 h-4" />
-          <span>Alimenter la cagnotte</span>
+          <span>{language === 'darija' ? "Zid f s-sandoq" : "Alimenter la cagnotte"}</span>
         </button>
 
         {/* secondary actions */}

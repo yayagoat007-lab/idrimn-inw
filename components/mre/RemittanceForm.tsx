@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { SUPPORTED_CURRENCIES, getMREPreference, convertToMAD, getExchangeRates } from '../../lib/currency-exchange';
 import { Send, Plus, ArrowRightLeft, RefreshCw, CheckCircle } from 'lucide-react';
+import { formatCurrency } from '../../lib/utils';
+import { t } from '../../lib/i18n';
 
 interface RemittanceFormProps {
   language: 'fr' | 'darija';
@@ -9,8 +11,6 @@ interface RemittanceFormProps {
 }
 
 export function RemittanceForm({ language, onAddSuccess, isLoading = false }: RemittanceFormProps) {
-  const isDarija = language === 'darija';
-  
   const [pref, setPref] = useState({ enabled: true, currency: 'EUR' });
   const [amountForeign, setAmountForeign] = useState('');
   const [foreignCurrency, setForeignCurrency] = useState('EUR');
@@ -65,7 +65,7 @@ export function RemittanceForm({ language, onAddSuccess, isLoading = false }: Re
     setPurpose('');
     setIsRecurring(false);
 
-    setSuccessMsg(isDarija ? 'تم تسجيل التحويل بنجاح وبقيد المعاملات!' : 'Envoi enregistré avec succès dans votre budget !');
+    setSuccessMsg(t('remittanceLoggedSuccess', language));
     setTimeout(() => setSuccessMsg(''), 4000);
   };
 
@@ -74,10 +74,10 @@ export function RemittanceForm({ language, onAddSuccess, isLoading = false }: Re
       <div className="space-y-1">
         <h4 className="text-sm font-black text-slate-900 tracking-tight flex items-center gap-2">
           <Send id="remittance-send-icon" size={16} className="text-emerald-600 rotate-[-15deg]" />
-          {isDarija ? 'تسجيل إرسال أموال (Remise)' : 'Enregistrer une remise familiale'}
+          {t('logRemittanceTitle', language)}
         </h4>
         <p className="text-[10px] text-slate-400 font-semibold">
-          {isDarija ? 'سجل حوالة جديدة لعائلتك ليتم احتسابها تلقائيا في ميزانيتك' : 'Enregistrez un envoi d\'argent au Maroc pour déduire automatiquement de vos comptes.'}
+          {t('logRemittanceDesc', language)}
         </p>
       </div>
 
@@ -92,7 +92,7 @@ export function RemittanceForm({ language, onAddSuccess, isLoading = false }: Re
         {/* Foreign Amount */}
         <div className="space-y-1">
           <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">
-            {isDarija ? 'القدر بالعملة الصعبة' : 'Montant Devise'}
+            {t('foreignAmountLabel', language)}
           </label>
           <div className="relative">
             <input
@@ -121,7 +121,7 @@ export function RemittanceForm({ language, onAddSuccess, isLoading = false }: Re
         {/* Exchange Rate (Readonly or editable) */}
         <div className="space-y-1">
           <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">
-            {isDarija ? 'سعر الصرف المستخدم' : 'Taux de change (MAD)'}
+            {t('exchangeRateUsedLabel', language)}
           </label>
           <input
             id="exchange-rate-used-input"
@@ -139,10 +139,10 @@ export function RemittanceForm({ language, onAddSuccess, isLoading = false }: Re
         <div id="conversion-preview-box" className="p-3 bg-emerald-50/50 border border-emerald-100/60 rounded-2xl flex items-center justify-between text-xs font-extrabold text-emerald-900">
           <span className="flex items-center gap-1">
             <ArrowRightLeft size={13} className="text-emerald-600" />
-            {isDarija ? 'المقابل بالدرهم المغربي :' : 'Contre-valeur estimée :'}
+            {t('estimatedCounterValue', language)}
           </span>
           <span className="text-sm font-black">
-            {amountMAD.toLocaleString('fr-MA', { minimumFractionDigits: 2 })} DH
+            {formatCurrency(amountMAD)}
           </span>
         </div>
       )}
@@ -152,7 +152,7 @@ export function RemittanceForm({ language, onAddSuccess, isLoading = false }: Re
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">
-              {isDarija ? 'إسم المستفيد' : 'Nom du bénéficiaire'}
+              {t('recipientNameLabel', language)}
             </label>
             <input
               id="recipient-name-input"
@@ -160,14 +160,14 @@ export function RemittanceForm({ language, onAddSuccess, isLoading = false }: Re
               required
               value={recipientName}
               onChange={(e) => setRecipientName(e.target.value)}
-              placeholder={isDarija ? 'مثلا: الوالدة، فاطمة...' : 'ex: Maman, Conjoint...'}
+              placeholder={language === 'darija' ? 'مثلا: الوالدة، فاطمة...' : 'ex: Maman, Conjoint...'}
               className="w-full px-3 py-2 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-600 focus:bg-white"
             />
           </div>
 
           <div className="space-y-1">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">
-              {isDarija ? 'القرابة' : 'Relation'}
+              {t('recipientRelationLabel', language)}
             </label>
             <select
               id="recipient-relation-select"
@@ -175,10 +175,10 @@ export function RemittanceForm({ language, onAddSuccess, isLoading = false }: Re
               onChange={(e) => setRecipientRelation(e.target.value as any)}
               className="w-full px-3 py-2 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-600 focus:bg-white"
             >
-              <option value="parent">{isDarija ? 'أب / أم (Parent)' : 'Parent'}</option>
-              <option value="conjoint">{isDarija ? 'زوج / زوجة (Conjoint)' : 'Époux / Épouse'}</option>
-              <option value="enfant">{isDarija ? 'ولد / بنت (Enfant)' : 'Enfant'}</option>
-              <option value="autre">{isDarija ? 'آخر (Autre)' : 'Autre'}</option>
+              <option value="parent">{t('relationParent', language)}</option>
+              <option value="conjoint">{t('relationConjoint', language)}</option>
+              <option value="enfant">{t('relationEnfant', language)}</option>
+              <option value="autre">{t('relationAutre', language)}</option>
             </select>
           </div>
         </div>
@@ -186,7 +186,7 @@ export function RemittanceForm({ language, onAddSuccess, isLoading = false }: Re
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">
-              {isDarija ? 'طريقة الإرسال' : 'Méthode de transfert'}
+              {t('transferMethodLabel', language)}
             </label>
             <select
               id="remittance-method-select"
@@ -194,23 +194,23 @@ export function RemittanceForm({ language, onAddSuccess, isLoading = false }: Re
               onChange={(e) => setMethod(e.target.value as any)}
               className="w-full px-3 py-2 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-600 focus:bg-white"
             >
-              <option value="virement">{isDarija ? 'تحويل بنكي' : 'Virement bancaire'}</option>
+              <option value="virement">{t('methodVirement', language)}</option>
               <option value="wafacash">Wafacash</option>
               <option value="cashplus">Cash Plus</option>
-              <option value="autre">{isDarija ? 'طريقة أخرى' : 'Autre agency / Cash'}</option>
+              <option value="autre">{t('methodAutreAgency', language)}</option>
             </select>
           </div>
 
           <div className="space-y-1">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">
-              {isDarija ? 'الغرض (اختياري)' : 'Objet (Optionnel)'}
+              {t('optionalPurposeLabel', language)}
             </label>
             <input
               id="remittance-purpose-input"
               type="text"
               value={purpose}
               onChange={(e) => setPurpose(e.target.value)}
-              placeholder={isDarija ? 'مثال: الكراء، التقدية...' : 'ex: Loyer, Hanout...'}
+              placeholder={language === 'darija' ? 'مثال: الكراء، التقدية...' : 'ex: Loyer, Hanout...'}
               className="w-full px-3 py-2 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-600 focus:bg-white"
             />
           </div>
@@ -221,10 +221,10 @@ export function RemittanceForm({ language, onAddSuccess, isLoading = false }: Re
       <div className="pt-1 flex items-center justify-between">
         <div className="space-y-0.5">
           <span className="text-xs font-extrabold text-slate-700 block">
-            {isDarija ? 'إرسال متكرر؟' : 'Envoi automatique récurrent ?'}
+            {t('recurringTransferLabel', language)}
           </span>
           <span className="text-[10px] text-slate-400 font-semibold block">
-            {isDarija ? 'تكرار هذا التحويل تلقائيا كل شهر' : 'Planifier cet envoi de manière récurrente'}
+            {t('recurringTransferDesc', language)}
           </span>
         </div>
         <label className="relative inline-flex items-center cursor-pointer">
@@ -242,7 +242,7 @@ export function RemittanceForm({ language, onAddSuccess, isLoading = false }: Re
       {isRecurring && (
         <div id="recurrence-freq-box" className="p-3 bg-slate-50 border border-slate-100 rounded-2xl flex items-center gap-3">
           <span className="text-[10px] font-black text-slate-400 uppercase block tracking-wider">
-            {isDarija ? 'التردد' : 'Fréquence'}
+            {t('remittanceFrequencyLabel', language)}
           </span>
           <select
             id="recurrence-freq-select"
@@ -250,9 +250,9 @@ export function RemittanceForm({ language, onAddSuccess, isLoading = false }: Re
             onChange={(e) => setRecurringFrequency(e.target.value)}
             className="px-3 py-1 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700"
           >
-            <option value="weekly">{isDarija ? 'أسبوعيا' : 'Hebdomadaire'}</option>
-            <option value="monthly">{isDarija ? 'شهريا' : 'Mensuel'}</option>
-            <option value="quarterly">{isDarija ? 'كل 3 أشهر' : 'Trimestriel'}</option>
+            <option value="weekly">{t('weekly', language)}</option>
+            <option value="monthly">{t('monthly', language)}</option>
+            <option value="quarterly">{t('trimestriel', language)}</option>
           </select>
         </div>
       )}
@@ -269,7 +269,7 @@ export function RemittanceForm({ language, onAddSuccess, isLoading = false }: Re
         ) : (
           <Plus size={14} />
         )}
-        <span>{isDarija ? 'تسجيل الإرسال' : 'Ajouter la remise'}</span>
+        <span>{t('addRemittanceButton', language)}</span>
       </button>
     </form>
   );

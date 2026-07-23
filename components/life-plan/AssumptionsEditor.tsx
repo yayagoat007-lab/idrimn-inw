@@ -1,20 +1,23 @@
 import React from 'react';
 import { Assumptions } from '../../hooks/use-long-term-plan';
 import { Settings, Shield, RefreshCw, Sparkles, TrendingUp, HelpCircle } from 'lucide-react';
+import { useTranslation } from '../../hooks/use-translation';
 
 interface AssumptionsEditorProps {
   assumptions: Assumptions;
   onUpdate: (newAssumptions: Partial<Assumptions>) => void;
   onReset: () => void;
-  language: 'fr' | 'darija';
+  language?: 'fr' | 'darija';
 }
 
 export function AssumptionsEditor({
   assumptions,
   onUpdate,
   onReset,
-  language,
+  language: propLanguage,
 }: AssumptionsEditorProps) {
+  const { lang } = useTranslation();
+  const language = propLanguage || lang;
   
   const handleInputChange = (field: keyof Assumptions, val: string | number) => {
     onUpdate({ [field]: val });
@@ -187,7 +190,7 @@ export function AssumptionsEditor({
                     : 'text-slate-500 hover:text-slate-800'
                 }`}
               >
-                {scen === 'prudent' ? 'Prudent' : scen === 'balanced' ? 'Balanced' : 'Dynamic'}
+                {scen === 'prudent' ? t.prudent : scen === 'balanced' ? t.balanced : t.dynamic}
               </button>
             ))}
           </div>

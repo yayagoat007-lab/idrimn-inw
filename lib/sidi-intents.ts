@@ -322,6 +322,298 @@ export const SIDI_INTENTS: Intent[] = [
     keywords: ["conseil", "epargner", "nwffer", "nkhbi", "nassiha", "astuces"],
     category: "savings",
     description: "Demander des astuces de sagesse budgétaire marocaine"
+  },
+  {
+    id: "check_wallet_balance",
+    patterns: [
+      /\bwallet\b/i,
+      /\bsolde wallet\b/i,
+      /\bportefeuille\b/i,
+      /\bflous.*wallet\b/i,
+      /\bsolde.*wallet\b/i
+    ],
+    keywords: ["wallet", "portefeuille", "solde", "flous", "compte"],
+    category: "finance",
+    description: "Vérifier le solde de son wallet"
+  },
+  {
+    id: "send_p2p_transfer",
+    patterns: [
+      /\benvoie\b/i,
+      /\btransfert\b/i,
+      /\bsift\b/i,
+      /\bpath\b/i,
+      /\btransferer\b/i,
+      /\benvoyer\b/i
+    ],
+    keywords: ["envoie", "transfert", "sift", "payer", "envoyer"],
+    category: "social",
+    description: "Envoyer un transfert d'argent à un proche"
+  },
+  {
+    id: "pay_bill_via_sidi",
+    patterns: [
+      /\bfacture\b/i,
+      /\bkhlass.*do\b/i,
+      /\bkhlass.*lma\b/i,
+      /\bpaye.*facture\b/i,
+      /\bregle.*facture\b/i
+    ],
+    keywords: ["facture", "paye", "regle", "lydec", "onee", "iam", "telecom"],
+    category: "finance",
+    description: "Payer des factures"
+  },
+  {
+    id: "recharge_via_sidi",
+    patterns: [
+      /\brecharge\b/i,
+      /\biam.*recharge\b/i,
+      /\borange.*recharge\b/i,
+      /\binwi.*recharge\b/i,
+      /\bta3bia\b/i,
+      /\bta3bi2a\b/i
+    ],
+    keywords: ["recharge", "orange", "iam", "inwi", "ta3bia"],
+    category: "finance",
+    description: "Recharger une ligne de téléphone"
+  },
+  {
+    id: "check_roundup_savings",
+    patterns: [
+      /\barrondi\b/i,
+      /\bepargne.*micro\b/i,
+      /\bsave.*roundup\b/i,
+      /\bkhb.*arrondi\b/i,
+      /\broundup\b/i,
+      /\bround-up\b/i
+    ],
+    keywords: ["arrondi", "micro", "epargne", "economise", "micro-epargne"],
+    category: "savings",
+    description: "Vérifier l'épargne via arrondi"
+  },
+  {
+    id: "check_remittance_history",
+    patterns: [
+      /\benvois.*argent\b/i,
+      /\bremises\b/i,
+      /\bremittance\b/i,
+      /\bmes.*transferts\b/i,
+      /\bmes.*envois\b/i,
+      /\b remittances\b/i
+    ],
+    keywords: ["remittance", "envois", "transferts", "famille", "mre"],
+    category: "social",
+    description: "Vérifier l'historique des envois d'argent MRE"
+  },
+  {
+    id: "check_family_budget_remote",
+    patterns: [
+      /\bbudget.*famille\b/i,
+      /\bdépenses.*foyer\b/i,
+      /\bdar.* remote\b/i,
+      /\bbudget.*foyer\b/i,
+      /\bmasrouf.*dar\b/i
+    ],
+    keywords: ["famille", "foyer", "remote", "dépenses", "maison"],
+    category: "social",
+    description: "Vérifier le budget du foyer distant MRE"
+  },
+  {
+    id: "check_active_challenges",
+    patterns: [
+      /\bmes.*défis\b/i,
+      /\bmes.*defis\b/i,
+      /\bdefis.*cours\b/i,
+      /\btahadiyat\b/i,
+      /\bchallenges\b/i
+    ],
+    keywords: ["defis", "challenges", "tahadiyat", "cours", "active"],
+    category: "savings",
+    description: "Vérifier ses défis ou challenges financiers en cours"
+  },
+  {
+    id: "suggest_academy_lesson",
+    patterns: [
+      /\bapprends-moi\b/i,
+      /\bapprendre\b/i,
+      /\bleçon\b/i,
+      /\blecon\b/i,
+      /\bdars\b/i,
+      /\bacademie\b/i,
+      /\bacademy\b/i
+    ],
+    keywords: ["apprendre", "leçon", "lecon", "dars", "academy", "cours"],
+    category: "education",
+    description: "Suggérer une leçon de l'Académie financière"
+  },
+  {
+    id: "check_academy_progress",
+    patterns: [
+      /\bprogrès.*académie\b/i,
+      /\bprogres.*academie\b/i,
+      /\bmes.*certificats\b/i,
+      /\bchahada\b/i,
+      /\bscore.*academie\b/i
+    ],
+    keywords: ["academie", "academy", "certificats", "chahada", "progres"],
+    category: "education",
+    description: "Vérifier sa progression et ses certificats de l'Académie"
+  },
+  {
+    id: "check_referral_status",
+    patterns: [
+      /\bparrainage\b/i,
+      /\bcode.*invitation\b/i,
+      /\bmes.*invités\b/i,
+      /\bparrainer\b/i,
+      /\bcode.*parrainage\b/i,
+      /\bstada3\b/i
+    ],
+    keywords: ["parrainage", "code", "invitation", "invites", "filleuls"],
+    category: "social",
+    description: "Vérifier son statut de parrainage et récupérer son code"
+  },
+  {
+    id: "check_savings_group",
+    patterns: [
+      /\bgroupe.*épargne\b/i,
+      /\bgroupe.*epargne\b/i,
+      /\bcagnotte\b/i,
+      /\bjam3iya\b/i,
+      /\bjamaat\b/i,
+      /\bcollecte\b/i
+    ],
+    keywords: ["groupe", "epargne", "cagnotte", "jam3iya", "amis"],
+    category: "social",
+    description: "Vérifier l'état de son groupe d'épargne ou tontine amicale"
+  },
+  {
+    id: "share_achievement",
+    patterns: [
+      /\bpartager.*réussite\b/i,
+      /\bpartager.*reussite\b/i,
+      /\bpublie.*objectif\b/i,
+      /\bpublier\b/i,
+      /\bpartager\b/i,
+      /\bpartager.*badge\b/i
+    ],
+    keywords: ["partager", "publier", "reussite", "objectif", "badge"],
+    category: "social",
+    description: "Partager une réussite récente ou un objectif atteint sur la communauté"
+  },
+  {
+    id: "explain_score_breakdown",
+    patterns: [
+      /\bpourquoi.*score\b/i,
+      /\bcomment.*améliorer.*score\b/i,
+      /\bcomment.*ameliorer.*score\b/i,
+      /\bkifach.*score\b/i,
+      /\bdetail.*score\b/i
+    ],
+    keywords: ["pourquoi", "ameliorer", "kifach", "breakdown", "details"],
+    category: "savings",
+    description: "Comprendre et améliorer la composition de son score Floussi"
+  },
+  {
+    id: "check_floussi_score",
+    patterns: [
+      /\bmon.*score\b/i,
+      /\bcomment.*débrouille\b/i,
+      /\bcomment.*debrouille\b/i,
+      /\bch7al.*score\b/i,
+      /\bfloussi.*score\b/i
+    ],
+    keywords: ["score", "debrouille", "ch7al", "points"],
+    category: "savings",
+    description: "Vérifier son score Floussi d'intelligence financière"
+  },
+  {
+    id: "check_weekly_report",
+    patterns: [
+      /\brapport.*semaine\b/i,
+      /\brésumé.*hebdo\b/i,
+      /\bresume.*hebdo\b/i,
+      /\brapport.*hebdo\b/i,
+      /\brapport.*weekly\b/i
+    ],
+    keywords: ["rapport", "semaine", "hebdo", "weekly", "resume"],
+    category: "education",
+    description: "Consulter son rapport hebdomadaire de coaching IA (Premium Analyse+/Elite)"
+  },
+  {
+    id: "start_monthly_review",
+    patterns: [
+      /\bbilan.*mois\b/i,
+      /\bregarde.*mois.*ensemble\b/i,
+      /\bmonthly.*review\b/i,
+      /\brevye.*chhar\b/i,
+      /\bcoaching.*mensuel\b/i
+    ],
+    keywords: ["bilan", "mois", "monthly", "review", "ensemble"],
+    category: "education",
+    description: "Lancer le bilan de revue mensuel guidé (Premium Analyse+/Elite)"
+  },
+  {
+    id: "suggest_optimization_challenge",
+    patterns: [
+      /\bcomment.*économiser.*plus\b/i,
+      /\bcomment.*economiser.*plus\b/i,
+      /\bun.*défi.*pour.*moi\b/i,
+      /\bun.*defi.*pour.*moi\b/i,
+      /\bchallenge.*economie\b/i,
+      /\bdefi.*optimisation\b/i
+    ],
+    keywords: ["economiser", "plus", "defi", "challenge", "optimisation"],
+    category: "savings",
+    description: "Suggérer un défi d'optimisation financière personnalisé (Premium Analyse+/Elite)"
+  },
+  {
+    id: "check_unread_notifications",
+    patterns: [
+      /\bnotifications?\b/i,
+      /\bquoi de neuf\b/i,
+      /\bdes nouvelles alertes\b/i,
+      /\bnew.*alerts?\b/i,
+      /\bkhbar\b/i,
+      /\btanbih\b/i,
+      /\btanbihat\b/i
+    ],
+    keywords: ["notification", "notifications", "neuf", "alertes", "khbar", "tanbihat"],
+    category: "system",
+    description: "Vérifier les notifications non lues"
+  },
+  {
+    id: "search_via_sidi",
+    patterns: [
+      /\bcherche\s+(.+)\b/i,
+      /\bchercher\s+(.+)\b/i,
+      /\btrouve\s+(.+)\b/i,
+      /\btrouver\s+(.+)\b/i,
+      /\bmontre-moi\s+(.+)\b/i,
+      /\bmontre\s+moi\s+(.+)\b/i,
+      /\bqleb\s+3la\s+(.+)\b/i,
+      /\bsearch\s+(.+)\b/i
+    ],
+    keywords: ["cherche", "trouve", "chercher", "trouver", "montre", "qleb", "search"],
+    category: "system",
+    description: "Recherche universelle via Sidi"
+  },
+  {
+    id: "update_preference_via_sidi",
+    patterns: [
+      /\bchange.*langue\b/i,
+      /\bactiver?.*mode.*nuit\b/i,
+      /\bdesactiver?.*notifications?.*nuit\b/i,
+      /\bactive.*nuit\b/i,
+      /\bdesactive.*nuit\b/i,
+      /\bset.*language\b/i,
+      /\blangue.*français\b/i,
+      /\blangue.*darija\b/i,
+      /\bpref.*langue\b/i
+    ],
+    keywords: ["langue", "mode", "nuit", "activer", "desactiver", "preference", "preferences"],
+    category: "system",
+    description: "Mettre à jour ses préférences de langue, de thème ou de notifications"
   }
 ];
 
@@ -334,6 +626,10 @@ export interface DetectedResult {
     merchant?: string;
     date_relative?: 'today' | 'yesterday' | 'tomorrow';
     target_name?: string;
+    recipient?: string;
+    search_query?: string;
+    preference_key?: string;
+    preference_value?: string;
   };
 }
 
@@ -469,6 +765,65 @@ export function detectIntent(normalizedText: string, originalText: string): Dete
     slots.target_name = "Or";
   } else if (originalText.includes("Jmâa") || originalText.includes("jmaa") || normalizedText.includes("jmaa")) {
     slots.target_name = "Jmâa El Kheir";
+  }
+
+  // Extract recipient for p2p transfer
+  if (normalizedText.includes("transfert") || normalizedText.includes("envoie") || normalizedText.includes("sift") || normalizedText.includes("envoyer")) {
+    // Look for patterns like "à [Name]", "l [Name]", "vers [Name]", "pour [Name]"
+    const recipientRegex = /(?:à|l|vers|pour|destinataire|recipient|sift|envoie|envoyer)\s+([a-zA-Z\u0600-\u06FF\d\s]+)/i;
+    const matchRecipient = recipientRegex.exec(originalText);
+    if (matchRecipient) {
+      let name = matchRecipient[1].trim();
+      // Clean up extracted string, removing numbers or words like "dh", "dirhams", "dirham", "mad", "dhs", "dryal"
+      name = name.replace(/\b\d+\s*(?:dh|dirhams?|mad|dhs|dryal)?\b/gi, "").trim();
+      // Remove leading connectors like "à", "l", "vers", "pour"
+      name = name.replace(/^(?:à|l|vers|pour)\s+/i, "").trim();
+      if (name && name.length > 1) {
+        slots.recipient = name;
+      }
+    }
+  }
+
+  // Extract search_query for search_via_sidi
+  if (matchedIntent.id === 'search_via_sidi') {
+    const searchPatterns = [
+      /\bcherche(?:r)?\s+(.+)/i,
+      /\btrouve(?:r)?\s+(.+)/i,
+      /\bmontre(?:-)?\s*moi\s+(.+)/i,
+      /\bqleb\s+3la\s+(.+)/i,
+      /\bsearch\s+(.+)/i
+    ];
+    for (const pat of searchPatterns) {
+      const match = pat.exec(originalText);
+      if (match) {
+        slots.search_query = match[1].trim();
+        break;
+      }
+    }
+    if (!slots.search_query) {
+      const cleanWords = originalText.split(/\s+/).filter(w => !["cherche", "chercher", "trouve", "trouver", "montre", "moi", "montre-moi", "qleb", "3la", "search"].includes(w.toLowerCase()));
+      slots.search_query = cleanWords.join(" ");
+    }
+  }
+
+  // Extract preference slots for update_preference_via_sidi
+  if (matchedIntent.id === 'update_preference_via_sidi') {
+    const lowerText = originalText.toLowerCase();
+    if (lowerText.includes("darija")) {
+      slots.preference_key = "language";
+      slots.preference_value = "darija";
+    } else if (lowerText.includes("francais") || lowerText.includes("français") || lowerText.includes("french")) {
+      slots.preference_key = "language";
+      slots.preference_value = "fr";
+    } else if (lowerText.includes("mode nuit") || lowerText.includes("nuit") || lowerText.includes("dark") || lowerText.includes("sombre")) {
+      slots.preference_key = "theme";
+      slots.preference_value = lowerText.includes("desactive") || lowerText.includes("désactive") || lowerText.includes("sans") || lowerText.includes("off") ? "light" : "dark";
+    } else if (lowerText.includes("notification") || lowerText.includes("notifications")) {
+      if (lowerText.includes("nuit") || lowerText.includes("silence") || lowerText.includes("quiet")) {
+        slots.preference_key = "quiet_hours";
+        slots.preference_value = lowerText.includes("desactive") || lowerText.includes("désactive") || lowerText.includes("off") || lowerText.includes("non") ? "disabled" : "enabled";
+      }
+    }
   }
 
   return {

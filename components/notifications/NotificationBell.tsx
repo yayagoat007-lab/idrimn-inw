@@ -29,7 +29,7 @@ export function NotificationBell({ userId, language, onNavigate }: NotificationB
       <button
         onClick={() => setIsPanelOpen(true)}
         className="relative p-2.5 text-slate-500 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition-all cursor-pointer active:scale-95 flex items-center justify-center"
-        aria-label="Notifications"
+        aria-label={language === 'darija' ? "Tanbihat" : "Notifications"}
       >
         <Bell size={18} />
         {unreadCount > 0 && (

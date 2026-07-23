@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { Goal } from '../../types';
 import { formatCurrency } from '../../lib/utils';
 import * as Icons from 'lucide-react';
+import { Language, t } from '../../lib/i18n';
 
 interface GoalCardProps {
   goal: Goal;
   onContribute: (id: string, amount: number) => void;
-  language: 'fr' | 'darija';
+  language: Language;
 }
 
 export function GoalCard({ goal, onContribute, language }: GoalCardProps) {
@@ -43,7 +44,7 @@ export function GoalCard({ goal, onContribute, language }: GoalCardProps) {
             </h4>
             {goal.deadline && (
               <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">
-                Échéance: {goal.deadline}
+                {t('deadline', language)}: {goal.deadline}
               </p>
             )}
           </div>
@@ -55,8 +56,8 @@ export function GoalCard({ goal, onContribute, language }: GoalCardProps) {
 
       <div className="space-y-1.5">
         <div className="flex justify-between text-[11px] font-bold text-slate-600">
-          <span>{formatCurrency(goal.current_amount)} sur {formatCurrency(goal.target_amount)}</span>
-          <span className="text-emerald-600">{formatCurrency(remaining)} restants</span>
+          <span>{formatCurrency(goal.current_amount)} {t('sur', language)} {formatCurrency(goal.target_amount)}</span>
+          <span className="text-emerald-600">{formatCurrency(remaining)} {t('remaining', language)}</span>
         </div>
         <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
           <div 
@@ -72,7 +73,7 @@ export function GoalCard({ goal, onContribute, language }: GoalCardProps) {
             onClick={() => setShowInput(true)}
             className="w-full py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 font-extrabold rounded-xl text-[10px] uppercase tracking-wider transition-colors border border-slate-100 cursor-pointer"
           >
-            Contribuer rapidement
+            {t('quickContribute', language)}
           </button>
         ) : (
           <div className="flex items-center gap-2">
@@ -82,7 +83,7 @@ export function GoalCard({ goal, onContribute, language }: GoalCardProps) {
                 value={amountInput}
                 onChange={(e) => setAmountInput(e.target.value)}
                 className="w-full pl-3 pr-8 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-hidden focus:ring-1 focus:ring-emerald-500"
-                placeholder="Montant"
+                placeholder={t('amount', language)}
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">
                 DH
@@ -92,7 +93,7 @@ export function GoalCard({ goal, onContribute, language }: GoalCardProps) {
               onClick={handleQuickSave}
               className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition-colors cursor-pointer"
             >
-              Ajouter
+              {t('add', language)}
             </button>
             <button
               onClick={() => setShowInput(false)}

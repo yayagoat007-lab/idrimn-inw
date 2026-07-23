@@ -6,6 +6,7 @@ import { QuizPlayer } from '../../../components/academy/QuizPlayer';
 import { CertificateModal } from '../../../components/academy/CertificateModal';
 import { CompletionCertificate } from '../../../lib/academy-progress';
 import { AcademyModule, AcademyLesson } from '../../../lib/academy-content';
+import { useTranslation } from '../../../hooks/use-translation';
 import { 
   GraduationCap, 
   Award, 
@@ -23,10 +24,12 @@ import {
 } from 'lucide-react';
 
 interface AcademyPageProps {
-  language: 'fr' | 'darija';
+  language?: 'fr' | 'darija';
 }
 
-export default function AcademyPage({ language }: AcademyPageProps) {
+export default function AcademyPage({ language: propLanguage }: AcademyPageProps) {
+  const { lang } = useTranslation();
+  const language = propLanguage || lang;
   const userId = "mock-user-id-9999";
   const {
     modules,
@@ -280,9 +283,9 @@ export default function AcademyPage({ language }: AcademyPageProps) {
                       {lesson.title}
                     </h4>
                     <p className="text-xs text-slate-400 font-medium flex items-center gap-2 mt-0.5">
-                      <span>⏱️ {lesson.estimatedMinutes} min de lecture</span>
+                      <span>⏱️ {lesson.estimatedMinutes} {language === 'darija' ? 'dqayeq d qraya' : 'min de lecture'}</span>
                       <span>•</span>
-                      <span>{lesson.quiz.length} questions</span>
+                      <span>{lesson.quiz.length} {language === 'darija' ? 'as2ila' : 'questions'}</span>
                     </p>
                   </div>
 

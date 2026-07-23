@@ -42,6 +42,7 @@ export function Sidebar({ currentRoute, onNavigate, language, subscriptionTier }
         { id: 'transactions', label: getTranslation('transactions', language), icon: ArrowDownUp },
         { id: 'buckets', label: getTranslation('buckets', language), icon: Layers },
         { id: 'insights', label: getTranslation('insights', language), icon: PieChart },
+        { id: 'coaching', label: language === 'darija' ? 'Coaching & Nasiha 💡' : 'Coaching & Nasiha 💡', icon: Compass },
         { id: 'goals', label: getTranslation('goals', language), icon: Target },
         { id: 'wrapped', label: language === 'darija' ? 'Bilan d l-3am 🎊' : 'Floussi Wrapped 🎊', icon: Sparkles },
       ]

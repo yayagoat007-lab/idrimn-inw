@@ -2,18 +2,21 @@ import React, { useRef, useState, useEffect } from 'react';
 import { CompletionCertificate } from '../../lib/academy-progress';
 import { X, Download, Share2, Award, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { useFocusTrap } from '../../hooks/use-focus-trap';
+import { useTranslation } from '../../hooks/use-translation';
 
 interface CertificateModalProps {
   certificate: CompletionCertificate;
   onClose: () => void;
-  language: 'fr' | 'darija';
+  language?: 'fr' | 'darija';
 }
 
 export const CertificateModal: React.FC<CertificateModalProps> = ({
   certificate,
   onClose,
-  language
+  language: propLanguage
 }) => {
+  const { lang } = useTranslation();
+  const language = propLanguage || lang;
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(true);
@@ -280,7 +283,9 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
                 <CheckCircle2 className="w-4 h-4 text-emerald-500 fill-emerald-100" />
               </p>
               <p className="text-xs text-emerald-700 mt-1 leading-relaxed">
-                Ce diplôme d\'honneur atteste de ton assiduité financière. Il comporte un code unique de contrôle (<strong>{certificate.validationCode}</strong>). Tu peux le télécharger et le partager directement sur tes réseaux professionnels.
+                {language === 'darija' 
+                  ? `Had ch-Chahada kat-fiyed l-indibat l-mali dyalek. Fiha wahed l-code khass d-dabt (${certificate.validationCode}). T9der t-chargiha o t-charekha m3a shabek.`
+                  : `Ce diplôme d'honneur atteste de ton assiduité financière. Il comporte un code unique de contrôle (${certificate.validationCode}). Tu peux le télécharger et le partager directement sur tes réseaux professionnels.`}
               </p>
             </div>
           </div>

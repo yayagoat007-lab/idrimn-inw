@@ -92,15 +92,47 @@ export function PartnerOfferBanner() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
+  const localizedOffers = DEMO_OFFERS.map(offer => {
+    if (lang === 'darija') {
+      let title = offer.title;
+      let description = offer.description;
+      let discountValue = offer.discountValue;
+
+      if (offer.id === 'opt-inwi') {
+        title = 'Offre Khassa Recharge *6';
+        description = 'Stafed men +50% dyal l-internet f r-recharge dyalk m3a Floussi.';
+        discountValue = '+50% Internet';
+      } else if (offer.id === 'opt-jumia') {
+        title = 'Takhfid 3la l-Électroménager';
+        description = 'Stafed men 10% dyal l-khassm f koulchi d l-cousina o l-dar.';
+        discountValue = '-10% Khassm';
+      } else if (offer.id === 'opt-marjane') {
+        title = 'Panié l-well fabor';
+        description = "Wffr 50 DH f l-commande d l-internet l-well d Marjane (chri 300 DH wella ktr).";
+        discountValue = '50 DH Fabor';
+      } else if (offer.id === 'opt-careem') {
+        title = 'Safar b taman rkhiss';
+        description = 'Stafed men -20% f l-triqat 3 d l-ajil f Casablanca wella Rabat.';
+        discountValue = '-20% f 3 d s-sfar';
+      } else if (offer.id === 'opt-glovo') {
+        title = 'Tawsil Fabor d l-Makla';
+        description = 'T-awsil fabor f 2 commande dyalk d l-makla f restoyat dyal l-mouda.';
+        discountValue = 'Tawsil Fabor';
+      }
+      return { ...offer, title, description, discountValue };
+    }
+    return offer;
+  });
+
   const nextOffer = () => {
-    setCurrentIndex((prev) => (prev + 1) % DEMO_OFFERS.length);
+    setCurrentIndex((prev) => (prev + 1) % localizedOffers.length);
   };
 
   const prevOffer = () => {
-    setCurrentIndex((prev) => (prev - 1 + DEMO_OFFERS.length) % DEMO_OFFERS.length);
+    setCurrentIndex((prev) => (prev - 1 + localizedOffers.length) % localizedOffers.length);
   };
 
-  const offer = DEMO_OFFERS[currentIndex];
+  const offer = localizedOffers[currentIndex];
 
   const t = {
     sponsor: lang === 'darija' ? 'Choraka dyalna' : 'Partenaire Sponsorisé',
@@ -110,6 +142,7 @@ export function PartnerOfferBanner() {
     premiumTitle: lang === 'darija' ? 'T-hanna mn l-Ich\'harat' : 'Supprimer les bannières',
     premiumDesc: lang === 'darija' ? 'Dowez l-Premium o thanna mn l-bannières o l-Ich\'harat choraka.' : 'Passez au Premium pour désactiver les bannières de nos partenaires et naviguer sans interruption.',
     upgradeBtn: lang === 'darija' ? 'Upgrade l-Premium' : 'Passer au Premium',
+    offersNav: lang === 'darija' ? 'L-Offre' : 'Offres'
   };
 
   return (
@@ -191,7 +224,7 @@ export function PartnerOfferBanner() {
         <div className="lg:border-l lg:border-amber-200/60 lg:pl-6 shrink-0 flex flex-col justify-center gap-3 min-w-56">
           {/* Navigation Dots */}
           <div className="flex items-center gap-2 justify-between">
-            <span className="text-[9px] font-bold text-amber-700 uppercase">Offres ({currentIndex + 1}/{DEMO_OFFERS.length})</span>
+            <span className="text-[9px] font-bold text-amber-700 uppercase">{t.offersNav} ({currentIndex + 1}/{DEMO_OFFERS.length})</span>
             <div className="flex items-center gap-1.5">
               <button 
                 onClick={prevOffer} 

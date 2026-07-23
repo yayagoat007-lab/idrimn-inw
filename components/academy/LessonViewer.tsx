@@ -1,6 +1,7 @@
 import React from 'react';
 import { AcademyLesson } from '../../lib/academy-content';
 import { BookOpen, Clock, ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { useTranslation } from '../../hooks/use-translation';
 
 interface LessonViewerProps {
   lesson: AcademyLesson;
@@ -8,7 +9,7 @@ interface LessonViewerProps {
   onBack: () => void;
   onStartQuiz: () => void;
   isCompleted: boolean;
-  language: 'fr' | 'darija';
+  language?: 'fr' | 'darija';
   currentIndex: number;
   totalLessons: number;
 }
@@ -19,10 +20,12 @@ export const LessonViewer: React.FC<LessonViewerProps> = ({
   onBack,
   onStartQuiz,
   isCompleted,
-  language,
+  language: propLanguage,
   currentIndex,
   totalLessons
 }) => {
+  const { lang } = useTranslation();
+  const language = propLanguage || lang;
   return (
     <div id={`lesson-viewer-${lesson.id}`} className="max-w-3xl mx-auto bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden transition-all duration-300">
       {/* Banner / Header */}

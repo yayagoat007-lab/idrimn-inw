@@ -98,7 +98,7 @@ export default function OnboardingPage({ onComplete }: OnboardingPageProps) {
             disabled={completing || skipping}
             className="px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-500 hover:text-slate-700 rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer disabled:opacity-50"
           >
-            Passer l'étape
+            {language === 'darija' ? "N9ez l-khotwa" : "Passer l'étape"}
           </button>
         </div>
 
@@ -175,7 +175,9 @@ export default function OnboardingPage({ onComplete }: OnboardingPageProps) {
         </div>
         
         <div className="mt-8 text-center text-[10px] text-slate-400 font-medium">
-          Vos données budgétaires Floussi sont cryptées en local (IndexedDB) et synchronisées de manière sécurisée hors-ligne.
+          {language === 'darija' 
+            ? "M3loumat d l-mizaniya dyalk f Floussi mchffra f l-jiha dyalk (IndexedDB) o m-synchronisya b amane bla internet."
+            : "Vos données budgétaires Floussi sont cryptées en local (IndexedDB) et synchronisées de manière sécurisée hors-ligne."}
         </div>
       </div>
     </div>

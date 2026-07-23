@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FileText, CheckSquare, Download, Sparkles, RefreshCw, ChevronRight, ChevronLeft } from 'lucide-react';
+import { useTranslation } from '../../hooks/use-translation';
 
 interface ReportGeneratorProps {
   onGenerate: (config: {
@@ -12,9 +13,10 @@ interface ReportGeneratorProps {
 }
 
 export function ReportGenerator({ onGenerate, isGenerating }: ReportGeneratorProps) {
+  const { lang } = useTranslation();
   const [step, setStep] = useState(1);
   const [reportType, setReportType] = useState<'monthly' | 'quarterly' | 'annual'>('monthly');
-  const [period, setPeriod] = useState('Juillet 2026');
+  const [period, setPeriod] = useState(lang === 'darija' ? 'Yulyuz 2026' : 'Juillet 2026');
   const [sections, setSections] = useState<string[]>(['overview', 'net_worth', 'benchmarks', 'ai_insights']);
   const [format, setFormat] = useState<'pdf' | 'excel' | 'csv'>('pdf');
 
@@ -73,10 +75,14 @@ export function ReportGenerator({ onGenerate, isGenerating }: ReportGeneratorPro
         <div className="space-y-4">
           <h3 className="text-xs font-black text-slate-800 flex items-center gap-1.5 uppercase tracking-wider">
             <FileText className="w-4 h-4 text-emerald-600" />
-            <span>Étape 1 : Périodicité du Rapport</span>
+            <span>
+              {lang === 'darija' ? "Marhala 1 : Périodicité d l-Rapport" : "Étape 1 : Périodicité du Rapport"}
+            </span>
           </h3>
           <p className="text-[10px] text-slate-400 font-semibold leading-relaxed">
-            Sélectionnez la fréquence de génération de l'audit de patrimoine Floussi.
+            {lang === 'darija'
+              ? "Khtar chhal d l-merrat t-sowweb l-audit d l-flouss dyalk f Floussi."
+              : "Sélectionnez la fréquence de génération de l'audit de patrimoine Floussi."}
           </p>
 
           <div className="grid grid-cols-3 gap-3">
@@ -85,14 +91,18 @@ export function ReportGenerator({ onGenerate, isGenerating }: ReportGeneratorPro
                 key={type}
                 type="button"
                 onClick={() => setReportType(type)}
-                className={`p-3 rounded-xl border text-center transition-all ${
+                className={`p-3 rounded-xl border text-center transition-all cursor-pointer ${
                   reportType === type 
                     ? 'border-emerald-500 bg-emerald-50/10 text-emerald-800 font-bold' 
                     : 'border-slate-150 hover:border-slate-300 text-slate-600'
                 }`}
               >
                 <span className="text-[10px] block uppercase tracking-wide">
-                  {type === 'monthly' ? 'Mensuel' : type === 'quarterly' ? 'Trimestriel' : 'Annuel'}
+                  {type === 'monthly'
+                    ? (lang === 'darija' ? 'Dyal l-chhar' : 'Mensuel')
+                    : type === 'quarterly'
+                    ? (lang === 'darija' ? 'Dyal 3 chhour' : 'Trimestriel')
+                    : (lang === 'darija' ? 'Dyal l-aam' : 'Annuel')}
                 </span>
               </button>
             ))}
@@ -105,17 +115,21 @@ export function ReportGenerator({ onGenerate, isGenerating }: ReportGeneratorPro
         <div className="space-y-4">
           <h3 className="text-xs font-black text-slate-800 flex items-center gap-1.5 uppercase tracking-wider">
             <FileText className="w-4 h-4 text-emerald-600" />
-            <span>Étape 2 : Sélection de la Période</span>
+            <span>
+              {lang === 'darija' ? "Marhala 2 : Khtar l-Waqt" : "Étape 2 : Sélection de la Période"}
+            </span>
           </h3>
           <p className="text-[10px] text-slate-400 font-semibold leading-relaxed">
-            Donnez un libellé ou choisissez la période cible pour cet audit financier.
+            {lang === 'darija'
+              ? "Smi l-waqt wella khtar l-période d had l-audit l-mali dyalk."
+              : "Donnez un libellé ou choisissez la période cible pour cet audit financier."}
           </p>
           <input 
             type="text" 
             value={period}
             onChange={(e) => setPeriod(e.target.value)}
             className="w-full border border-slate-200 rounded-xl p-2 text-xs font-semibold text-slate-700 focus:border-emerald-500 outline-none"
-            placeholder="Ex: Juillet 2026, Q2 2026..."
+            placeholder={lang === 'darija' ? "Mathalan: Yulyuz 2026, Q2 2026..." : "Ex: Juillet 2026, Q2 2026..."}
           />
         </div>
       )}
@@ -125,25 +139,41 @@ export function ReportGenerator({ onGenerate, isGenerating }: ReportGeneratorPro
         <div className="space-y-4">
           <h3 className="text-xs font-black text-slate-800 flex items-center gap-1.5 uppercase tracking-wider">
             <CheckSquare className="w-4 h-4 text-emerald-600" />
-            <span>Étape 3 : Sections à Inclure</span>
+            <span>
+              {lang === 'darija' ? "Marhala 3 : Chnou bghiti fih" : "Étape 3 : Sections à Inclure"}
+            </span>
           </h3>
           <p className="text-[10px] text-slate-400 font-semibold leading-relaxed">
-            Cochez les briques analytiques que vous désirez exporter dans le document final.
+            {lang === 'darija'
+              ? "Khtar l-briques lli bghiti t-khrej f l-warqa l-khra."
+              : "Cochez les briques analytiques que vous désirez exporter dans le document final."}
           </p>
 
           <div className="space-y-2 text-xs font-semibold text-slate-700">
             {[
-              { id: 'overview', name: 'Résumé budgétaire & sandoqs' },
-              { id: 'net_worth', name: "Évolution d'épargne & net worth" },
-              { id: 'benchmarks', name: 'Comparaison nationale HCP' },
-              { id: 'ai_insights', name: 'Analyses & prévisions prédictives' }
+              {
+                id: 'overview',
+                name: lang === 'darija' ? "Moulakhass l-masrouf o s-snhirates" : "Résumé budgétaire & sandoqs"
+              },
+              {
+                id: 'net_worth',
+                name: lang === 'darija' ? "Ziyadat d l-iddikhar o net worth" : "Évolution d'épargne & net worth"
+              },
+              {
+                id: 'benchmarks',
+                name: lang === 'darija' ? "Moyenne l-wataniya dyal HCP" : "Comparaison nationale HCP"
+              },
+              {
+                id: 'ai_insights',
+                name: lang === 'darija' ? "Tawaqo3at o nasayih d l-IA" : "Analyses & prévisions prédictives"
+              }
             ].map((sec) => (
               <label key={sec.id} className="flex items-center gap-2.5 p-2 border border-slate-100 rounded-xl hover:bg-slate-50 cursor-pointer">
                 <input 
                   type="checkbox" 
                   checked={sections.includes(sec.id)}
                   onChange={() => handleToggleSection(sec.id)}
-                  className="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4"
+                  className="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4 cursor-pointer"
                 />
                 <span>{sec.name}</span>
               </label>
@@ -157,10 +187,12 @@ export function ReportGenerator({ onGenerate, isGenerating }: ReportGeneratorPro
         <div className="space-y-4">
           <h3 className="text-xs font-black text-slate-800 flex items-center gap-1.5 uppercase tracking-wider">
             <Download className="w-4 h-4 text-emerald-600" />
-            <span>Étape 4 : Format de Sortie</span>
+            <span>
+              {lang === 'darija' ? "Marhala 4 : l-Format d l-Khroj" : "Étape 4 : Format de Sortie"}
+            </span>
           </h3>
           <p className="text-[10px] text-slate-400 font-semibold leading-relaxed">
-            Sous quel format préférez-vous recevoir vos données ?
+            {lang === 'darija' ? "Kifach bghiti t-ched l-m3loumat dyalk ?" : "Sous quel format préférez-vous recevoir vos données ?"}
           </p>
 
           <div className="grid grid-cols-3 gap-3">
@@ -169,7 +201,7 @@ export function ReportGenerator({ onGenerate, isGenerating }: ReportGeneratorPro
                 key={fmt}
                 type="button"
                 onClick={() => setFormat(fmt)}
-                className={`p-3 rounded-xl border text-center transition-all ${
+                className={`p-3 rounded-xl border text-center transition-all cursor-pointer ${
                   format === fmt 
                     ? 'border-emerald-500 bg-emerald-50/10 text-emerald-800 font-bold' 
                     : 'border-slate-150 hover:border-slate-300 text-slate-600'
@@ -186,23 +218,31 @@ export function ReportGenerator({ onGenerate, isGenerating }: ReportGeneratorPro
       {step === 5 && (
         <div className="text-center py-4 space-y-3">
           <Sparkles className="w-8 h-8 text-amber-500 mx-auto animate-pulse" />
-          <h4 className="text-xs font-black text-slate-800">Prêt pour Compilation</h4>
+          <h4 className="text-xs font-black text-slate-800">
+            {lang === 'darija' ? "Wajed l-Takhraj" : "Prêt pour Compilation"}
+          </h4>
           <p className="text-[10px] text-slate-400 font-semibold max-w-xs mx-auto">
-            Tous les indicateurs sont calculés. Appuyez sur le bouton ci-dessous pour compiler et recevoir votre rapport de performance.
+            {lang === 'darija'
+              ? "Koulchi l-mouchirate mhsoubin. Klike f l-bouton lli l-teht bch t-ched r-rapport dyalk."
+              : "Tous les indicateurs sont calculés. Appuyez sur le bouton ci-dessous pour compiler et recevoir votre rapport de performance."}
           </p>
 
           <button
             type="button"
             onClick={handleSubmit}
             disabled={isGenerating}
-            className="w-full max-w-xs mx-auto bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs py-2.5 rounded-xl transition-all shadow-md shadow-emerald-600/10 flex items-center justify-center gap-1.5"
+            className="w-full max-w-xs mx-auto bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs py-2.5 rounded-xl transition-all shadow-md shadow-emerald-600/10 flex items-center justify-center gap-1.5 cursor-pointer"
           >
             {isGenerating ? (
               <RefreshCw className="w-4 h-4 animate-spin" />
             ) : (
               <Download className="w-4 h-4" />
             )}
-            <span>{isGenerating ? "Génération..." : "Générer le Rapport"}</span>
+            <span>
+              {isGenerating 
+                ? (lang === 'darija' ? "Kat-Sowweb..." : "Génération...") 
+                : (lang === 'darija' ? "Sowweb r-Rapport" : "Générer le Rapport")}
+            </span>
           </button>
         </div>
       )}
@@ -214,18 +254,18 @@ export function ReportGenerator({ onGenerate, isGenerating }: ReportGeneratorPro
             type="button"
             onClick={handleBack}
             disabled={step === 1}
-            className="px-3.5 py-1.5 border border-slate-200 hover:border-slate-300 text-slate-600 rounded-xl text-xs font-black flex items-center gap-1 transition-all disabled:opacity-40"
+            className="px-3.5 py-1.5 border border-slate-200 hover:border-slate-300 text-slate-600 rounded-xl text-xs font-black flex items-center gap-1 transition-all disabled:opacity-40 cursor-pointer"
           >
             <ChevronLeft className="w-4 h-4" />
-            <span>Retour</span>
+            <span>{lang === 'darija' ? "Rje3" : "Retour"}</span>
           </button>
 
           <button
             type="button"
             onClick={handleNext}
-            className="px-4 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-black flex items-center gap-1 transition-all"
+            className="px-4 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-black flex items-center gap-1 transition-all cursor-pointer"
           >
-            <span>Suivant</span>
+            <span>{lang === 'darija' ? "Zid l-gdam" : "Suivant"}</span>
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
@@ -234,3 +274,4 @@ export function ReportGenerator({ onGenerate, isGenerating }: ReportGeneratorPro
   );
 }
 export default ReportGenerator;
+

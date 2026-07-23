@@ -19,10 +19,11 @@ import {
 import { useSetupChecklist } from '../../hooks/use-setup-checklist';
 import { ConfettiAnimation } from '../shared/ConfettiAnimation';
 import { Language } from '../../lib/i18n';
+import { useTranslation } from '../../hooks/use-translation';
 
 interface SetupChecklistCardProps {
   userId?: string;
-  language: Language;
+  language?: Language;
   onNavigate: (screen: string) => void;
 }
 
@@ -37,9 +38,11 @@ const IconMap: Record<string, React.ComponentType<any>> = {
 
 export function SetupChecklistCard({
   userId = "mock-user-id-9999",
-  language,
+  language: propLanguage,
   onNavigate
 }: SetupChecklistCardProps) {
+  const { lang } = useTranslation();
+  const language = propLanguage || (lang as Language);
   const { items, progress, isVisible, dismissChecklist } = useSetupChecklist(userId);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [confettiActive, setConfettiActive] = useState(false);

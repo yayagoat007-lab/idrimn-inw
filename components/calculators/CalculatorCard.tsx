@@ -1,5 +1,6 @@
 import React from 'react';
 import { LucideIcon } from 'lucide-react';
+import { useTranslation } from '../../hooks/use-translation';
 
 interface CalculatorCardProps {
   title: string;
@@ -10,6 +11,7 @@ interface CalculatorCardProps {
 }
 
 export function CalculatorCard({ title, description, icon: Icon, colorClass, onClick }: CalculatorCardProps) {
+  const { lang } = useTranslation();
   return (
     <button
       onClick={onClick}
@@ -25,7 +27,7 @@ export function CalculatorCard({ title, description, icon: Icon, colorClass, onC
       </div>
 
       <span className="text-[10px] font-black uppercase text-emerald-600 tracking-wider flex items-center gap-1 group-hover:underline">
-        Ouvrir le simulateur &rarr;
+        {lang === 'darija' ? "Helli l-hissab " : "Ouvrir le simulateur "} &rarr;
       </span>
     </button>
   );

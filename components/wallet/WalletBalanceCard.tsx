@@ -1,11 +1,12 @@
 import React from 'react';
 import { WalletBalance } from '../../types';
 import { Plus, Send, FileText, Smartphone, ShieldCheck, ShieldAlert, Sparkles, HelpCircle } from 'lucide-react';
+import { Language } from '../../lib/i18n';
 
 interface WalletBalanceCardProps {
   balance: WalletBalance | null;
   dailySpent: number;
-  lang: 'fr' | 'darija';
+  language: Language;
   onAddFunds: () => void;
   onSendP2P: () => void;
   onPayBill: () => void;
@@ -16,30 +17,31 @@ interface WalletBalanceCardProps {
 export function WalletBalanceCard({
   balance,
   dailySpent,
-  lang,
+  language,
   onAddFunds,
   onSendP2P,
   onPayBill,
   onRecharge,
   onToggleKyc
 }: WalletBalanceCardProps) {
+  const isDarija = language === 'darija';
   
   if (!balance) return null;
 
   const limitLeft = Math.max(0, balance.dailyLimit - dailySpent);
 
   const t = {
-    balanceLabel: lang === 'darija' ? 'Rassid d l-Wallet (Solde)' : 'Solde du Portefeuille',
-    dailySpentLabel: lang === 'darija' ? 'Masrouf l-yowm :' : 'Dépenses du jour :',
-    limitLeftLabel: lang === 'darija' ? 'L-baqi d l-plafond :' : 'Plafond restant :',
-    kycVerified: lang === 'darija' ? 'Mtheqqeq (KYC OK)' : 'Identité Vérifiée (KYC)',
-    kycUnverified: lang === 'darija' ? 'Ghir mtheqqeq (Plafond 500 DH)' : 'Compte Basique (Plafond 500 DH)',
-    kycAction: lang === 'darija' ? 'Theqqeq dghya' : 'Vérifier mon identité (+)',
-    addFunds: lang === 'darija' ? 'Alimenter' : 'Alimenter',
-    sendP2P: lang === 'darija' ? 'Envoyer' : 'Transférer',
-    payBill: lang === 'darija' ? 'Payer Facture' : 'Facture',
-    recharge: lang === 'darija' ? 'Recharger' : 'Recharge',
-    sandbox: lang === 'darija' ? 'Portefeuille de Simulation Floussi' : 'Portefeuille de Simulation Floussi'
+    balanceLabel: isDarija ? 'Rassid d l-Wallet (Solde)' : 'Solde du Portefeuille',
+    dailySpentLabel: isDarija ? 'Masrouf l-yowm :' : 'Dépenses du jour :',
+    limitLeftLabel: isDarija ? 'L-baqi d l-plafond :' : 'Plafond restant :',
+    kycVerified: isDarija ? 'Mtheqqeq (KYC OK)' : 'Identité Vérifiée (KYC)',
+    kycUnverified: isDarija ? 'Ghir mtheqqeq (Plafond 500 DH)' : 'Compte Basique (Plafond 500 DH)',
+    kycAction: isDarija ? 'Theqqeq dghya' : 'Vérifier mon identité (+)',
+    addFunds: isDarija ? 'Alimenter' : 'Alimenter',
+    sendP2P: isDarija ? 'Envoyer' : 'Transférer',
+    payBill: isDarija ? 'Payer Facture' : 'Facture',
+    recharge: isDarija ? 'Recharger' : 'Recharge',
+    sandbox: isDarija ? 'Portefeuille de Simulation Floussi' : 'Portefeuille de Simulation Floussi'
   };
 
   return (
@@ -60,7 +62,7 @@ export function WalletBalanceCard({
           <button 
             type="button"
             onClick={onToggleKyc}
-            className="flex items-center gap-1 px-2.5 py-1 bg-emerald-950/40 border border-emerald-500/30 rounded-full text-[10px] font-black text-emerald-400 cursor-pointer hover:bg-emerald-900/20 transition-all"
+            className="flex items-center gap-1 px-2.5 py-1 bg-emerald-950/40 border border-emerald-500/30 rounded-full text-[10px] font-black text-emerald-400 cursor-pointer hover:bg-emerald-900/20 transition-all text-left"
           >
             <ShieldCheck size={12} className="text-emerald-400 animate-bounce" />
             <span>{t.kycVerified}</span>
@@ -69,7 +71,7 @@ export function WalletBalanceCard({
           <button
             type="button"
             onClick={onToggleKyc}
-            className="flex items-center gap-1 px-2.5 py-1 bg-amber-950/40 border border-amber-500/30 rounded-full text-[10px] font-black text-amber-400 cursor-pointer hover:bg-amber-900/20 transition-all"
+            className="flex items-center gap-1 px-2.5 py-1 bg-amber-950/40 border border-amber-500/30 rounded-full text-[10px] font-black text-amber-400 cursor-pointer hover:bg-amber-900/20 transition-all text-left"
           >
             <ShieldAlert size={12} className="text-amber-400 animate-pulse" />
             <span>{t.kycAction}</span>
@@ -107,7 +109,7 @@ export function WalletBalanceCard({
         {/* ACTION 1: ADD FUNDS */}
         <button
           onClick={onAddFunds}
-          className="flex flex-col items-center gap-2 group cursor-pointer"
+          className="flex flex-col items-center gap-2 group cursor-pointer text-center"
         >
           <div className="w-11 h-11 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-950 transition-all active:scale-95 group-hover:-translate-y-0.5">
             <Plus size={18} />
@@ -120,7 +122,7 @@ export function WalletBalanceCard({
         {/* ACTION 2: TRANSFER */}
         <button
           onClick={onSendP2P}
-          className="flex flex-col items-center gap-2 group cursor-pointer"
+          className="flex flex-col items-center gap-2 group cursor-pointer text-center"
         >
           <div className="w-11 h-11 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white flex items-center justify-center shadow-sm transition-all active:scale-95 group-hover:-translate-y-0.5">
             <Send size={16} />
@@ -133,7 +135,7 @@ export function WalletBalanceCard({
         {/* ACTION 3: BILL PAYMENT */}
         <button
           onClick={onPayBill}
-          className="flex flex-col items-center gap-2 group cursor-pointer"
+          className="flex flex-col items-center gap-2 group cursor-pointer text-center"
         >
           <div className="w-11 h-11 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white flex items-center justify-center shadow-sm transition-all active:scale-95 group-hover:-translate-y-0.5">
             <FileText size={16} />
@@ -146,7 +148,7 @@ export function WalletBalanceCard({
         {/* ACTION 4: RECHARGE */}
         <button
           onClick={onRecharge}
-          className="flex flex-col items-center gap-2 group cursor-pointer"
+          className="flex flex-col items-center gap-2 group cursor-pointer text-center"
         >
           <div className="w-11 h-11 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white flex items-center justify-center shadow-sm transition-all active:scale-95 group-hover:-translate-y-0.5">
             <Smartphone size={16} />

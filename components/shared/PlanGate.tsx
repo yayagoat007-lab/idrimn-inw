@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../hooks/use-auth';
 import { SubscriptionTier } from '../../types';
 import { ShieldAlert, Sparkles, Check, ChevronRight } from 'lucide-react';
+import { useTranslation } from '../../hooks/use-translation';
 
 interface PlanGateProps {
   requiredTier: SubscriptionTier;
@@ -27,6 +28,7 @@ const PLAN_INFO = {
 
 export function PlanGate({ requiredTier, children, fallback }: PlanGateProps) {
   const { profile, upgradeSubscription } = useAuth();
+  const { lang } = useTranslation();
   const [showModal, setShowModal] = useState(false);
 
   const currentTier: SubscriptionTier = profile?.subscription_tier || 'free';
@@ -58,32 +60,46 @@ export function PlanGate({ requiredTier, children, fallback }: PlanGateProps) {
           </div>
           
           <h3 className="text-lg font-black text-slate-800 tracking-tight">
-            Option {PLAN_INFO[requiredTier].name} Requise
+            {lang === 'darija' ? `Khassa option ${PLAN_INFO[requiredTier].name}` : `Option ${PLAN_INFO[requiredTier].name} Requise`}
           </h3>
           <p className="text-xs text-slate-400 font-semibold mt-1">
-            Profitez de toute la puissance de Floussi. Votre plan actuel est {PLAN_INFO[currentTier].name}.
+            {lang === 'darija'
+              ? `Stafed men ga3 l-mizates dyal Floussi. L-plan dyalk d l-yom howa ${PLAN_INFO[currentTier].name}.`
+              : `Profitez de toute la puissance de Floussi. Votre plan actuel est ${PLAN_INFO[currentTier].name}.`}
           </p>
 
           <div className="my-5 w-full border-t border-slate-100 py-3 text-left space-y-2">
             <div className="flex items-start gap-2 text-xs text-slate-600 font-medium">
               <Check className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-              <span>Accès illimité aux rapports et indicateurs avancés.</span>
+              <span>
+                {lang === 'darija'
+                  ? "Dkhoul bla houdoud l l-taqarir o l-mouachirate s-s3iba."
+                  : "Accès illimité aux rapports et indicateurs avancés."}
+              </span>
             </div>
             <div className="flex items-start gap-2 text-xs text-slate-600 font-medium">
               <Check className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-              <span>Zéro publicité sur l'application Web, Play Store et App Store.</span>
+              <span>
+                {lang === 'darija'
+                  ? "Zero ich'har f l-App Web, Play Store o App Store."
+                  : "Zéro publicité sur l'application Web, Play Store et App Store."}
+              </span>
             </div>
             <div className="flex items-start gap-2 text-xs text-slate-600 font-medium">
               <Check className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-              <span>Synchronisation instantanée avec vos comptes bancaires et Daret.</span>
+              <span>
+                {lang === 'darija'
+                  ? "Synchronisation d l-weqt m3a l-kontat o Daret dyalk."
+                  : "Synchronisation instantanée avec vos comptes bancaires et Daret."}
+              </span>
             </div>
           </div>
 
           <button
             onClick={() => setShowModal(true)}
-            className="w-full bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-xl py-2.5 px-4 text-xs font-black tracking-wide shadow-md shadow-amber-500/20 hover:opacity-95 transition-all flex items-center justify-center gap-1.5"
+            className="w-full bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-xl py-2.5 px-4 text-xs font-black tracking-wide shadow-md shadow-amber-500/20 hover:opacity-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
           >
-            <span>Passer à {requiredPlanName}</span>
+            <span>{lang === 'darija' ? `Zid l ${requiredPlanName}` : `Passer à ${requiredPlanName}`}</span>
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
@@ -96,18 +112,20 @@ export function PlanGate({ requiredTier, children, fallback }: PlanGateProps) {
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-black text-slate-800 flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-amber-500" />
-                <span>Floussi Premium & Analyse+</span>
+                <span>{lang === 'darija' ? "Floussi Premium o Analyse+" : "Floussi Premium & Analyse+"}</span>
               </h2>
               <button 
                 onClick={() => setShowModal(false)}
-                className="text-slate-400 hover:text-slate-600 text-sm font-bold"
+                className="text-slate-400 hover:text-slate-600 text-sm font-bold cursor-pointer"
               >
-                Fermer
+                {lang === 'darija' ? "Sedd" : "Fermer"}
               </button>
             </div>
 
             <p className="text-xs text-slate-500 mb-6">
-              Choisissez l'abonnement qui correspond à la taille de votre patrimoine et aux traditions de votre foyer.
+              {lang === 'darija'
+                ? "Khtar l-abonnement lli mzyan l l-patrimoine dyalk o l-a3raf d l-dar dyalk."
+                : "Choisissez l'abonnement qui correspond à la taille de votre patrimoine et aux traditions de votre foyer."}
             </p>
 
             <div className="space-y-3">
@@ -132,17 +150,19 @@ export function PlanGate({ requiredTier, children, fallback }: PlanGateProps) {
                         <span className="text-sm font-black text-slate-800">{info.name}</span>
                         {isCurrent && (
                           <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded-full uppercase">
-                            Actuel
+                            {lang === 'darija' ? "L-yom" : "Actuel"}
                           </span>
                         )}
                         {tier === requiredTier && (
                           <span className="text-[9px] bg-amber-100 text-amber-800 font-bold px-1.5 py-0.5 rounded-full uppercase">
-                            Requis
+                            {lang === 'darija' ? "Khass" : "Requis"}
                           </span>
                         )}
                       </div>
                       <p className="text-[10px] text-slate-400 font-semibold mt-0.5">
-                        Abonnement mensuel Floussi Maroc • Résiliation en un clic.
+                        {lang === 'darija'
+                          ? "Abonnement d l-chhar Floussi Maroc • t-9te3 f dqiqa."
+                          : "Abonnement mensuel Floussi Maroc • Résiliation en un clic."}
                       </p>
                     </div>
 
@@ -151,9 +171,9 @@ export function PlanGate({ requiredTier, children, fallback }: PlanGateProps) {
                       {!isCurrent && (
                         <button
                           onClick={() => handleUpgrade(tier)}
-                          className="bg-slate-800 hover:bg-slate-900 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg transition-all"
+                          className="bg-slate-800 hover:bg-slate-900 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg transition-all cursor-pointer"
                         >
-                          Choisir
+                          {lang === 'darija' ? "Khtar" : "Choisir"}
                         </button>
                       )}
                     </div>

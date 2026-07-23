@@ -3,13 +3,15 @@ import { useMobileRecharge } from '../../hooks/use-mobile-recharge';
 import { useWallet } from '../../hooks/use-wallet';
 import { MobileOperator } from '../../types';
 import { CheckCircle2, Smartphone, Sparkles } from 'lucide-react';
+import { Language } from '../../lib/i18n';
 
 interface RechargeFormProps {
-  lang: 'fr' | 'darija';
+  language: Language;
   onSuccess?: () => void;
 }
 
-export function RechargeForm({ lang, onSuccess }: RechargeFormProps) {
+export function RechargeForm({ language, onSuccess }: RechargeFormProps) {
+  const isDarija = language === 'darija';
   const { balance } = useWallet();
   const { rechargeMobile } = useMobileRecharge();
 
@@ -29,14 +31,14 @@ export function RechargeForm({ lang, onSuccess }: RechargeFormProps) {
   const quickAmounts = [10, 20, 50, 100, 200];
 
   const t = {
-    phoneLabel: lang === 'darija' ? 'Raqm d l-hatif :' : 'Numéro de téléphone marocain :',
+    phoneLabel: isDarija ? 'Raqm d l-hatif :' : 'Numéro de téléphone marocain :',
     phonePlaceholder: 'Ex: 0612345678',
-    opLabel: lang === 'darija' ? 'Khtar l-khit :' : 'Opérateur réseau :',
-    amountLabel: lang === 'darija' ? 'Khtar l-qadr (DH) :' : 'Montant de recharge :',
-    submitBtn: lang === 'darija' ? 'Recharger dghya (Simulation)' : 'Recharger immédiatement (Simulation)',
-    successMsg: lang === 'darija' ? 'Recharge t-khelesset b l-khir!' : 'Recharge mobile effectuée !',
-    simNote: lang === 'darija' ? 'Hada ghir tajriba, l-flous real ma ghay-mchiwch.' : 'Simulation locale - aucun débit bancaire réel.',
-    insufficient: lang === 'darija' ? 'Ma3ndekch flous kafi f l-wallet' : 'Solde de portefeuille virtuel insuffisant.'
+    opLabel: isDarija ? 'Khtar l-khit :' : 'Opérateur réseau :',
+    amountLabel: isDarija ? 'Khtar l-qadr (DH) :' : 'Montant de recharge :',
+    submitBtn: isDarija ? 'Recharger dghya (Simulation)' : 'Recharger immédiatement (Simulation)',
+    successMsg: isDarija ? 'Recharge t-khelesset b l-khir!' : 'Recharge mobile effectuée !',
+    simNote: isDarija ? 'Hada ghir tajriba, l-flous real ma ghay-mchiwch.' : 'Simulation locale - aucun débit bancaire réel.',
+    insufficient: isDarija ? 'Ma3ndekch flous kafi f l-wallet' : 'Solde de portefeuille virtuel insuffisant.'
   };
 
   const handleRecharge = async (e: React.FormEvent) => {
@@ -45,7 +47,7 @@ export function RechargeForm({ lang, onSuccess }: RechargeFormProps) {
     setSuccess(null);
 
     if (!phone || phone.length < 9) {
-      setError(lang === 'darija' ? 'Raqm l-hatif ghalat.' : 'Veuillez saisir un numéro de téléphone marocain valide.');
+      setError(isDarija ? 'Raqm l-hatif ghalat.' : 'Veuillez saisir un numéro de téléphone marocain valide.');
       return;
     }
 
@@ -83,15 +85,15 @@ export function RechargeForm({ lang, onSuccess }: RechargeFormProps) {
 
         <div className="bg-white border border-slate-100 rounded-2xl p-4 text-left text-xs space-y-2">
           <div className="flex justify-between">
-            <span className="text-slate-400 font-bold">Opérateur</span>
+            <span className="text-slate-400 font-bold">{isDarija ? "L-Khayeit" : "Opérateur"}</span>
             <span className="text-slate-800 font-black">{success.operator}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-slate-400 font-bold">Destinataire</span>
+            <span className="text-slate-400 font-bold">{isDarija ? "L-Mousstafid" : "Destinataire"}</span>
             <span className="text-slate-800 font-mono font-bold">{success.phoneNumber}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-slate-400 font-bold">Montant</span>
+            <span className="text-slate-400 font-bold">{isDarija ? "L-Mablagh" : "Montant"}</span>
             <span className="text-emerald-700 font-black font-mono">-{success.amount.toFixed(2)} DH</span>
           </div>
         </div>
@@ -100,7 +102,7 @@ export function RechargeForm({ lang, onSuccess }: RechargeFormProps) {
           onClick={() => setSuccess(null)}
           className="w-full py-2 bg-slate-800 text-white text-[10px] font-black uppercase tracking-wider rounded-xl cursor-pointer"
         >
-          Faire une autre recharge
+          {isDarija ? "Sifet recharge khora" : "Faire une autre recharge"}
         </button>
       </div>
     );
@@ -188,7 +190,7 @@ export function RechargeForm({ lang, onSuccess }: RechargeFormProps) {
         disabled={loading}
         className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-widest rounded-2xl shadow-md cursor-pointer transition-all active:scale-98"
       >
-        {loading ? 'Rechargement...' : t.submitBtn}
+        {loading ? (isDarija ? 'Khdamin...' : 'Rechargement...') : t.submitBtn}
       </button>
     </form>
   );

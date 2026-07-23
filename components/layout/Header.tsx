@@ -5,6 +5,7 @@ import { formatCurrency } from '../../lib/utils';
 import { useState } from 'react';
 import { NotificationBell } from '../notifications/NotificationBell';
 import { SearchTriggerButton } from '../search/SearchTriggerButton';
+import { SubscriptionStatusBadge } from '../shared/SubscriptionStatusBadge';
 
 interface HeaderProps {
   profile: Profile | null;
@@ -43,9 +44,13 @@ export function Header({
           <h2 className="text-lg font-semibold text-gray-900 tracking-tight flex items-center gap-1.5">
             Ahlan, {profile?.full_name || "Moussafer"} ! 🇲🇦
           </h2>
-          <p className="text-xs text-gray-500">
-            {profile?.subscription_tier === 'free' ? "Plan Siyahi (Gratuit)" : `Abonnement ${profile?.subscription_tier?.toUpperCase()}`}
-          </p>
+          <div className="mt-1">
+            <SubscriptionStatusBadge 
+              tier={profile?.subscription_tier || 'free'} 
+              language={language as 'fr' | 'darija'} 
+              variant="compact"
+            />
+          </div>
         </div>
 
         {/* Sync / Offline Indicators */}

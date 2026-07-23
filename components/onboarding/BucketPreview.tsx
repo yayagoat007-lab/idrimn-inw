@@ -1,5 +1,6 @@
 import React from 'react';
 import { Home, Wallet, PiggyBank, Heart } from 'lucide-react';
+import { useTranslation } from '../../hooks/use-translation';
 
 interface BucketType {
   id: string;
@@ -16,6 +17,8 @@ interface BucketPreviewProps {
 }
 
 export function BucketPreview({ buckets, incomeAmount }: BucketPreviewProps) {
+  const { lang } = useTranslation();
+
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat('fr-MA', { style: 'currency', currency: 'MAD', maximumFractionDigits: 0 }).format(val);
   };
@@ -23,7 +26,9 @@ export function BucketPreview({ buckets, incomeAmount }: BucketPreviewProps) {
   return (
     <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100 space-y-4 font-sans select-none">
       <div className="flex justify-between items-center pb-2 border-b border-slate-100">
-        <h4 className="font-extrabold text-xs text-slate-900 uppercase tracking-wider">Aperçu de la répartition</h4>
+        <h4 className="font-extrabold text-xs text-slate-900 uppercase tracking-wider">
+          {lang === 'darija' ? "Kholasat t-taqsim" : "Aperçu de la répartition"}
+        </h4>
         <span className="text-[10px] font-bold text-slate-400">Total : {formatCurrency(incomeAmount)}</span>
       </div>
 

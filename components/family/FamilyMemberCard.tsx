@@ -1,15 +1,18 @@
 import React from 'react';
 import { ExtendedFamilyMember } from '../../hooks/use-family-members';
 import { Shield, Eye, User, Settings, Trash2, Clock, Globe } from 'lucide-react';
+import { t, Language } from '../../lib/i18n';
 
 interface FamilyMemberCardProps {
   member: ExtendedFamilyMember;
   onRoleChange: (id: string, role: ExtendedFamilyMember['role']) => void;
   onRemove: (id: string) => void;
   isAdmin: boolean;
+  language: Language;
 }
 
-export function FamilyMemberCard({ member, onRoleChange, onRemove, isAdmin }: FamilyMemberCardProps) {
+export function FamilyMemberCard({ member, onRoleChange, onRemove, isAdmin, language }: FamilyMemberCardProps) {
+  const isDarija = language === 'darija';
   const getRoleBadge = (role: string) => {
     switch (role) {
       case 'admin':
@@ -23,7 +26,7 @@ export function FamilyMemberCard({ member, onRoleChange, onRemove, isAdmin }: Fa
         return (
           <span className="flex items-center gap-1 text-[9px] bg-emerald-100 text-emerald-800 font-extrabold px-2 py-0.5 rounded-full uppercase">
             <User className="w-2.5 h-2.5" />
-            <span>Membre</span>
+            <span>{isDarija ? 'Membru' : 'Membre'}</span>
           </span>
         );
       case 'viewer':
@@ -36,7 +39,7 @@ export function FamilyMemberCard({ member, onRoleChange, onRemove, isAdmin }: Fa
       default:
         return (
           <span className="flex items-center gap-1 text-[9px] bg-slate-100 text-slate-800 font-extrabold px-2 py-0.5 rounded-full uppercase">
-            <span>Enfant</span>
+            <span>{isDarija ? 'Weld / Bent' : 'Enfant'}</span>
           </span>
         );
     }
@@ -75,7 +78,7 @@ export function FamilyMemberCard({ member, onRoleChange, onRemove, isAdmin }: Fa
 
       {/* Shared sandoqs summary */}
       <div className="my-4 pt-3 border-t border-slate-50">
-        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Sandoqs partagés</span>
+        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">{t('sharedEnvelopesLabel', language)}</span>
         <div className="flex flex-wrap gap-1 mt-1.5">
           {member.sharedBuckets.map((b, idx) => (
             <span key={idx} className="text-[9px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-bold">
@@ -84,7 +87,7 @@ export function FamilyMemberCard({ member, onRoleChange, onRemove, isAdmin }: Fa
           ))}
           {member.budgetLimit && (
             <span className="text-[9px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-md font-extrabold">
-              Plafond: {member.budgetLimit} DH
+              {t('budgetLimitCard', language)}: {member.budgetLimit} DH
             </span>
           )}
         </div>
@@ -98,15 +101,15 @@ export function FamilyMemberCard({ member, onRoleChange, onRemove, isAdmin }: Fa
             onChange={(e) => onRoleChange(member.id, e.target.value as any)}
             className="flex-1 text-[10px] font-bold text-slate-600 bg-slate-50 hover:bg-slate-100 border border-slate-100 rounded-lg p-1.5 outline-none cursor-pointer"
           >
-            <option value="member">Passer Membre</option>
-            <option value="viewer">Passer Viewer</option>
-            <option value="child">Passer Enfant</option>
+            <option value="member">{isDarija ? 'Passer Membre' : 'Passer Membre'}</option>
+            <option value="viewer">{isDarija ? 'Passer Viewer' : 'Passer Viewer'}</option>
+            <option value="child">{isDarija ? 'Passer Enfant' : 'Passer Enfant'}</option>
           </select>
 
           <button
             onClick={() => onRemove(member.id)}
-            className="p-1.5 border border-red-100 hover:border-red-200 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-            title="Retirer"
+            className="p-1.5 border border-red-100 hover:border-red-200 text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+            title={isDarija ? 'مسح' : 'Retirer'}
           >
             <Trash2 className="w-4 h-4" />
           </button>

@@ -41,6 +41,36 @@ interface ResponseContext {
   amount?: number;
   categoryName?: string;
   merchant?: string;
+  walletBalance?: number;
+  recipientName?: string;
+  roundupSavings?: number;
+  remittanceTotal?: number;
+  remoteBudgetLimit?: number;
+  remoteBudgetSpent?: number;
+  activeChallengesCount?: number;
+  recommendedLessonTitle?: string;
+  completedLessonsCount?: number;
+  certificatesCount?: number;
+  referralCode?: string;
+  invitedFriendsCount?: number;
+  savingsGroupCount?: number;
+  savingsGroupBalance?: number;
+  floussiScore?: number;
+  floussiTier?: string;
+  scoreTip?: string;
+  pointsToNextTier?: number;
+  weeklyReportSummary?: string;
+  optimizationChallengeTitle?: string;
+  monthlyReviewMonth?: string;
+  planUpgradeNotice?: string;
+  unreadNotificationsCount?: number;
+  notificationSummary?: string;
+  searchQuery?: string;
+  searchResultsCount?: number;
+  searchResultsSummary?: string;
+  preferenceKey?: string;
+  preferenceValue?: string;
+  preferenceStatus?: string;
 }
 
 export function getPersonalityResponse(intentId: string, context: ResponseContext = {}): string {
@@ -221,10 +251,132 @@ export function getPersonalityResponse(intentId: string, context: ResponseContex
     ],
     how_to_save: [
       `Conseil de sage : Applique la règle marocaine des 3 tiers. Un tiers pour la subsistance (Dar & Makla), un tiers pour les imprévus/famille, et un tiers pour le Tawfir (Épargne). 👍`,
-      `Astuce du jour : Évite les dépenses de 'Khlass de café' compulsifs. 10 DH par-ci, 15 DH par-là... À la fin du mois, c'est un sandoq entier qui s'est évaporé !`,
+      `Astuce du jour : Évite les d-dépenses de 'Khlass de café' compulsifs. 10 DH par-ci, 15 DH par-là... À la fin du mois, c'est un sandoq entier qui s'est évaporé !`,
       `Anticipe toujours le Ramadan et l'Aïd Al Adha dès le début de l'année. Mettre 200 DH de côté chaque mois est plus facile que de sortir 3000 DH d'un coup !`,
       `Sagesse financière : Ne dépense jamais de l'argent que tu n'as pas encore reçu. Fuis les petits crédits de consommation comme la peste !`,
       `Pour économiser, fais tes courses au souq hebdomadaire plutôt qu'au supermarché pour les fruits, légumes et viande. C'est meilleur pour la santé et le sandoq !`
+    ],
+    check_wallet_balance: [
+      `Votre solde Wallet est de **${context.walletBalance ?? 0} DH**. Lah yzid l'baraka f had s-sandoq l-mounassib ! 📱`,
+      `Ton solde de portefeuille mobile (Wallet) s'élève à **${context.walletBalance ?? 0} DH** lyouma. Koulchi f l'amane !`,
+      `Flous li andek f l-wallet sghir dyalek slla l **${context.walletBalance ?? 0} DH**. Prêt pour un paiement ou un transfert rapide ?`
+    ],
+    send_p2p_transfer: [
+      `Safi ! J'ai bien envoyé **${amount}** à **${context.recipientName ?? 'ton destinataire'}** en toute sécurité. Ton solde Wallet a été mis à jour ! 💸`,
+      `Transfert effectué avec succès de **${amount}** l **${context.recipientName ?? 'ton proche'}** ! Lah ybarek l'amitiat o s-solidarité.`,
+      `C'est fait ! **${amount}** transférés avec succès à **${context.recipientName ?? 'ton contact'}**. Sécurité et plafonds parfaitement respectés, d'accord avec Sidi !`
+    ],
+    pay_bill_via_sidi: [
+      `Pour payer ta facture ONEE, IAM ou Lydec en toute sécurité, je t'ai ouvert le formulaire officiel ci-dessous ! Remplis-le en deux clics. 📝`,
+      `Khlass d l-factures khasso t-tba3 mzyan ! Ouvre le formulaire de paiement juste en dessous pour régler ça en toute confiance.`,
+      `Rien de plus simple ! Utilise le formulaire ci-dessous que je viens de t'ouvrir pour payer tes factures d'eau, d'électricité ou de télécom.`
+    ],
+    recharge_via_sidi: [
+      `Besoin d'une recharge IAM, Orange ou Inwi ? Je t'ai préparé le formulaire de recharge rapide juste en dessous ! Saisis ton numéro et c'est parti. 📱`,
+      `Ta3bi2a f l-ghalta la ! Remplis le formulaire de recharge rapide ci-dessous pour recharger ta ligne en toute sécurité et sans erreur.`,
+      `Je t'ai ouvert l'écran de recharge mobile ! Saisis ton opérateur et ton type de recharge (*6, *3...) pour rester connecté avec les proches.`
+    ],
+    check_roundup_savings: [
+      `Grâce à tes micro-épargnes par arrondi de transactions, tu as déjà mis de côté **${context.roundupSavings ?? 0} DH** ! Une vraie tirelire de baraka sans aucun effort ! 🪙`,
+      `Ma cha'a Allah ! Tes petits sous d'arrondi sllat l **${context.roundupSavings ?? 0} DH**. C'est de l'argent qui grandit en cachette !`,
+      `Tu as cumulé **${context.roundupSavings ?? 0} DH** grâce à l'arrondi automatique. Petit à petit, l'oiseau fait son nid, n-khbiw chouia b chouia !`
+    ],
+    check_remittance_history: [
+      `En tant que MRE, tu as envoyé un total de **${context.remittanceTotal ?? 0} DH** à ta famille restée au Maroc ce mois-ci. Lah yjazik bikhair ! 🇲🇦`,
+      `Historique des remises d'argent : Tes transferts s'élèvent à **${context.remittanceTotal ?? 0} DH** au total. Ta solidarité familiale est magnifique.`,
+      `Tu as envoyé **${context.remittanceTotal ?? 0} DH** au foyer. Chaque dirham soutient tes proches au pays, Lah ybarek f l-masrouf.`
+    ],
+    check_family_budget_remote: [
+      `Le budget de ton foyer distant au pays est de **${context.remoteBudgetLimit ?? 0} DH**, et ils ont dépensé **${context.remoteBudgetSpent ?? 0} DH**. Reste disponible pour eux ! 🏡`,
+      `Suivi remote : Ta famille a consommé **${context.remoteBudgetSpent ?? 0} DH** sur le budget de **${context.remoteBudgetLimit ?? 0} DH** alloué. Tout est sous contrôle.`,
+      `Masrouf d l'khout f l-Blad : Ils ont dépensé **${context.remoteBudgetSpent ?? 0} DH** sur **${context.remoteBudgetLimit ?? 0} DH** ce mois-ci. L'économie est bien gérée !`
+    ],
+    check_active_challenges: [
+      `Tu as actuellement **${context.activeChallengesCount ?? 0}** défis d'optimisation en cours. Allez, m3ak l-khir, t-kemelhoum kamlin l-bonté dyal sandoq ! 🏆`,
+      `Tahadiyat f l-cours : Tu as **${context.activeChallengesCount ?? 0}** challenges actifs. Tiens bon pour décrocher tes badges et ton bonus d'XP !`,
+      `Koulchi 3la l-motivaçion ! Tu as **${context.activeChallengesCount ?? 0}** défis actifs pour affûter ta sagesse budgétaire marocaine.`
+    ],
+    suggest_academy_lesson: [
+      `Pour continuer à faire grandir ton esprit financier, je te propose la leçon : **${context.recommendedLessonTitle ?? 'Gestion du budget'}** dans l'Académie ! 📚`,
+      `Dars l-moufidd lyoum : Que dis-tu d'apprendre sur **${context.recommendedLessonTitle ?? 'L\'Épargne'}** ? Une vraie perle de sagesse !`,
+      `Savoir, c'est économiser ! Ouvre notre académie Floussi et découvre le cours **${context.recommendedLessonTitle ?? 'Les secrets du tawfir'}**.`
+    ],
+    check_academy_progress: [
+      `Ma cha'a Allah ! Tu as déjà validé **${context.completedLessonsCount ?? 0}** modules et tu as décroché **${context.certificatesCount ?? 0}** certificats officiels de l'Académie Floussi ! 🎓`,
+      `Progression Académie : **${context.completedLessonsCount ?? 0}** leçons terminées. Ton score d'intelligence financière augmente chaque jour !`,
+      `Chahadat li andek : Tu détiens **${context.certificatesCount ?? 0}** certificats de réussite. Les banquiers n'ont qu'à bien se tenir devant toi !`
+    ],
+    check_referral_status: [
+      `Parraine tes proches et partage la baraka ! Ton code est **${context.referralCode ?? 'FLOUSSI-PRO'}** et tu as déjà invité **${context.invitedFriendsCount ?? 0}** filleuls. 👍`,
+      `Stada3 l-ahbab : Tu as invité **${context.invitedFriendsCount ?? 0}** personnes à rejoindre Floussi. Voici ton code magique : **${context.referralCode ?? 'MY-CODE'}** !`,
+      `Plus on est de fous, plus on économise ! Ton code de parrainage est **${context.referralCode ?? 'SIDI-REFER'}** (déjà **${context.invitedFriendsCount ?? 0}** filleuls).`
+    ],
+    check_savings_group: [
+      `Ton groupe d'épargne ou tontine amicale (Jam3iya) contient **${context.savingsGroupCount ?? 0}** groupes actifs, avec une cagnotte globale de **${context.savingsGroupBalance ?? 0} DH**. Solidarité totale ! 🤝`,
+      `Cagnotte commune entre amis : Tu as **${context.savingsGroupCount ?? 0}** groupes d'épargne en cours de cotisation. La cagnotte s'élève à **${context.savingsGroupBalance ?? 0} DH** .`,
+      `Jam3iya dyalkoum fiha **${context.savingsGroupBalance ?? 0} DH** d'épargne commune. Un vrai projet de vie solidaire géré en toute confiance.`
+    ],
+    share_achievement: [
+      `Quelle fierté ! Je te propose de partager ta réussite sur le flux de la communauté pour inspirer les autres citoyens de Floussi ! 🌟`,
+      `Partage ta baraka ! Choisis l'une de tes victoires récentes ci-dessous pour l'annoncer fièrement à la communauté.`,
+      `L'encouragement mutuel fait la force ! Partage ton badge ou ton objectif atteint avec les autres membres en toute simplicité.`
+    ],
+    check_floussi_score: [
+      `Ton Score Floussi est de **${context.floussiScore ?? 350} points**, ce qui te place au rang de **${context.floussiTier ?? 'Débutant'}** ! 📈 Tu te débrouilles super bien, continue comme ça !`,
+      `Score Floussi dyalk hwa **${context.floussiScore ?? 350} points** (**${context.floussiTier ?? 'Débutant'}**). L'intelligence financière t-bda t-tla3 t-bqa f l-qouwa ! 💪`,
+      `La baraka du score : tu as **${context.floussiScore ?? 350} pts** ! Ton niveau de gestionnaire est **${context.floussiTier ?? 'Débutant'}**. C'est solide ! 🌟`
+    ],
+    explain_score_breakdown: [
+      `Voici l'analyse de ta sagesse financière : il te manque **${context.pointsToNextTier ?? 50} points** pour atteindre le palier supérieur ! 💡 Conseil personnalisé de Sidi : *${context.scoreTip ?? 'Épargne un peu plus chaque mois'}*`,
+      `F-fham kifach t-tla3 score dyalk : Khassak ghir **${context.pointsToNextTier ?? 50} d l-points** bach t-tla3 l-niveau jdid. S-saha dyal sandoq : *${context.scoreTip ?? 'Zid chwiya dyal t-tawfir'}*`,
+      `Pour faire grandir ta baraka financière de **${context.pointsToNextTier ?? 50} points**, suis ce précieux conseil : *${context.scoreTip ?? 'Participe à un cours de l\'Académie'}* ! 📚`
+    ],
+    check_weekly_report: [
+      `Voici ton rapport hebdomadaire personnalisé, réservé aux membres d'élite ! 📊\n\n${context.weeklyReportSummary ?? 'Semaine d\'économies exceptionnelles et de saine discipline !'}`,
+      `Moul l-kora rje3 ! Ton rapport de la semaine est prêt, sidi. Résumé : ${context.weeklyReportSummary ?? 'Sagesse et gestion au top.'} 🌟`,
+      `Rapport hebdomadaire Elite : ${context.weeklyReportSummary ?? 'Félicitations pour ton assiduité.'}`
+    ],
+    start_monthly_review: [
+      `C'est l'heure de notre bilan du mois de **${context.monthlyReviewMonth ?? 'ce mois-ci'}** ! Ensemble, on fait le tri des enveloppes et on célèbre tes victoires. 📅`,
+      `Aji n-diro l-bilan dyal chhar **${context.monthlyReviewMonth ?? 'l-fat'}** ! On va regarder tes sandoqs un par un pour faire fructifier la baraka. ✨`,
+      `Bilan mensuel guidé lancé ! Analysons le mois de **${context.monthlyReviewMonth ?? 'dernier'}** pour perfectionner ta stratégie financière.`
+    ],
+    suggest_optimization_challenge: [
+      `Pour optimiser tes dépenses, je te propose de relever le défi suivant : **${context.optimizationChallengeTitle ?? 'Zéro café en dehors du foyer'}** ! ☕`,
+      `Un challenge d'élite pour toi : **${context.optimizationChallengeTitle ?? 'Réduction du sandoq Loisirs de 10%'}** ! Es-tu prêt à le relever ? 🏆`,
+      `Optimise ton sandoq avec ce défi : **${context.optimizationChallengeTitle ?? 'Achat en gros chez moul l-hanout'}**. La baraka n'attend pas !`
+    ],
+    premium_upgrade_required: [
+      `Oups, cette fonctionnalité exclusive (rapports de coaching IA, défis d'optimisation avancés, bilans mensuels) fait partie de nos formules supérieures **Analyse+** ou **Elite**. 🌟 Tu peux passer au niveau supérieur à tout moment depuis les paramètres de ton profil pour débloquer ces précieux outils sans aucune pression !`,
+      `Had l-mouassat d l-coaching khassa ghir b n-nass dyal **Analyse+** oula **Elite**. ✨ T9dar t-upgrade l-abonnement dyalk melli t-bghi, bla machakil o b l-baraka dyalk !`,
+      `Pour débloquer la pleine puissance du Coach IA (rapports hebdomadaires, bilans guidés mensuels), rejoins notre communauté premium **Analyse+ / Elite** ! C'est un bel investissement pour ta sagesse financière future. 👍`
+    ],
+    check_unread_notifications: lang === 'darija' ? [
+      `3andek **${context.unreadNotificationsCount ?? 0}** tanbih(at) jdid(in) machi ma9riyin ! 🔔\n\n${context.notificationSummary ?? "Machi mouchkil, t9dar tchoufhoum f l-centre d l-notifications !"}`,
+      `Chouf, s-Sandoq dyal l-notifications fih **${context.unreadNotificationsCount ?? 0}** hwayj jdad ! 📈 Résumé: ${context.notificationSummary ?? "Koulchi mzyan, khoya."}`,
+      `Rani l9it **${context.unreadNotificationsCount ?? 0}** alertes jdad lyouma. Aji n-choufo l-khbar : ${context.notificationSummary ?? "Machi mouchkil."}`
+    ] : [
+      `Tu as **${context.unreadNotificationsCount ?? 0}** notification(s) non lue(s) ! 🔔\n\n${context.notificationSummary ?? "Rien à signaler pour l'instant !"}`,
+      `Voici ce qui est nouveau, ${name} : **${context.unreadNotificationsCount ?? 0}** alertes t'attendent ! 📈 Résumé : ${context.notificationSummary ?? "Tout est sous contrôle."}`,
+      `J'ai trouvé **${context.unreadNotificationsCount ?? 0}** notifications importantes à ton attention. Résumé : ${context.notificationSummary ?? "Pas d'alertes majeures."}`
+    ],
+    search_via_sidi: lang === 'darija' ? [
+      `9lebt f s-sandoq dyali l-ktab 3la **"${context.searchQuery ?? ''}"** o l9it **${context.searchResultsCount ?? 0}** natija : ${context.searchResultsSummary ?? 'makayn walou...'} 🔍`,
+      `Ha hya l-natija d l-ba7t dyalk l **"${context.searchQuery ?? ''}"** : L9ina **${context.searchResultsCount ?? 0}** 3onsor ! ${context.searchResultsSummary ?? 'Walo f l-mouassat.'} 📂`,
+      `B-nisba l l-ba7t dyal **"${context.searchQuery ?? ''}"** : Ha chnou l9it (**${context.searchResultsCount ?? 0}** results) : ${context.searchResultsSummary ?? 'qleb mzyan !'}`
+    ] : [
+      `J'ai cherché dans tes archives pour **"${context.searchQuery ?? ''}"** et j'ai trouvé **${context.searchResultsCount ?? 0}** résultat(s) : ${context.searchResultsSummary ?? 'aucun résultat...'} 🔍`,
+      `Voici les résultats de ta recherche pour **"${context.searchQuery ?? ''}"** : **${context.searchResultsCount ?? 0}** élément(s) détecté(s). ${context.searchResultsSummary ?? 'Aucun élément trouvé.'} 📂`,
+      `Recherche de **"${context.searchQuery ?? ''}"** terminée ! J'ai déniché **${context.searchResultsCount ?? 0}** correspondance(s) : ${context.searchResultsSummary ?? 'pas de correspondance.'}`
+    ],
+    update_preference_via_sidi: lang === 'darija' ? [
+      `Safi ! Bedelt lik preference dyalk b n-nja7 : **${context.preferenceStatus ?? 'koulchi mzyan'}** ! ⚙️`,
+      `T-mte3 b had l-bedil jdid : **${context.preferenceStatus ?? 'safé'}** ! Sidi Floussi dima f l-khedma. 👍`,
+      `Koulchi fl-aman, sidi ! L-preference dyalk t-bdel : **${context.preferenceStatus ?? 'safé'}** ! ✨`
+    ] : [
+      `Parfait ! J'ai bien mis à jour ta préférence : **${context.preferenceStatus ?? 'opération réussie'}** ! ⚙️`,
+      `Changement effectué avec succès : **${context.preferenceStatus ?? 'réussi'}** ! Sidi Floussi s'adapte à tes habitudes. 👍`,
+      `C'est fait, sidi ! Ta préférence a été modifiée : **${context.preferenceStatus ?? 'mis à jour'}** ! ✨`
     ],
     fallback: [
       `Aji, je n'ai pas tout à fait compris ta demande. Peux-tu reformuler ? Tu peux me dire par exemple *"Solde"* ou *"Sraft 40 DH dans loisirs"* !`,

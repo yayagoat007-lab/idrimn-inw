@@ -11,6 +11,9 @@ import { AIInsightsDashboard } from '../../../components/insights/AIInsightsDash
 import { MoroccanBenchmarks } from '../../../components/insights/MoroccanBenchmarks';
 import { ReportsHistory } from '../../../components/insights/ReportsHistory';
 import { MoodHistoryChart } from '../../../components/checkin/MoodHistoryChart';
+import { useFloussiScore } from '../../../hooks/use-floussi-score';
+import { ScoreBreakdownCard } from '../../../components/score/ScoreBreakdownCard';
+import { ScoreHistoryChart } from '../../../components/score/ScoreHistoryChart';
 import { 
   BarChart, Sparkles, PieChart, Landmark, FileText, 
   ChevronRight, TrendingUp, HelpCircle 
@@ -39,6 +42,9 @@ export default function InsightsPage({ language }: InsightsPageProps) {
   } = useInsights();
 
   const { monthlyHistory, spendingByCategory, topExpenses } = stats;
+
+  // Load unified Floussi Score details
+  const { score: scoreObj } = useFloussiScore(userId, language as 'fr' | 'darija');
 
   // Navigation tab states
   const [activeTab, setActiveTab] = useState<'overview' | 'benchmarks' | 'ai'>('overview');
@@ -116,6 +122,14 @@ export default function InsightsPage({ language }: InsightsPageProps) {
             stats={stats} 
             comparePrevious={comparePrevious} 
           />
+
+          {/* Unified Floussi Score Evolution & Composition */}
+          {scoreObj && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <ScoreHistoryChart userId={userId} language={language as 'fr' | 'darija'} />
+              <ScoreBreakdownCard components={scoreObj.components} language={language as 'fr' | 'darija'} />
+            </div>
+          )}
 
           {/* Monthly area and line trends chart */}
           <TrendsChart monthlyHistory={monthlyHistory} />

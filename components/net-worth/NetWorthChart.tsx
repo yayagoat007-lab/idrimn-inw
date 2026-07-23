@@ -4,6 +4,7 @@ import {
   CartesianGrid, Tooltip, Legend, ResponsiveContainer 
 } from 'recharts';
 import { TrendingUp, Sparkles, HelpCircle } from 'lucide-react';
+import { formatCurrency } from '../../lib/utils';
 
 interface NetWorthChartProps {
   historicalData: any[];
@@ -22,14 +23,14 @@ export function NetWorthChart({ historicalData, projectionData }: NetWorthChartP
           <p className="font-extrabold text-slate-300 mb-1">{label}</p>
           <div className="space-y-1 font-mono">
             <p className="text-emerald-400">
-              Actifs: <span className="font-black">{(payload[0]?.value || 0).toLocaleString()} DH</span>
+              Actifs: <span className="font-black">{formatCurrency(payload[0]?.value || 0)}</span>
             </p>
             <p className="text-rose-400">
-              Dettes: <span className="font-black">{(payload[1]?.value || 0).toLocaleString()} DH</span>
+              Dettes: <span className="font-black">{formatCurrency(payload[1]?.value || 0)}</span>
             </p>
             <div className="border-t border-slate-700 my-1 pt-1">
               <p className="text-white font-black">
-                Patrimoine Net: <span>{(payload[2]?.value || 0).toLocaleString()} DH</span>
+                Patrimoine Net: <span>{formatCurrency(payload[2]?.value || 0)}</span>
               </p>
             </div>
           </div>

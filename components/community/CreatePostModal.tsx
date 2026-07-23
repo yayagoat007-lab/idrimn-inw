@@ -3,15 +3,16 @@ import { useGoals } from '../../hooks/use-goals';
 import { useAuth } from '../../hooks/use-auth';
 import { X, Sparkles, Lightbulb, HelpCircle, Send } from 'lucide-react';
 import { useFocusTrap } from '../../hooks/use-focus-trap';
+import { Language } from '../../lib/i18n';
 
 interface CreatePostModalProps {
   isOpen: boolean;
   onClose: () => void;
-  lang: 'fr' | 'darija';
+  language: Language;
   onCreatePost: (content: string, type: 'achievement' | 'tip' | 'question', relatedGoalName?: string) => void;
 }
 
-export function CreatePostModal({ isOpen, onClose, lang, onCreatePost }: CreatePostModalProps) {
+export function CreatePostModal({ isOpen, onClose, language, onCreatePost }: CreatePostModalProps) {
   const { profile } = useAuth();
   const userId = profile?.id || "mock-user-id-9999";
   const { goals } = useGoals(userId);
@@ -23,18 +24,20 @@ export function CreatePostModal({ isOpen, onClose, lang, onCreatePost }: CreateP
 
   if (!isOpen) return null;
 
+  const isDarija = language === 'darija';
+
   const t = {
-    title: lang === 'darija' ? 'Kteb Post Jdid' : 'Créer une publication',
-    placeholderTip: lang === 'darija' ? 'Share chi astuce d l-budget dyalk... Ex: Kifash n-n9ss f fatoura d l-ma' : 'Partagez une astuce budgétaire... Ex: Comment économiser sur les courses avec l\'OCR Floussi',
-    placeholderQuestion: lang === 'darija' ? 'Sowl l-comunauté Floussi chi so2al...' : 'Posez une question d\'entraide financière à la communauté Floussi...',
-    typeLabel: lang === 'darija' ? 'No3 d l-post :' : 'Type de publication :',
-    tip: lang === 'darija' ? 'Fikra (Astuce)' : 'Astuce Budget',
-    question: lang === 'darija' ? 'So2al (Question)' : 'Question / Entraide',
-    goalLabel: lang === 'darija' ? 'Hadaf dyalk d l-epargne (Facultatif) :' : 'Lier à l\'un de vos objectifs d\'épargne (Optionnel) :',
-    selectGoal: lang === 'darija' ? '-- Khtar Hadaf --' : '-- Choisir un objectif --',
-    publish: lang === 'darija' ? 'Nashr (Publier)' : 'Publier',
-    cancel: lang === 'darija' ? 'Ilgha2 (Annuler)' : 'Annuler',
-    emptyAlert: lang === 'darija' ? 'Kteb chi haja f l-post d l-owl.' : 'Veuillez rédiger le contenu de votre message avant de publier.'
+    title: isDarija ? 'Kteb Post Jdid' : 'Créer une publication',
+    placeholderTip: isDarija ? 'Share chi astuce d l-budget dyalk... Ex: Kifash n-n9ss f fatoura d l-ma' : 'Partagez une astuce budgétaire... Ex: Comment économiser sur les courses avec l\'OCR Floussi',
+    placeholderQuestion: isDarija ? 'Sowl l-comunauté Floussi chi so2al...' : 'Posez une question d\'entraide financière à la communauté Floussi...',
+    typeLabel: isDarija ? 'No3 d l-post :' : 'Type de publication :',
+    tip: isDarija ? 'Fikra (Astuce)' : 'Astuce Budget',
+    question: isDarija ? 'So2al (Question)' : 'Question / Entraide',
+    goalLabel: isDarija ? 'Hadaf dyalk d l-epargne (Facultatif) :' : 'Lier à l\'un de vos objectifs d\'épargne (Optionnel) :',
+    selectGoal: isDarija ? '-- Khtar Hadaf --' : '-- Choisir un objectif --',
+    publish: isDarija ? 'Nashr (Publier)' : 'Publier',
+    cancel: isDarija ? 'Ilgha2 (Annuler)' : 'Annuler',
+    emptyAlert: isDarija ? 'Kteb chi haja f l-post d l-owl.' : 'Veuillez rédiger le contenu de votre message avant de publier.'
   };
 
   const handleSubmit = (e: React.FormEvent) => {

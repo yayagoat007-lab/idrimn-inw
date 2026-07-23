@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useBiometricAuth } from '../../hooks/use-biometric-auth';
 import { useFocusTrap } from '../../hooks/use-focus-trap';
+import { formatCurrency } from '../../lib/utils';
 
 interface PinConfirmModalProps {
   isOpen: boolean;
@@ -121,7 +122,7 @@ export function PinConfirmModal({
       setAttempts(nextAttempts);
       if (nextAttempts >= 3) {
         setError(language === 'darija' 
-          ? 'Trop de tentatives ! Veuillez patienter 30 secondes.' 
+          ? 'Ktr d t-tajarib! Sna 30 d t-taniya.' 
           : 'Trop de tentatives ! Veuillez patienter 30 secondes.'
         );
         setLockoutTime(30);
@@ -178,7 +179,7 @@ export function PinConfirmModal({
     doubleConfirmTitle: language === 'darija' ? '🔒 Taqid Sani - Mabla9 Kbir' : '🔒 Double Validation - Montant Élevé',
     doubleConfirmSub: language === 'darija' 
       ? `Mabla9 kbir (> 5000 DH). 3awed kteb l-PIN dyalk bch t-aqad d-tahwil.`
-      : `Montant supérieur à 5 000 DH (${amount.toLocaleString('fr-FR')} DH). Veuillez confirmer à nouveau pour éviter toute erreur.`,
+      : `Montant supérieur à 5 000 DH (${formatCurrency(amount)}). Veuillez confirmer à nouveau pour éviter toute erreur.`,
     cooldownMsg: (secs: number) => language === 'darija' 
       ? `Sna s-saniat... (${secs}s)` 
       : `Veuillez patienter... (${secs}s)`,
@@ -225,8 +226,10 @@ export function PinConfirmModal({
             {/* Amount Warning */}
             {amount > 0 && (
               <div className="px-4 py-2 rounded-2xl bg-slate-50 border border-slate-100 text-center font-mono w-full">
-                <span className="text-[9px] uppercase font-bold text-slate-400 block">Montant à valider</span>
-                <span className="text-lg font-black text-slate-800">{amount.toLocaleString('fr-FR')} DH</span>
+                <span className="text-[9px] uppercase font-bold text-slate-400 block">
+                  {language === 'darija' ? "Mabla9 l-taqad" : "Montant à valider"}
+                </span>
+                <span className="text-lg font-black text-slate-800">{formatCurrency(amount)}</span>
               </div>
             )}
 

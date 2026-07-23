@@ -190,6 +190,7 @@ export default function GoalsPage({ language = 'fr' }: GoalsPageProps) {
           <div className="bg-white rounded-3xl p-6 max-w-4xl w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <GoalForm
               goal={activeFormGoal}
+              language={language}
               onSubmit={handleCreateOrUpdateGoal}
               onCancel={() => {
                 setShowGoalCreator(false);
@@ -207,6 +208,7 @@ export default function GoalsPage({ language = 'fr' }: GoalsPageProps) {
         goal={activeContributeGoal}
         logs={contributions}
         onContribute={handleContribute}
+        language={language}
       />
 
     </div>

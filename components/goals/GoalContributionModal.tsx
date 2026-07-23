@@ -4,6 +4,7 @@ import { formatCurrency, formatDate } from '../../lib/utils';
 import { X, Coins, Check, ArrowUpRight } from 'lucide-react';
 import { GoalContributionLog } from '../../hooks/use-goals';
 import { useFocusTrap } from '../../hooks/use-focus-trap';
+import { Language, t } from '../../lib/i18n';
 
 interface GoalContributionModalProps {
   isOpen: boolean;
@@ -11,6 +12,7 @@ interface GoalContributionModalProps {
   goal: Goal | null;
   logs: GoalContributionLog[];
   onContribute: (id: string, amount: number, note: string) => void;
+  language: Language;
 }
 
 const QUICK_AMOUNTS = [50, 100, 200, 500, 1000];
@@ -20,7 +22,8 @@ export function GoalContributionModal({
   onClose,
   goal,
   logs,
-  onContribute
+  onContribute,
+  language
 }: GoalContributionModalProps) {
   const [amount, setAmount] = useState<number>(100);
   const [note, setNote] = useState('');
@@ -57,8 +60,8 @@ export function GoalContributionModal({
             <div className="p-3 bg-white/20 rounded-full animate-bounce">
               <Check size={32} strokeWidth={3} />
             </div>
-            <h4 className="font-extrabold text-sm uppercase tracking-wider mt-3">Épargne Enregistrée !</h4>
-            <p className="text-xs text-white/80 font-bold mt-1">+{formatCurrency(amount)} ajoutés à {goal.name}</p>
+            <h4 className="font-extrabold text-sm uppercase tracking-wider mt-3">{t('epargneEnregistree', language)}</h4>
+            <p className="text-xs text-white/80 font-bold mt-1">+{formatCurrency(amount)} {t('addedTo', language)} {goal.name}</p>
           </div>
         )}
 
@@ -70,10 +73,10 @@ export function GoalContributionModal({
             </div>
             <div>
               <h3 className="font-extrabold text-sm text-slate-800 uppercase tracking-wider">
-                Alimenter : {goal.name}
+                {t('alimenter', language)} : {goal.name}
               </h3>
               <p className="text-[10px] text-slate-400 font-bold mt-0.5">
-                Cible restante : {formatCurrency(Math.max(0, goal.target_amount - goal.current_amount))}
+                {t('cibleRestante', language)} {formatCurrency(Math.max(0, goal.target_amount - goal.current_amount))}
               </p>
             </div>
           </div>
@@ -92,7 +95,7 @@ export function GoalContributionModal({
             
             {/* Quick amount buttons */}
             <div className="space-y-2">
-              <span className="text-[10px] font-black uppercase text-slate-400">Versement Rapide (DH)</span>
+              <span className="text-[10px] font-black uppercase text-slate-400">{t('versementRapide', language)}</span>
               <div className="grid grid-cols-5 gap-2">
                 {QUICK_AMOUNTS.map(val => (
                   <button
@@ -110,7 +113,7 @@ export function GoalContributionModal({
             {/* Manual input and notes */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase text-slate-400">Montant Précis (DH)</label>
+                <label className="text-[10px] font-black uppercase text-slate-400">{t('montantPrecis', language)}</label>
                 <input
                   type="number"
                   required
@@ -123,12 +126,12 @@ export function GoalContributionModal({
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase text-slate-400">Note / Commentaire (Optionnel)</label>
+                <label className="text-[10px] font-black uppercase text-slate-400">{t('noteCommentaire', language)}</label>
                 <input
                   type="text"
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
-                  placeholder="ex: Reste de salaire"
+                  placeholder={t('resteSalaire', language)}
                   className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold text-slate-800 focus:outline-hidden focus:ring-1 focus:ring-emerald-500"
                 />
               </div>
@@ -141,13 +144,13 @@ export function GoalContributionModal({
                 onClick={onClose}
                 className="px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-extrabold text-xs uppercase tracking-wider rounded-2xl transition-colors cursor-pointer"
               >
-                Annuler
+                {t('cancel', language)}
               </button>
               <button
                 type="submit"
                 className="px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-xs uppercase tracking-wider rounded-2xl transition-all shadow-md cursor-pointer"
               >
-                Confirmer l'Épargne
+                {t('confirmerEpargne', language)}
               </button>
             </div>
 
@@ -155,9 +158,9 @@ export function GoalContributionModal({
 
           {/* Historical contributions logs */}
           <div className="space-y-2 pt-4 border-t border-slate-50">
-            <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Historique des versements</span>
+            <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">{t('historiqueVersements', language)}</span>
             {goalLogs.length === 0 ? (
-              <p className="text-[10px] text-slate-400 font-bold py-2">Aucun versement n'a encore été enregistré pour cet objectif.</p>
+              <p className="text-[10px] text-slate-400 font-bold py-2">{t('aucunVersement', language)}</p>
             ) : (
               <div className="divide-y divide-slate-50 max-h-40 overflow-y-auto rounded-2xl border border-slate-100 bg-slate-50/20 px-3 py-1">
                 {goalLogs.map(l => (

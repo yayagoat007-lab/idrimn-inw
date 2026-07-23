@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, Smartphone, ArrowRight, RefreshCw, Key, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { getTranslation, Language } from '../../../lib/i18n';
+import { useTranslation } from '../../../hooks/use-translation';
 import AuthLayout from '../layout';
 
 interface ForgotPasswordPageProps {
@@ -10,7 +11,9 @@ interface ForgotPasswordPageProps {
   language?: Language;
 }
 
-export default function ForgotPasswordPage({ onNavigateLogin, language = 'fr' }: ForgotPasswordPageProps) {
+export default function ForgotPasswordPage({ onNavigateLogin, language: propLanguage }: ForgotPasswordPageProps) {
+  const { lang } = useTranslation();
+  const language = propLanguage || lang;
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [method, setMethod] = useState<'email' | 'sms'>('email');
@@ -34,7 +37,7 @@ export default function ForgotPasswordPage({ onNavigateLogin, language = 'fr' }:
   const handleSubmitEmail = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.includes('@')) {
-      setError("Veuillez saisir une adresse email valide.");
+      setError(language === 'darija' ? "3afak dakhil email s7i7." : "Veuillez saisir une adresse email valide.");
       return;
     }
     setError('');
@@ -46,7 +49,7 @@ export default function ForgotPasswordPage({ onNavigateLogin, language = 'fr' }:
       setSent(true);
       setCooldown(60);
     } catch (err: any) {
-      setError(err.message || "Erreur lors de l'envoi du lien.");
+      setError(err.message || (language === 'darija' ? "Khata2 f l-irsal d l-rabit." : "Erreur lors de l'envoi du lien."));
     } finally {
       setLoading(false);
     }
@@ -55,7 +58,7 @@ export default function ForgotPasswordPage({ onNavigateLogin, language = 'fr' }:
   const handleSendSmsOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!/^(?:\+212|0)[5-7]\d{8}$/.test(phone)) {
-      setError("Numéro marocain invalide.");
+      setError(language === 'darija' ? "Raqm l-telefon ghalt." : "Numéro marocain invalide.");
       return;
     }
     setError('');
@@ -66,7 +69,7 @@ export default function ForgotPasswordPage({ onNavigateLogin, language = 'fr' }:
       setOtpSent(true);
       setCooldown(60);
     } catch (err: any) {
-      setError(err.message || "Erreur lors de l'envoi du SMS.");
+      setError(err.message || (language === 'darija' ? "Khata2 f l-irsal d SMS." : "Erreur lors de l'envoi du SMS."));
     } finally {
       setLoading(false);
     }
@@ -75,7 +78,7 @@ export default function ForgotPasswordPage({ onNavigateLogin, language = 'fr' }:
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (otpCode.length !== 6) {
-      setError("Le code doit contenir 6 chiffres.");
+      setError(language === 'darija' ? "L-koud khassou 6 d r-raqm." : "Le code doit contenir 6 chiffres.");
       return;
     }
     setError('');
@@ -91,10 +94,10 @@ export default function ForgotPasswordPage({ onNavigateLogin, language = 'fr' }:
           window.dispatchEvent(event);
         }, 1200);
       } else {
-        throw new Error("Code incorrect.");
+        throw new Error(language === 'darija' ? "Koud ghalt." : "Code incorrect.");
       }
     } catch (err: any) {
-      setError(err.message || "Code incorrect.");
+      setError(err.message || (language === 'darija' ? "Koud ghalt." : "Code incorrect."));
     } finally {
       setLoading(false);
     }
@@ -127,7 +130,7 @@ export default function ForgotPasswordPage({ onNavigateLogin, language = 'fr' }:
                 method === 'email' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-900'
               }`}
             >
-              Par Email
+              {language === 'darija' ? "B Email" : "Par Email"}
             </button>
             <button
               onClick={() => { setMethod('sms'); setError(''); }}
@@ -135,7 +138,7 @@ export default function ForgotPasswordPage({ onNavigateLogin, language = 'fr' }:
                 method === 'sms' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-900'
               }`}
             >
-              Par SMS (OTP Maroc)
+              {language === 'darija' ? "B SMS (OTP l-Maghrib)" : "Par SMS (OTP Maroc)"}
             </button>
           </div>
         )}
@@ -145,7 +148,9 @@ export default function ForgotPasswordPage({ onNavigateLogin, language = 'fr' }:
           sent ? (
             <div className="text-center p-4 bg-emerald-50 border border-emerald-100 rounded-xl space-y-3">
               <CheckCircle2 size={36} className="text-emerald-600 mx-auto animate-bounce" />
-              <h3 className="font-extrabold text-sm text-emerald-950">Lien envoyé !</h3>
+              <h3 className="font-extrabold text-sm text-emerald-950">
+                {language === 'darija' ? "Rabit tsifet!" : "Lien envoyé !"}
+              </h3>
               <p className="text-xs text-emerald-800 font-medium leading-relaxed">
                 {getTranslation('verifyEmailSubtitle', language)}
               </p>
@@ -155,7 +160,9 @@ export default function ForgotPasswordPage({ onNavigateLogin, language = 'fr' }:
                 onClick={handleSubmitEmail}
                 className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-200 disabled:text-slate-400 text-white font-bold text-xs rounded-xl transition-all"
               >
-                {cooldown > 0 ? `Renvoyer dans ${cooldown}s` : getTranslation('resendEmailButton', language)}
+                {cooldown > 0 
+                  ? (language === 'darija' ? `A3id l-irsal f ${cooldown}s` : `Renvoyer dans ${cooldown}s`) 
+                  : getTranslation('resendEmailButton', language)}
               </button>
             </div>
           ) : (
@@ -195,8 +202,12 @@ export default function ForgotPasswordPage({ onNavigateLogin, language = 'fr' }:
           otpVerified ? (
             <div className="text-center p-4 bg-emerald-50 border border-emerald-100 rounded-xl space-y-3">
               <CheckCircle2 size={36} className="text-emerald-600 mx-auto" />
-              <h3 className="font-extrabold text-sm text-emerald-950">Code vérifié avec succès !</h3>
-              <p className="text-xs text-emerald-800 font-medium">Redirection vers l'écran de réinitialisation...</p>
+              <h3 className="font-extrabold text-sm text-emerald-950">
+                {language === 'darija' ? "T-t7a9aqna mn l-koud b najah !" : "Code vérifié avec succès !"}
+              </h3>
+              <p className="text-xs text-emerald-800 font-medium">
+                {language === 'darija' ? "Ghadi n-diwek l r-reinitialisation..." : "Redirection vers l'écran de réinitialisation..."}
+              </p>
             </div>
           ) : otpSent ? (
             <form onSubmit={handleVerifyOtp} className="space-y-4">
@@ -232,9 +243,11 @@ export default function ForgotPasswordPage({ onNavigateLogin, language = 'fr' }:
                 type="button"
                 disabled={cooldown > 0}
                 onClick={handleSendSmsOtp}
-                className="w-full text-center text-[11px] font-bold text-emerald-600 disabled:text-slate-400"
+                className="w-full text-center text-[11px] font-bold text-emerald-600 disabled:text-slate-400 font-sans"
               >
-                {cooldown > 0 ? `Renvoyer le code dans ${cooldown}s` : "Renvoyer le code SMS"}
+                {cooldown > 0 
+                  ? (language === 'darija' ? `A3id l-irsal f ${cooldown}s` : `Renvoyer le code dans ${cooldown}s`) 
+                  : (language === 'darija' ? "A3id irsal SMS" : "Renvoyer le code SMS")}
               </button>
             </form>
           ) : (
@@ -263,7 +276,7 @@ export default function ForgotPasswordPage({ onNavigateLogin, language = 'fr' }:
                 disabled={loading}
                 className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md shadow-emerald-600/15 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
               >
-                {loading ? <RefreshCw size={14} className="animate-spin" /> : <span>Envoyer le SMS OTP</span>}
+                {loading ? <RefreshCw size={14} className="animate-spin" /> : <span>{language === 'darija' ? "Tsifet SMS OTP" : "Envoyer le SMS OTP"}</span>}
               </button>
             </form>
           )

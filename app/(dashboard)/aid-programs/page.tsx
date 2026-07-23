@@ -7,6 +7,7 @@ import {
 } from '../../../lib/aid-programs';
 import { useGoals } from '../../../hooks/use-goals';
 import { useAuth } from '../../../hooks/use-auth';
+import { useTranslation } from '../../../hooks/use-translation';
 import { 
   ShieldAlert, 
   Sliders, 
@@ -23,8 +24,15 @@ import {
   Layers,
   ChevronRight
 } from 'lucide-react';
+import { formatCurrency } from '../../../lib/utils';
 
-export default function AidProgramsPage({ language }: { language: 'fr' | 'darija' }) {
+interface AidProgramsPageProps {
+  language?: 'fr' | 'darija';
+}
+
+export default function AidProgramsPage({ language: propLanguage }: AidProgramsPageProps) {
+  const { lang } = useTranslation();
+  const language = propLanguage || lang;
   const { profile } = useAuth();
   const userId = profile?.id || "mock-user-id-9999";
   const { createGoal } = useGoals(userId);
@@ -124,7 +132,7 @@ export default function AidProgramsPage({ language }: { language: 'fr' | 'darija
           <div className="space-y-1.5 relative z-10">
             <span className="text-[10px] uppercase font-black tracking-widest text-blue-600 flex items-center gap-1.5">
               <Gift size={13} />
-              <span>Programmes de Solidarité Nationale</span>
+              <span>{language === 'darija' ? "Baramij d l-Moussawa" : "Programmes de Solidarité Nationale"}</span>
             </span>
             <h1 className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight uppercase flex items-center gap-2">
               <span>{t.title}</span>
@@ -137,7 +145,9 @@ export default function AidProgramsPage({ language }: { language: 'fr' | 'darija
 
           <div className="bg-blue-50 border border-blue-100 text-blue-800 px-3 py-2.5 rounded-2xl flex items-center gap-2 max-w-xs shrink-0 font-sans">
             <Info size={16} className="text-blue-600" />
-            <span className="text-[10px] uppercase font-black leading-snug">Connecté à votre simulateur d'apport de fonds Floussi</span>
+            <span className="text-[10px] uppercase font-black leading-snug">
+              {language === 'darija' ? "Moula9a m3a 7issab Floussi dyalek d l-istirdad" : "Connecté à votre simulateur d'apport de fonds Floussi"}
+            </span>
           </div>
         </div>
 
@@ -155,7 +165,7 @@ export default function AidProgramsPage({ language }: { language: 'fr' | 'darija
           <div className="lg:col-span-1 bg-white border border-slate-100 rounded-3xl p-6 shadow-3xs space-y-6">
             <h2 className="font-black text-slate-800 text-xs uppercase tracking-wider flex items-center gap-1.5 border-b border-slate-50 pb-3">
               <Sliders size={14} className="text-blue-600" />
-              <span>Paramètres du Foyer</span>
+              <span>{language === 'darija' ? "Ma3loumat d l-Aila" : "Paramètres du Foyer"}</span>
             </h2>
 
             {/* RSU Score Slider */}
@@ -211,20 +221,22 @@ export default function AidProgramsPage({ language }: { language: 'fr' | 'darija
 
             {/* Children list configuration */}
             <div className="space-y-3 border-t border-slate-50 pt-4">
-              <span className="text-[10px] uppercase font-black text-slate-400 tracking-widest block">Enfants à charge ({children.length})</span>
+              <span className="text-[10px] uppercase font-black text-slate-400 tracking-widest block">
+                {language === 'darija' ? `Enfants à charge (${children.length})` : `Enfants à charge (${children.length})`}
+              </span>
               
               <div className="space-y-1.5 max-h-40 overflow-y-auto">
                 {children.map((child) => (
                   <div key={child.id} className="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-100 rounded-xl text-xs font-semibold">
                     <span className="text-slate-700 uppercase font-mono">
-                      {child.age} ans • {child.inSchool ? t.childSchool : 'Non scolarisé'}
+                      {child.age} {language === 'darija' ? "3am" : "ans"} • {child.inSchool ? t.childSchool : (language === 'darija' ? 'Makhaddams f mdrassa' : 'Non scolarisé')}
                     </span>
                     <button
                       type="button"
                       onClick={() => handleRemoveChild(child.id)}
                       className="text-red-500 hover:text-red-700 font-bold uppercase text-[10px] cursor-pointer"
                     >
-                      Supprimer
+                      {language === 'darija' ? "Zowwel" : "Supprimer"}
                     </button>
                   </div>
                 ))}
@@ -234,7 +246,7 @@ export default function AidProgramsPage({ language }: { language: 'fr' | 'darija
               <div className="bg-slate-50 p-3 rounded-2xl border border-slate-150 flex flex-col gap-2.5">
                 <div className="grid grid-cols-2 gap-2">
                   <div className="space-y-1">
-                    <label className="text-[8px] uppercase font-black text-slate-400">Âge</label>
+                    <label className="text-[8px] uppercase font-black text-slate-400">{language === 'darija' ? "3mar" : "Âge"}</label>
                     <input
                       type="number"
                       min="0"
@@ -252,7 +264,7 @@ export default function AidProgramsPage({ language }: { language: 'fr' | 'darija
                         onChange={(e) => setNewInSchool(e.target.checked)}
                         className="w-3.5 h-3.5 text-blue-600"
                       />
-                      <span>Scolarisé</span>
+                      <span>{language === 'darija' ? "Madrassa" : "Scolarisé"}</span>
                     </label>
                   </div>
                 </div>
@@ -262,7 +274,7 @@ export default function AidProgramsPage({ language }: { language: 'fr' | 'darija
                   onClick={handleAddChild}
                   className="py-1 bg-slate-800 hover:bg-slate-900 text-white text-[9px] font-black uppercase tracking-widest rounded-lg cursor-pointer"
                 >
-                  Ajouter un Enfant
+                  {language === 'darija' ? "Zid l-Weld" : "Ajouter un Enfant"}
                 </button>
               </div>
             </div>
@@ -309,9 +321,11 @@ export default function AidProgramsPage({ language }: { language: 'fr' | 'darija
                 <div className="space-y-1">
                   <span className="text-[8px] uppercase font-black text-slate-400 block">{t.statsMonthly}</span>
                   <h3 className="text-xl font-black text-blue-600">
-                    +{result.totalAidsMonthly.toLocaleString('fr-FR')} DH <span className="text-xs text-slate-400 font-semibold uppercase">/mois</span>
+                    +{formatCurrency(result.totalAidsMonthly)} <span className="text-xs text-slate-400 font-semibold uppercase">{language === 'darija' ? "/f-cchar" : "/mois"}</span>
                   </h3>
-                  <p className="text-[9px] text-slate-400 font-bold uppercase">Alloué au budget familial</p>
+                  <p className="text-[9px] text-slate-400 font-bold uppercase">
+                    {language === 'darija' ? "Mkhassas l l-mizaniya d l-aila" : "Alloué au budget familial"}
+                  </p>
                 </div>
                 <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center shrink-0">
                   <Calendar size={20} />
@@ -322,9 +336,11 @@ export default function AidProgramsPage({ language }: { language: 'fr' | 'darija
                 <div className="space-y-1">
                   <span className="text-[8px] uppercase font-black text-slate-400 block">{t.statsOneTime}</span>
                   <h3 className="text-xl font-black text-emerald-600">
-                    +{result.totalAidsOneTime.toLocaleString('fr-FR')} DH <span className="text-xs text-slate-400 font-semibold">unique</span>
+                    +{formatCurrency(result.totalAidsOneTime)} <span className="text-xs text-slate-400 font-semibold">{language === 'darija' ? "marra khra" : "unique"}</span>
                   </h3>
-                  <p className="text-[9px] text-slate-400 font-bold uppercase">Subventions d'investissements</p>
+                  <p className="text-[9px] text-slate-400 font-bold uppercase">
+                    {language === 'darija' ? "Da3m d l-istithmar" : "Subventions d'investissements"}
+                  </p>
                 </div>
                 <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center shrink-0">
                   <Gift size={20} />
@@ -343,9 +359,11 @@ export default function AidProgramsPage({ language }: { language: 'fr' | 'darija
               {result.eligiblePrograms.length === 0 ? (
                 <div className="bg-slate-50 border border-dashed border-slate-150 rounded-2xl p-8 text-center">
                   <AlertTriangle className="text-amber-500 mx-auto mb-2" size={20} />
-                  <p className="text-xs text-slate-500 font-black uppercase">Votre configuration n'indique aucune aide éligible.</p>
+                  <p className="text-xs text-slate-500 font-black uppercase">
+                    {language === 'darija' ? "Maza mtl3at tal chi msa3ada." : "Votre configuration n'indique aucune aide éligible."}
+                  </p>
                   <p className="text-[10px] text-slate-400 font-bold uppercase mt-1 leading-relaxed">
-                    Augmentez le nombre d'enfants, simulez Daam Sakane, ou ajustez le score RSU (en dessous de 9.743).
+                    {language === 'darija' ? "Zid l-olad, jareb da3m sakan, ola bdel l-index RSU (a9al mn 9.743)" : "Augmentez le nombre d'enfants, simulez Daam Sakane, ou ajustez le score RSU (en dessous de 9.743)."}
                   </p>
                 </div>
               ) : (
@@ -361,7 +379,7 @@ export default function AidProgramsPage({ language }: { language: 'fr' | 'darija
                             {language === 'darija' ? aid.nameDarija : aid.nameFr}
                           </h3>
                           <span className={`text-[8px] font-mono font-black uppercase px-2 py-0.5 rounded-md ${aid.type === 'monthly' ? 'bg-blue-100 text-blue-800' : 'bg-emerald-100 text-emerald-800'}`}>
-                            {aid.type === 'monthly' ? 'Mensuel' : 'Prime Unique'}
+                            {aid.type === 'monthly' ? (language === 'darija' ? 'Chahri' : 'Mensuel') : (language === 'darija' ? 'Da3m Unique' : 'Prime Unique')}
                           </span>
                         </div>
                         <p className="text-[11px] text-slate-500 font-semibold leading-relaxed">
@@ -372,9 +390,11 @@ export default function AidProgramsPage({ language }: { language: 'fr' | 'darija
                       {/* Right amount layout & button action */}
                       <div className="flex items-center gap-4 shrink-0 font-mono text-xs">
                         <div className="text-right">
-                          <span className="text-[8px] uppercase font-black text-slate-400 block">Montant Estimé</span>
+                          <span className="text-[8px] uppercase font-black text-slate-400 block">
+                            {language === 'darija' ? "T-9dir d l-mablagh" : "Montant Estimé"}
+                          </span>
                           <span className={`text-base font-black ${aid.type === 'monthly' ? 'text-blue-600' : 'text-emerald-600'}`}>
-                            +{aid.amount.toLocaleString('fr-FR')} DH
+                            +{formatCurrency(aid.amount)}
                           </span>
                         </div>
 

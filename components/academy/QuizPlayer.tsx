@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { QuizQuestion } from '../../lib/academy-content';
 import { Check, X, ArrowRight, HelpCircle, RotateCcw, Award, Star } from 'lucide-react';
+import { useTranslation } from '../../hooks/use-translation';
 
 interface QuizPlayerProps {
   quiz: QuizQuestion[];
@@ -13,15 +14,17 @@ interface QuizPlayerProps {
     unlockedBadgeId?: string;
   };
   onBackToLesson: () => void;
-  language: 'fr' | 'darija';
+  language?: 'fr' | 'darija';
 }
 
 export const QuizPlayer: React.FC<QuizPlayerProps> = ({
   quiz,
   onQuizComplete,
   onBackToLesson,
-  language
+  language: propLanguage
 }) => {
+  const { lang } = useTranslation();
+  const language = propLanguage || lang;
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOptionIndex, setSelectedOptionIndex] = useState<number | null>(null);
   const [answers, setAnswers] = useState<{ [questionIndex: number]: number }>({});

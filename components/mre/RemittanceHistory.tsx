@@ -2,6 +2,8 @@ import React from 'react';
 import { RemittanceRecord } from '../../types';
 import { Trash2, TrendingUp, CreditCard, Calendar, Send } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+import { formatCurrency } from '../../lib/utils';
+import { t } from '../../lib/i18n';
 
 interface RemittanceHistoryProps {
   language: 'fr' | 'darija';
@@ -18,27 +20,25 @@ export function RemittanceHistory({
   trendData,
   stats
 }: RemittanceHistoryProps) {
-  const isDarija = language === 'darija';
-
   return (
     <div className="space-y-4 font-sans">
       {/* Stats Cards */}
       <div className="grid grid-cols-2 gap-3">
         <div id="stats-total-envoye" className="bg-white p-4 border border-slate-100 rounded-3xl space-y-1 shadow-sm">
           <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">
-            {isDarija ? 'مجموع التحويلات' : 'Total Envoyé'}
+            {t('totalSentStats', language)}
           </span>
           <span className="text-base font-black text-slate-900 block">
-            {stats.totalSent.toLocaleString('fr-MA', { minimumFractionDigits: 2 })} <span className="text-xs text-slate-500 font-bold">DH</span>
+            {formatCurrency(stats.totalSent)}
           </span>
         </div>
 
         <div id="stats-moyenne-mensuelle" className="bg-white p-4 border border-slate-100 rounded-3xl space-y-1 shadow-sm">
           <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">
-            {isDarija ? 'المعدل الشهري' : 'Moyenne Mensuelle'}
+            {t('monthlyAverageStats', language)}
           </span>
           <span className="text-base font-black text-slate-900 block">
-            {stats.averageMonthly.toLocaleString('fr-MA', { minimumFractionDigits: 2 })} <span className="text-xs text-slate-500 font-bold">DH/mois</span>
+            {formatCurrency(stats.averageMonthly)}/mois
           </span>
         </div>
       </div>
@@ -47,7 +47,7 @@ export function RemittanceHistory({
       <div id="mre-chart-box" className="bg-white p-5 border border-slate-100 rounded-3xl space-y-3 shadow-sm">
         <h4 className="text-xs font-black text-slate-900 tracking-tight flex items-center gap-1.5 uppercase">
           <TrendingUp size={14} className="text-emerald-600" />
-          {isDarija ? 'تطور التحويلات في الزمن' : 'Tendance des envois (6 mois)'}
+          {t('remittanceTrendTitle', language)}
         </h4>
         
         <div className="h-44 w-full text-xs">
@@ -65,7 +65,7 @@ export function RemittanceHistory({
               <Tooltip 
                 contentStyle={{ background: '#FFF', border: '1px solid #E2E8F0', borderRadius: '16px', fontWeight: 'bold' }}
                 labelClassName="text-slate-500 text-[10px]"
-                formatter={(val: number) => [`${val.toLocaleString()} DH`, 'Montant']}
+                formatter={(val: number) => [formatCurrency(val), 'Montant']}
               />
               <Area type="monotone" dataKey="amount" stroke="#10B981" strokeWidth={2.5} fillOpacity={1} fill="url(#colorRemit)" />
             </AreaChart>
@@ -77,14 +77,14 @@ export function RemittanceHistory({
       <div id="mre-remittances-list-box" className="bg-white p-5 border border-slate-100 rounded-3xl space-y-3 shadow-sm">
         <h4 className="text-xs font-black text-slate-900 tracking-tight flex items-center gap-1.5 uppercase">
           <Send size={14} className="text-emerald-600" />
-          {isDarija ? 'أرشيف التحويلات' : 'Historique des envois'}
+          {t('remittanceHistoryTitle', language)}
         </h4>
 
         {remittances.length === 0 ? (
           <div className="py-8 text-center space-y-1.5">
             <span className="text-lg block">📦</span>
             <p className="text-xs font-bold text-slate-400">
-              {isDarija ? 'لا توجد تحويلات مسجلة بعد.' : 'Aucun envoi enregistré pour le moment.'}
+              {t('noRemittancesLogged', language)}
             </p>
           </div>
         ) : (
@@ -107,7 +107,7 @@ export function RemittanceHistory({
                         {r.recipientName}
                         {r.isRecurring && (
                           <span className="text-[8px] px-1 bg-indigo-50 text-indigo-600 border border-indigo-100/60 rounded font-bold uppercase">
-                            {isDarija ? 'متكرر' : 'Auto'}
+                            {t('remittanceAutoBadge', language)}
                           </span>
                         )}
                       </h5>
@@ -131,7 +131,7 @@ export function RemittanceHistory({
                         {r.amountForeign.toLocaleString()} {r.foreignCurrency}
                       </span>
                       <span className="text-[9px] text-slate-400 font-bold block">
-                        ≈ {r.amountMAD.toLocaleString()} DH
+                        ≈ {formatCurrency(r.amountMAD)}
                       </span>
                     </div>
 

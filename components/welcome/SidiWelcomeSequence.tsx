@@ -201,7 +201,7 @@ export function SidiWelcomeSequence({
               className={`h-1.5 rounded-full transition-all duration-300 ${
                 step === i ? 'w-6 bg-emerald-600' : 'w-1.5 bg-slate-200 hover:bg-slate-300'
               }`}
-              aria-label={`Aller au temps ${i}`}
+              aria-label={lang === 'darija' ? `Doz l-marhala ${i}` : `Aller à l'étape ${i}`}
             />
           ))}
         </div>

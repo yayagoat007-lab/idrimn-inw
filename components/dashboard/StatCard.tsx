@@ -1,5 +1,6 @@
 import React from 'react';
 import * as Icons from 'lucide-react';
+import { Language, t } from '../../lib/i18n';
 
 interface StatCardProps {
   title: string;
@@ -13,6 +14,7 @@ interface StatCardProps {
   color: 'emerald' | 'rose' | 'amber' | 'blue' | 'slate' | 'indigo';
   variant?: 'grand' | 'moyen' | 'petit';
   subtitle?: string;
+  language?: Language;
 }
 
 export function StatCard({
@@ -22,7 +24,8 @@ export function StatCard({
   icon,
   color,
   variant = 'moyen',
-  subtitle
+  subtitle,
+  language = 'fr'
 }: StatCardProps) {
   const IconComponent = (Icons as any)[icon] || Icons.TrendingUp;
 
@@ -88,7 +91,7 @@ export function StatCard({
               {variation.percent}%
             </span>
             <span className="text-slate-400 font-semibold">
-              {variation.isPositive ? 'Augmentation' : 'Baisse'} de {variation.amount} vs mois dernier
+              {variation.isPositive ? t('augmentation', language) : t('baisse', language)} {t('de', language)} {variation.amount} {t('vsLastMonth', language)}
             </span>
           </div>
         )}

@@ -40,6 +40,9 @@ export const ALL_BADGES: Badge[] = [
   { id: 'ramadan_ready', title: 'Siyane & Sandoq', description: 'Activer le profil d\'enveloppes de dépenses Ramadan.', emoji: '🌙', xpValue: 120, category: 'features' },
   { id: 'zakat_pay', title: 'Zakat Al Maal', description: 'Utiliser le calculateur de Zakat pour évaluer son dû.', emoji: '🕋', xpValue: 100, category: 'features' },
   { id: 'referral_king', title: 'Ambassadeur Floussi', description: 'Inviter un ami qui s\'inscrit activement.', emoji: '🎁', xpValue: 200, category: 'onboarding' },
+  { id: 'premium_member', title: 'Membre Premium', description: 'Rejoindre le plan Premium Floussi.', emoji: '⭐', xpValue: 100, category: 'features' },
+  { id: 'famille_member', title: 'Floussi Famille', description: 'Rejoindre le plan Famille Floussi.', emoji: '👨‍👩‍👧‍👦', xpValue: 150, category: 'features' },
+  { id: 'analyste_member', title: 'Analyste Floussi', description: 'Rejoindre le plan Analyse Floussi.', emoji: '📊', xpValue: 250, category: 'features' },
   { id: 'elite_tier', title: 'Club Floussi Elite', description: 'Passer à l\'abonnement Floussi Elite pour débloquer tout.', emoji: '✨', xpValue: 500, category: 'features' },
   { id: 'sidi_friend', title: 'Ami de Sidi', description: 'Discuter plus de 10 fois avec Sidi Floussi, l\'assistant IA.', emoji: '🧠', xpValue: 150, category: 'features' },
   { id: 'scanner_pro', title: 'Scanner Pro', description: 'Numériser 5 reçus avec succès en extrayant les articles.', emoji: '📱', xpValue: 120, category: 'features' },
@@ -60,7 +63,11 @@ export const ALL_BADGES: Badge[] = [
   { id: 'anniversary_1y', title: '1 An Avec Floussi', description: 'Célébration de ton premier anniversaire d\'inscription ! Un an d\'efforts.', emoji: '🎂', xpValue: 100, category: 'engagement' },
   { id: 'anniversary_2y', title: '2 Ans Avec Floussi', description: 'Deux ans d\'iddikhar et d\'accompagnement sur Floussi.', emoji: '🥈', xpValue: 200, category: 'engagement' },
   { id: 'anniversary_3y', title: '3 Ans Avec Floussi', description: 'Trois ans d\'assiduité et d\'excellence budgétaire.', emoji: '🏆', xpValue: 300, category: 'engagement' },
-  { id: 'anniversary_5y', title: '5 Ans Avec Floussi', description: 'Cinq ans de sagesse financière et de prospérité absolue !', emoji: '👑', xpValue: 500, category: 'engagement' }
+  { id: 'anniversary_5y', title: '5 Ans Avec Floussi', description: 'Cinq ans de sagesse financière et de prospérité absolue !', emoji: '👑', xpValue: 500, category: 'engagement' },
+  { id: 'score_disciplined', title: 'Discipliné Floussi', description: 'Atteindre le palier Discipliné (score >= 300).', emoji: '📊', xpValue: 100, category: 'engagement' },
+  { id: 'score_strategist', title: 'Stratège Floussi', description: 'Atteindre le palier Stratège (score >= 500).', emoji: '🎯', xpValue: 200, category: 'engagement' },
+  { id: 'score_master', title: 'Maître Floussi', description: 'Atteindre le palier Maître (score >= 700).', emoji: '💎', xpValue: 300, category: 'engagement' },
+  { id: 'score_legend', title: 'Légende Floussi', description: 'Atteindre l\'excellence absolue et le palier Légende (score >= 850).', emoji: '👑', xpValue: 500, category: 'engagement' }
 ];
 
 /**

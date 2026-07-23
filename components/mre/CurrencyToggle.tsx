@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { SUPPORTED_CURRENCIES, getMREPreference, setMREPreference, getExchangeRates, saveExchangeRates } from '../../lib/currency-exchange';
 import { Settings, Check, RefreshCw, AlertCircle, Sparkles } from 'lucide-react';
+import { t } from '../../lib/i18n';
 
 interface CurrencyToggleProps {
   language: 'fr' | 'darija';
@@ -8,7 +9,6 @@ interface CurrencyToggleProps {
 }
 
 export function CurrencyToggle({ language, onChanged }: CurrencyToggleProps) {
-  const isDarija = language === 'darija';
   const [enabled, setEnabled] = useState(false);
   const [selectedCurr, setSelectedCurr] = useState('EUR');
   const [rates, setRates] = useState<Record<string, number>>({});
@@ -58,10 +58,10 @@ export function CurrencyToggle({ language, onChanged }: CurrencyToggleProps) {
         <div className="space-y-0.5">
           <h4 className="text-sm font-black text-slate-900 tracking-tight flex items-center gap-1.5">
             <Sparkles size={16} className="text-emerald-600" />
-            {isDarija ? 'وضعية مغاربة العالم (MRE)' : 'Mode MRE (Marocains du Monde)'}
+            {t('mreCurrencyToggleTitle', language)}
           </h4>
           <p className="text-[10px] text-slate-400 font-semibold">
-            {isDarija ? 'أظهر ميزانيتك بالعملة الصعبة والدرهم في نفس الوقت' : 'Affichez votre budget en double devise (Devise/MAD).'}
+            {t('mreCurrencyToggleDesc', language)}
           </p>
         </div>
         
@@ -82,7 +82,7 @@ export function CurrencyToggle({ language, onChanged }: CurrencyToggleProps) {
           {/* Currency Selection */}
           <div className="space-y-1.5">
             <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">
-              {isDarija ? 'اختر العملة الثانية' : 'Devise secondaire'}
+              {t('selectSecondaryCurrency', language)}
             </span>
             <div className="grid grid-cols-5 gap-2">
               {Object.values(SUPPORTED_CURRENCIES).map((c) => {
@@ -112,7 +112,7 @@ export function CurrencyToggle({ language, onChanged }: CurrencyToggleProps) {
               <div className="flex items-center gap-1.5">
                 <Settings size={14} className="text-slate-500" />
                 <span className="text-xs font-extrabold text-slate-700">
-                  {isDarija ? `سعر الصرف: 1 ${selectedCurr}` : `Taux de change : 1 ${selectedCurr}`}
+                  {t('exchangeRateTitle', language)} {selectedCurr}
                 </span>
               </div>
               
@@ -123,7 +123,7 @@ export function CurrencyToggle({ language, onChanged }: CurrencyToggleProps) {
                   onClick={() => setIsEditing(true)}
                   className="text-[10px] font-bold text-emerald-600 hover:underline cursor-pointer"
                 >
-                  {isDarija ? 'تعديل السعر' : 'Modifier'}
+                  {t('editRate', language)}
                 </button>
               ) : (
                 <div className="flex gap-2">
@@ -136,7 +136,7 @@ export function CurrencyToggle({ language, onChanged }: CurrencyToggleProps) {
                     }}
                     className="text-[10px] font-bold text-slate-400 hover:underline cursor-pointer"
                   >
-                    {isDarija ? 'إلغاء' : 'Annuler'}
+                    {t('cancel', language)}
                   </button>
                   <button
                     id="save-rate-btn"
@@ -144,7 +144,7 @@ export function CurrencyToggle({ language, onChanged }: CurrencyToggleProps) {
                     onClick={handleSaveRate}
                     className="text-[10px] font-bold text-emerald-600 hover:underline cursor-pointer"
                   >
-                    {isDarija ? 'حفظ' : 'Enregistrer'}
+                    {t('save', language)}
                   </button>
                 </div>
               )}
@@ -171,7 +171,7 @@ export function CurrencyToggle({ language, onChanged }: CurrencyToggleProps) {
               
               <span className="text-[9px] text-amber-600 font-extrabold bg-amber-50 border border-amber-100/50 px-1.5 py-0.5 rounded flex items-center gap-1">
                 <AlertCircle size={10} />
-                {isDarija ? 'سعر تقريبي، المرجو التحقق' : 'taux indicatif, à vérifier'}
+                {t('indicativeRateWarning', language)}
               </span>
             </div>
           </div>

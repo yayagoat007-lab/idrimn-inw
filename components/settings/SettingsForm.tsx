@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { MOROCCAN_CITIES } from '../../lib/constants';
 import { Camera, Save } from 'lucide-react';
+import { useTranslation } from '../../hooks/use-translation';
 
 interface SettingsFormProps {
   initialData: {
@@ -16,6 +17,7 @@ interface SettingsFormProps {
 export function SettingsForm({ initialData, onSave }: SettingsFormProps) {
   const [formData, setFormData] = useState(initialData);
   const [saving, setSaving] = useState(false);
+  const { lang } = useTranslation();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,15 +44,21 @@ export function SettingsForm({ initialData, onSave }: SettingsFormProps) {
           </label>
         </div>
         <div>
-          <h4 className="text-xs font-black text-slate-900">Photo de profil</h4>
-          <p className="text-[10px] text-slate-400 font-bold uppercase mt-0.5">Glissez une photo ou cliquez pour uploader</p>
+          <h4 className="text-xs font-black text-slate-900">
+            {lang === 'darija' ? "Tswira d l-profil" : "Photo de profil"}
+          </h4>
+          <p className="text-[10px] text-slate-400 font-bold uppercase mt-0.5">
+            {lang === 'darija' ? "Jrr tswira hna awla clique bach t-uploadi" : "Glissez une photo ou cliquez pour uploader"}
+          </p>
         </div>
       </div>
 
       {/* Grid Inputs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-bold text-slate-700 mb-1">Nom Complet</label>
+          <label className="block text-xs font-bold text-slate-700 mb-1">
+            {lang === 'darija' ? "Smit-ek l-Kamla" : "Nom Complet"}
+          </label>
           <input
             type="text"
             required
@@ -61,7 +69,9 @@ export function SettingsForm({ initialData, onSave }: SettingsFormProps) {
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-slate-700 mb-1">Ville de résidence</label>
+          <label className="block text-xs font-bold text-slate-700 mb-1">
+            {lang === 'darija' ? "L-Mdinah dyal s-Souknah" : "Ville de résidence"}
+          </label>
           <select
             value={formData.city}
             onChange={(e) => setFormData({ ...formData, city: e.target.value })}
@@ -74,7 +84,9 @@ export function SettingsForm({ initialData, onSave }: SettingsFormProps) {
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-slate-700 mb-1">Adresse Email (Non modifiable)</label>
+          <label className="block text-xs font-bold text-slate-700 mb-1">
+            {lang === 'darija' ? "Email (Ma t9drch t-bdelh)" : "Adresse Email (Non modifiable)"}
+          </label>
           <input
             type="email"
             disabled
@@ -84,7 +96,9 @@ export function SettingsForm({ initialData, onSave }: SettingsFormProps) {
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-slate-700 mb-1">N° de téléphone (WhatsApp)</label>
+          <label className="block text-xs font-bold text-slate-700 mb-1">
+            {lang === 'darija' ? "Nmarat d t-tilifoun (WhatsApp)" : "N° de téléphone (WhatsApp)"}
+          </label>
           <input
             type="tel"
             value={formData.phone}
@@ -100,7 +114,11 @@ export function SettingsForm({ initialData, onSave }: SettingsFormProps) {
         className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase tracking-wider rounded-xl transition-all shadow-xs flex items-center justify-center gap-2"
       >
         <Save size={14} />
-        <span>{saving ? 'Enregistrement...' : 'Sauvegarder les modifications'}</span>
+        <span>
+          {saving 
+            ? (lang === 'darija' ? 'Kaye t-hfed...' : 'Enregistrement...') 
+            : (lang === 'darija' ? 'Hfed l-tghyirat' : 'Sauvegarder les modifications')}
+        </span>
       </button>
     </form>
   );

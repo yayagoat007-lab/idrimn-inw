@@ -4,6 +4,7 @@ import {
   Tooltip, ResponsiveContainer, Legend, Line 
 } from 'recharts';
 import { TrendingUp, HelpCircle } from 'lucide-react';
+import { formatCurrency } from '../../lib/utils';
 
 interface TrendsChartProps {
   monthlyHistory: any[];
@@ -20,9 +21,9 @@ export function TrendsChart({ monthlyHistory }: TrendsChartProps) {
         <div className="bg-slate-900 border border-slate-700 text-white rounded-xl p-3 shadow-xl text-xs font-sans">
           <p className="font-extrabold text-slate-300 mb-1">{label}</p>
           <div className="space-y-1 font-mono">
-            <p className="text-emerald-400">Revenus: <span className="font-black">{income.toLocaleString()} DH</span></p>
-            <p className="text-rose-400 font-bold">Masrouf: <span>{expense.toLocaleString()} DH</span></p>
-            <p className="text-cyan-400 font-bold">Épargne: <span>{savings.toLocaleString()} DH</span></p>
+            <p className="text-emerald-400">Revenus: <span className="font-black">{formatCurrency(income)}</span></p>
+            <p className="text-rose-400 font-bold">Masrouf: <span>{formatCurrency(expense)}</span></p>
+            <p className="text-cyan-400 font-bold">Épargne: <span>{formatCurrency(savings)}</span></p>
           </div>
         </div>
       );

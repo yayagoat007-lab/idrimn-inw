@@ -1,6 +1,7 @@
 import React from 'react';
 import { Landmark, Users, ArrowUpRight, HelpCircle } from 'lucide-react';
 import { formatCurrency } from '../../lib/utils';
+import { Language, t } from '../../lib/i18n';
 
 interface TontineMiniCardProps {
   tontineData: {
@@ -13,7 +14,7 @@ interface TontineMiniCardProps {
     nextWinnerName: string;
   } | null;
   onPay: () => void;
-  language: 'fr' | 'darija';
+  language: Language;
 }
 
 export function TontineMiniCard({
@@ -25,8 +26,8 @@ export function TontineMiniCard({
     return (
       <div className="bg-white border border-slate-100 p-5 rounded-3xl shadow-xs text-center space-y-2">
         <Users className="text-slate-300 mx-auto" size={24} />
-        <h4 className="font-bold text-xs text-slate-800">Aucune Tontine (Daret) active</h4>
-        <p className="text-[10px] text-slate-400">Épargnez en groupe de manière solidaire et traditionnelle.</p>
+        <h4 className="font-bold text-xs text-slate-800">{t('aucunTontineActive', language)}</h4>
+        <p className="text-[10px] text-slate-400">{t('tontineMiniDesc', language)}</p>
       </div>
     );
   }
@@ -45,12 +46,12 @@ export function TontineMiniCard({
               {tontineData.tontineName}
             </h4>
             <span className="inline-block px-1.5 py-0.5 bg-indigo-500/20 text-indigo-300 rounded-md text-[8px] font-black uppercase tracking-wider">
-              Daret Solidaire
+              {t('tontineSolidaire', language)}
             </span>
           </div>
         </div>
         <div className="text-right">
-          <p className="text-[9px] text-indigo-300 font-bold uppercase tracking-wider">Tour Actuel</p>
+          <p className="text-[9px] text-indigo-300 font-bold uppercase tracking-wider">{t('tourActuel', language)}</p>
           <p className="font-black text-xs text-white">
             {tontineData.currentRound} / {tontineData.totalRounds}
           </p>
@@ -59,29 +60,29 @@ export function TontineMiniCard({
 
       <div className="space-y-1 bg-white/5 border border-white/5 rounded-2xl p-3 text-xs font-medium">
         <div className="flex justify-between">
-          <span className="text-indigo-200">Prochaine collecte:</span>
+          <span className="text-indigo-200">{t('nextCollect', language)}:</span>
           <span className="font-black text-white">{formatCurrency(tontineData.amount)}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-indigo-200">Date estimée:</span>
+          <span className="text-indigo-200">{t('estimatedDate', language)}:</span>
           <span className="font-black text-white">{tontineData.date}</span>
         </div>
         <div className="flex justify-between pt-1 border-t border-white/5">
-          <span className="text-indigo-200">Bénéficiaire du tour:</span>
+          <span className="text-indigo-200">{t('winnerRound', language)}:</span>
           <span className="font-black text-emerald-400">{tontineData.nextWinnerName}</span>
         </div>
       </div>
 
       <div className="flex items-center justify-between gap-3 pt-1">
         <div className="text-[10px] text-indigo-200 font-semibold">
-          Votre position d'encaissement : <strong className="text-white">{tontineData.userPosition}ème</strong>
+          {t('userPosition', language)} : <strong className="text-white">{tontineData.userPosition}ème</strong>
         </div>
         <button
           onClick={onPay}
           className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-all flex items-center gap-1 shadow-xs cursor-pointer"
         >
           <ArrowUpRight size={13} />
-          <span>Cotiser</span>
+          <span>{t('cotiser', language)}</span>
         </button>
       </div>
     </div>

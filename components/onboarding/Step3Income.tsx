@@ -23,10 +23,10 @@ const INCOME_PRESETS = [
 ];
 
 const SOURCES = [
-  { id: 'salaire', label: 'Salaire', desc: 'Virement stable', icon: Landmark },
-  { id: 'freelance', label: 'Freelance', desc: 'Contrats & Projets', icon: Briefcase },
-  { id: 'commerce', label: 'Commerce / Cash', desc: 'Ventes directes', icon: TrendingUp },
-  { id: 'autre', label: 'Autre source', desc: 'Revenus divers', icon: HelpCircle }
+  { id: 'salaire', label_fr: 'Salaire', label_darija: 'Salarié', desc_fr: 'Virement stable', desc_darija: 'Virement f l-banka', icon: Landmark },
+  { id: 'freelance', label_fr: 'Freelance', label_darija: 'Freelance', desc_fr: 'Contrats & Projets', desc_darija: 'Mouta3aqid', icon: Briefcase },
+  { id: 'commerce', label_fr: 'Commerce / Cash', label_darija: 'Tijara / Cash', desc_fr: 'Ventes directes', desc_darija: 'L-Bi3 o s-chra', icon: TrendingUp },
+  { id: 'autre', label_fr: 'Autre source', label_darija: 'Madakhil khra', desc_fr: 'Revenus divers', desc_darija: 'Haja khra', icon: HelpCircle }
 ];
 
 export function Step3Income({
@@ -52,7 +52,7 @@ export function Step3Income({
           {language === 'darija' ? 'الخلصة و المدخول' : 'Configurez vos revenus'}
         </h3>
         <p className="text-xs font-semibold text-slate-400">
-          Entrez vos ressources mensuelles pour diviser vos enveloppes.
+          {language === 'darija' ? "Kteb chhal kat-ched f chhar bach n-qasmo l-enveloppes dyalk." : "Entrez vos ressources mensuelles pour diviser vos enveloppes."}
         </p>
       </div>
 
@@ -60,7 +60,9 @@ export function Step3Income({
         {/* Income Amount Slider */}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <label className="text-xs font-bold text-slate-700">Revenu mensuel total *</label>
+            <label className="text-xs font-bold text-slate-700">
+              {language === 'darija' ? "Koulchi li kat-ched f chhar *" : "Revenu mensuel total *"}
+            </label>
             <span className="text-base font-black text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-xl">
               {formatCurrency(incomeAmount)}
             </span>
@@ -103,7 +105,9 @@ export function Step3Income({
 
         {/* Income Source cards */}
         <div className="space-y-2">
-          <label className="block text-xs font-bold text-slate-700">Source principale de revenu *</label>
+          <label className="block text-xs font-bold text-slate-700">
+            {language === 'darija' ? "Mnin kay-jiw l-flouss bezaf *" : "Source principale de revenu *"}
+          </label>
           <div className="grid grid-cols-2 gap-2.5">
             {SOURCES.map((src) => {
               const Icon = src.icon;
@@ -121,8 +125,12 @@ export function Step3Income({
                 >
                   <Icon size={18} className={isSelected ? 'text-emerald-600' : 'text-slate-400'} />
                   <div>
-                    <h4 className="font-extrabold text-[11px] text-slate-900 leading-tight">{src.label}</h4>
-                    <p className="text-[9px] text-slate-400 font-bold mt-0.5 leading-none">{src.desc}</p>
+                    <h4 className="font-extrabold text-[11px] text-slate-900 leading-tight">
+                      {language === 'darija' ? src.label_darija : src.label_fr}
+                    </h4>
+                    <p className="text-[9px] text-slate-400 font-bold mt-0.5 leading-none">
+                      {language === 'darija' ? src.desc_darija : src.desc_fr}
+                    </p>
                   </div>
                 </button>
               );
@@ -133,9 +141,12 @@ export function Step3Income({
         {/* Day of the month */}
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <label className="text-xs font-bold text-slate-700">Jour de réception de la paie *</label>
+            <label className="text-xs font-bold text-slate-700">
+              {language === 'darija' ? "Nhar f chhar mnin kat-ched l-flouss *" : "Jour de réception de la paie *"}
+            </label>
             <span className="text-xs font-black text-slate-800 bg-slate-100 px-2.5 py-1 rounded-xl flex items-center gap-1">
-              <Calendar size={12} className="text-slate-500" /> Le {payDay} du mois
+              <Calendar size={12} className="text-slate-500" /> 
+              {language === 'darija' ? `Nhar ${payDay} f chhar` : `Le ${payDay} du mois`}
             </span>
           </div>
 
@@ -150,9 +161,9 @@ export function Step3Income({
           />
 
           <div className="flex justify-between text-[9px] text-slate-400 font-bold">
-            <span>Début du mois (1)</span>
-            <span>Milieu (15)</span>
-            <span>Fin du mois (31)</span>
+            <span>{language === 'darija' ? "Bdayat chhar (1)" : "Début du mois (1)"}</span>
+            <span>{language === 'darija' ? "Nsf chhar (15)" : "Milieu (15)"}</span>
+            <span>{language === 'darija' ? "L-Lekhr d chhar (31)" : "Fin du mois (31)"}</span>
           </div>
         </div>
       </div>
@@ -163,13 +174,13 @@ export function Step3Income({
           className="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1 cursor-pointer"
         >
           <ArrowLeft size={14} />
-          <span>Retour</span>
+          <span>{language === 'darija' ? "Rje3" : "Retour"}</span>
         </button>
         <button
           onClick={onNext}
           className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md shadow-emerald-600/15 transition-all hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-1 cursor-pointer"
         >
-          <span>Continuer</span>
+          <span>{language === 'darija' ? "Kamal" : "Continuer"}</span>
           <ArrowRight size={14} />
         </button>
       </div>

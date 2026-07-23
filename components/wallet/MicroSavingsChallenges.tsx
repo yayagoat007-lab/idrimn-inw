@@ -2,29 +2,31 @@ import React, { useState } from 'react';
 import { useMicroSavings } from '../../hooks/use-micro-savings';
 import { useAuth } from '../../hooks/use-auth';
 import { Coffee, Car, ShieldCheck, Flame, Trophy, Play, Check, HelpCircle, Sparkles } from 'lucide-react';
+import { Language } from '../../lib/i18n';
 
 interface MicroSavingsChallengesProps {
-  lang: 'fr' | 'darija';
+  language: Language;
 }
 
-export function MicroSavingsChallenges({ lang }: MicroSavingsChallengesProps) {
+export function MicroSavingsChallenges({ language }: MicroSavingsChallengesProps) {
+  const isDarija = language === 'darija';
   const { user } = useAuth();
   const { challenges, toggleChallenge, simulateChallengesAudit } = useMicroSavings(user?.id || '');
   const [animatingChallenge, setAnimatingChallenge] = useState<string | null>(null);
 
   const t = {
-    title: lang === 'darija' ? 'Tahadiyat d L-Micro-Épargne' : 'Défis de Micro-Épargne',
-    desc: lang === 'darija' ? 'Tahadiyat l-yowmya bach t-jme3 chwiya d l-flous bla ma t-7ess' : 'Épargnez sans effort en relevant des défis simples au quotidien.',
-    streak: lang === 'darija' ? 'Silsila (Jours) :' : 'Série :',
-    saved: lang === 'darija' ? 'Jme3ti fih :' : 'Épargné :',
-    activate: lang === 'darija' ? 'Khedem' : 'Activer',
-    deactivate: lang === 'darija' ? 'Tfi' : 'Désactiver',
-    simulateBtn: lang === 'darija' ? 'Simuler une journée de réussite !' : 'Simuler une journée de réussite !',
-    simulateDesc: lang === 'darija' ? 'Tesser d l-yowm o d-khoul l-flous f sandoq' : 'Simule un passage au lendemain : si les défis sont actifs, Floussi transfère l\'argent économisé de votre Wallet vers l\'épargne.',
-    noCoffeeTitle: lang === 'darija' ? 'Défi sans Café' : 'Défi sans Café ☕',
-    noCoffeeDesc: lang === 'darija' ? 'Chaque jour sans acheter de café au salon = +10 DH épargnés' : 'Chaque jour sans dépense de café en salon = +10 DH mis de côté.',
-    noTaxiTitle: lang === 'darija' ? 'Défi sans Taxi' : 'Défi sans Taxi 🚖',
-    noTaxiDesc: lang === 'darija' ? 'Prendre le bus/tram au lieu d\'un taxi = +5 DH épargnés' : 'Prendre le bus/tram ou marcher au lieu d\'un taxi = +5 DH mis de côté.'
+    title: isDarija ? 'Tahadiyat d L-Micro-Épargne' : 'Défis de Micro-Épargne',
+    desc: isDarija ? 'Tahadiyat l-yowmya bach t-jme3 chwiya d l-flous bla ma t-7ess' : 'Épargnez sans effort en relevant des défis simples au quotidien.',
+    streak: isDarija ? 'Silsila (Jours) :' : 'Série :',
+    saved: isDarija ? 'Jme3ti fih :' : 'Épargné :',
+    activate: isDarija ? 'Khedem' : 'Activer',
+    deactivate: isDarija ? 'Tfi' : 'Désactiver',
+    simulateBtn: isDarija ? 'Simuler yowm dyal n-najah !' : 'Simuler une journée de réussite !',
+    simulateDesc: isDarija ? 'Tesser d l-yowm o d-khoul l-flous f sandoq' : 'Simule un passage au lendemain : si les défis sont actifs, Floussi transfère l\'argent économisé de votre Wallet vers l\'épargne.',
+    noCoffeeTitle: isDarija ? 'Défi bla Qhwa' : 'Défi sans Café ☕',
+    noCoffeeDesc: isDarija ? 'Koul nhar bla ma techri qhwa f l-hanout = +10 DH j-me3tiha.' : 'Chaque jour sans dépense de café en salon = +10 DH mis de côté.',
+    noTaxiTitle: isDarija ? 'Défi bla Taxi' : 'Défi sans Taxi 🚖',
+    noTaxiDesc: isDarija ? 'Khod tomobil l-kbira, bus awla tram blassa taxi = +5 DH j-me3tiha.' : 'Prendre le bus/tram ou marcher au lieu d\'un taxi = +5 DH mis de côté.'
   };
 
   const getChallengeDetails = (type: string) => {
@@ -35,7 +37,7 @@ export function MicroSavingsChallenges({ lang }: MicroSavingsChallengesProps) {
           desc: t.noCoffeeDesc,
           icon: <Coffee className="text-amber-700" size={18} />,
           bg: 'bg-amber-50/50 border-amber-100',
-          amount: '10 DH / jour'
+          amount: isDarija ? '10 DH / yowm' : '10 DH / jour'
         };
       case 'no_taxi':
         return {
@@ -43,15 +45,15 @@ export function MicroSavingsChallenges({ lang }: MicroSavingsChallengesProps) {
           desc: t.noTaxiDesc,
           icon: <Car className="text-blue-600" size={18} />,
           bg: 'bg-blue-50/40 border-blue-100',
-          amount: '5 DH / trajet'
+          amount: isDarija ? '5 DH / triq' : '5 DH / trajet'
         };
       default:
         return {
-          title: 'Défi Personnalisé',
-          desc: 'Épargner automatiquement selon vos règles.',
+          title: isDarija ? 'Tahadi khass' : 'Défi Personnalisé',
+          desc: isDarija ? 'Idikhar automatiki 3la hsab l-qawa3id dyalk.' : 'Épargner automatiquement selon vos règles.',
           icon: <Trophy className="text-emerald-600" size={18} />,
           bg: 'bg-emerald-50/40 border-emerald-100',
-          amount: '5 DH / jour'
+          amount: isDarija ? '5 DH / yowm' : '5 DH / jour'
         };
     }
   };
@@ -70,7 +72,7 @@ export function MicroSavingsChallenges({ lang }: MicroSavingsChallengesProps) {
       {/* Title block */}
       <div className="space-y-1">
         <h4 className="font-extrabold text-slate-800 text-xs uppercase tracking-wider flex items-center gap-1.5">
-          <Trophy size={16} className="text-amber-500 animate-bounce" />
+          <Trophy size={16} className="text-amber-500 animate-pulse" />
           <span>{t.title}</span>
         </h4>
         <p className="text-[10px] text-slate-400 font-bold leading-relaxed">{t.desc}</p>
@@ -142,7 +144,7 @@ export function MicroSavingsChallenges({ lang }: MicroSavingsChallengesProps) {
           <div className="p-3 bg-slate-50 rounded-2xl space-y-1">
             <span className="text-[9px] uppercase font-black tracking-widest text-slate-400 block flex items-center gap-1">
               <Sparkles size={11} className="text-amber-500" />
-              <span>Outil de Test Floussi (Bac à sable)</span>
+              <span>{isDarija ? "Bac à sable Floussi (Tajriba)" : "Outil de Test Floussi (Bac à sable)"}</span>
             </span>
             <p className="text-[10px] text-slate-500 font-medium leading-normal">{t.simulateDesc}</p>
           </div>
@@ -156,7 +158,7 @@ export function MicroSavingsChallenges({ lang }: MicroSavingsChallengesProps) {
             {animatingChallenge === 'all' ? (
               <>
                 <Check className="text-emerald-600 animate-bounce" size={13} />
-                <span>Succès de la simulation !</span>
+                <span>{isDarija ? "T-simulation n-je7at !" : "Succès de la simulation !"}</span>
               </>
             ) : (
               <>

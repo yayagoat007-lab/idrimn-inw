@@ -1,12 +1,15 @@
 import React from 'react';
 import { Tontine } from '../../types';
 import { Calendar, CheckCircle, Clock, Gift, Landmark } from 'lucide-react';
+import { t, Language } from '../../lib/i18n';
 
 interface TontineTimelineProps {
   tontine: Tontine;
+  language: Language;
 }
 
-export function TontineTimeline({ tontine }: TontineTimelineProps) {
+export function TontineTimeline({ tontine, language }: TontineTimelineProps) {
+  const isDarija = language === 'darija';
   // Generate a chronological timeline based on start_date
   const startDate = new Date(tontine.start_date);
   const events = Array.from({ length: tontine.total_members }, (_, i) => {
@@ -22,7 +25,7 @@ export function TontineTimeline({ tontine }: TontineTimelineProps) {
 
     return {
       round: i + 1,
-      date: roundDate.toLocaleDateString('fr-MA', { year: 'numeric', month: 'short', day: 'numeric' }),
+      date: roundDate.toLocaleDateString(isDarija ? 'ar-MA' : 'fr-MA', { year: 'numeric', month: 'short', day: 'numeric' }),
       isCompleted,
       isCurrent,
       beneficiary: i === 0 ? "Ahmed El Alami" : i === 1 ? "Fatima" : `Cousin ${i + 1}`
@@ -32,7 +35,7 @@ export function TontineTimeline({ tontine }: TontineTimelineProps) {
   return (
     <div className="border border-slate-150 rounded-2xl bg-white p-5 shadow-xs">
       <h4 className="text-xs font-black text-slate-800 mb-4 uppercase tracking-wider">
-        Échéancier & Historique de Rotation
+        {isDarija ? "Koulchi l'Doora o l'Tarikh dyal t-teqssim" : "Échéancier & Historique de Rotation"}
       </h4>
 
       <div className="space-y-4 relative before:absolute before:left-3.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-100">
@@ -57,11 +60,11 @@ export function TontineTimeline({ tontine }: TontineTimelineProps) {
               <div>
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="text-[10px] font-black text-slate-800">
-                    Rond {e.round} • Tirage {e.beneficiary}
+                    {isDarija ? `Doora ${e.round} • Ghayakhod ${e.beneficiary}` : `Rond ${e.round} • Tirage ${e.beneficiary}`}
                   </span>
                   {e.isCurrent && (
                     <span className="text-[8px] bg-blue-100 text-blue-800 font-extrabold px-1.5 py-0.5 rounded-full uppercase">
-                      Actif
+                      {isDarija ? "Khdam" : "Actif"}
                     </span>
                   )}
                 </div>

@@ -15,20 +15,23 @@ import { SidiAvatar } from '../sidi/SidiAvatar';
 import { ConfettiAnimation } from '../shared/ConfettiAnimation';
 import { AnniversarySummary } from '../../lib/account-anniversary';
 import { useFocusTrap } from '../../hooks/use-focus-trap';
+import { useTranslation } from '../../hooks/use-translation';
 
 interface AnniversaryModalProps {
   summary: AnniversarySummary;
-  language: 'fr' | 'darija';
+  language?: 'fr' | 'darija';
   onClose: () => void;
   onNavigate: (screen: string) => void;
 }
 
 export const AnniversaryModal: React.FC<AnniversaryModalProps> = ({
   summary,
-  language,
+  language: propLanguage,
   onClose,
   onNavigate
 }) => {
+  const { lang } = useTranslation();
+  const language = propLanguage || lang;
   const [showConfetti, setShowConfetti] = useState<boolean>(true);
   const content = summary[language];
   const years = summary.yearsCount;

@@ -248,7 +248,7 @@ export function LoginForm({
           {isLoading ? (
             <>
               <RefreshCw size={14} className="animate-spin" />
-              <span>Chargement...</span>
+              <span>{language === 'darija' ? "Tahmil..." : "Chargement..."}</span>
             </>
           ) : (
             <>
@@ -280,7 +280,9 @@ export function LoginForm({
       {/* Divider */}
       <div className="relative flex py-2 items-center">
         <div className="flex-grow border-t border-slate-100"></div>
-        <span className="flex-shrink mx-3 text-[10px] font-bold text-slate-300 uppercase tracking-wider">ou continuer avec</span>
+        <span className="flex-shrink mx-3 text-[10px] font-bold text-slate-300 uppercase tracking-wider">
+          {language === 'darija' ? "wla kemel b" : "ou continuer avec"}
+        </span>
         <div className="flex-grow border-t border-slate-100"></div>
       </div>
 

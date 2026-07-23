@@ -1,15 +1,18 @@
 import React from 'react';
 import { Sparkles, Calendar, ArrowRight, X } from 'lucide-react';
 import { useFocusTrap } from '../../hooks/use-focus-trap';
+import { useTranslation } from '../../hooks/use-translation';
 
 interface WrappedIntroModalProps {
   isOpen: boolean;
   onClose: () => void;
   onStart: () => void;
-  language: 'fr' | 'darija';
+  language?: 'fr' | 'darija';
 }
 
-export function WrappedIntroModal({ isOpen, onClose, onStart, language }: WrappedIntroModalProps) {
+export function WrappedIntroModal({ isOpen, onClose, onStart, language: propLanguage }: WrappedIntroModalProps) {
+  const { lang } = useTranslation();
+  const language = propLanguage || lang;
   const modalRef = useFocusTrap<HTMLDivElement>({ isOpen, onClose });
 
   if (!isOpen) return null;

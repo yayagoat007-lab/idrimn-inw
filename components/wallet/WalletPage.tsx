@@ -21,12 +21,14 @@ import {
   SlidersHorizontal,
   Calendar
 } from 'lucide-react';
+import { Language } from '../../lib/i18n';
 
 interface WalletPageProps {
-  lang: 'fr' | 'darija';
+  language: Language;
 }
 
-export function WalletPage({ lang }: WalletPageProps) {
+export function WalletPage({ language }: WalletPageProps) {
+  const isDarija = language === 'darija';
   const { balance, movements, dailySpent, toggleKyc, addFunds } = useWallet();
   
   // Navigation & Sub-form tabs
@@ -45,22 +47,22 @@ export function WalletPage({ lang }: WalletPageProps) {
 
   // Dictionary i18n
   const t = {
-    title: lang === 'darija' ? 'Mihfadati (Portefeuille)' : 'Mon Portefeuille',
-    subtitle: lang === 'darija' ? 'Mouvements d l-flous, l-khlassat o l-micro-saving f blassa wehda' : 'Gérez votre solde virtuel, vos paiements in-app et vos défis de micro-épargne',
-    simulationBanner: lang === 'darija' ? 'Hada ghir bac à sable simulation Floussi. L-flous real ma ghay-mchiwch kma kan.' : 'Mode Simulation Actif — Aucun argent réel n\'est déplacé ni débité.',
-    ledgerTitle: lang === 'darija' ? 'Sijil d l-Mouvements' : 'Historique des Mouvements',
-    filterAll: lang === 'darija' ? 'Kolchi' : 'Tout',
-    filterIn: lang === 'darija' ? 'Dkhoul' : 'Entrées',
-    filterOut: lang === 'darija' ? 'Kherdja' : 'Sorties',
-    searchPlaceholder: lang === 'darija' ? 'Sme7 r-recherche...' : 'Rechercher un mouvement...',
-    noMovements: lang === 'darija' ? 'Makayan ta mouamala f had l-weqt' : 'Aucun mouvement enregistré pour l\'instant.',
-    addFundsTitle: lang === 'darija' ? 'Alimenter mon Wallet' : 'Alimenter le Portefeuille',
-    addAmountLabel: lang === 'darija' ? 'L-qadr d l-flous (DH) :' : 'Montant à ajouter (DH) :',
-    addMethodLabel: lang === 'darija' ? 'Tariqat l-khlass :' : 'Moyen de paiement :',
-    addSuccessMsg: lang === 'darija' ? 'Wallet t-alimenta b l-khir!' : 'Portefeuille alimenté avec succès !',
-    addBtn: lang === 'darija' ? 'Zid l-flous' : 'Ajouter les fonds',
-    billTitle: lang === 'darija' ? 'Khless Fatoura' : 'Régler une Facture',
-    rechargeTitle: lang === 'darija' ? 'Recharge Mobile' : 'Recharge Express'
+    title: isDarija ? 'Mihfadati (Portefeuille)' : 'Mon Portefeuille',
+    subtitle: isDarija ? 'Mouvements d l-flous, l-khlassat o l-micro-saving f blassa wehda' : 'Gérez votre solde virtuel, vos paiements in-app et vos défis de micro-épargne',
+    simulationBanner: isDarija ? 'Hada ghir bac à sable simulation Floussi. L-flous real ma ghay-mchiwch kma kan.' : 'Mode Simulation Actif — Aucun argent réel n\'est déplacé ni débité.',
+    ledgerTitle: isDarija ? 'Sijil d l-Mouvements' : 'Historique des Mouvements',
+    filterAll: isDarija ? 'Kolchi' : 'Tout',
+    filterIn: isDarija ? 'Dkhoul' : 'Entrées',
+    filterOut: isDarija ? 'Kherdja' : 'Sorties',
+    searchPlaceholder: isDarija ? 'Sme7 r-recherche...' : 'Rechercher un mouvement...',
+    noMovements: isDarija ? 'Makayan ta mouamala f had l-weqt' : 'Aucun mouvement enregistré pour l\'instant.',
+    addFundsTitle: isDarija ? 'Alimenter mon Wallet' : 'Alimenter le Portefeuille',
+    addAmountLabel: isDarija ? 'L-qadr d l-flous (DH) :' : 'Montant à ajouter (DH) :',
+    addMethodLabel: isDarija ? 'Tariqat l-khlass :' : 'Moyen de paiement :',
+    addSuccessMsg: isDarija ? 'Wallet t-alimenta b l-khir!' : 'Portefeuille alimenté avec succès !',
+    addBtn: isDarija ? 'Zid l-flous' : 'Ajouter les fonds',
+    billTitle: isDarija ? 'Khless Fatoura' : 'Régler une Facture',
+    rechargeTitle: isDarija ? 'Recharge Mobile' : 'Recharge Express'
   };
 
   const handleAddFundsSubmit = async (e: React.FormEvent) => {
@@ -70,7 +72,7 @@ export function WalletPage({ lang }: WalletPageProps) {
 
     const amt = parseFloat(addAmount);
     if (isNaN(amt) || amt <= 0) {
-      setAddError(lang === 'darija' ? 'Saisir qadr s7i7.' : 'Veuillez saisir un montant supérieur à 0.');
+      setAddError(isDarija ? 'Saisir qadr s7i7.' : 'Veuillez saisir un montant supérieur à 0.');
       return;
     }
 
@@ -155,12 +157,12 @@ export function WalletPage({ lang }: WalletPageProps) {
 
   const getMovementLabel = (type: string) => {
     switch (type) {
-      case 'add_funds': return lang === 'darija' ? 'Alimentation' : 'Alimentation';
-      case 'transfer_in': return lang === 'darija' ? 'Transfert reçu' : 'Transfert Reçu';
-      case 'transfer_out': return lang === 'darija' ? 'Transfert envoyé' : 'Transfert Envoyé';
-      case 'bill_payment': return lang === 'darija' ? 'Facture' : 'Paiement Facture';
-      case 'recharge': return lang === 'darija' ? 'Recharge' : 'Recharge Express';
-      case 'round_up': return lang === 'darija' ? 'Épargne automatique' : 'Épargne Arrondi';
+      case 'add_funds': return isDarija ? 'Alimentation' : 'Alimentation';
+      case 'transfer_in': return isDarija ? 'Transfert reçu' : 'Transfert Reçu';
+      case 'transfer_out': return isDarija ? 'Transfert envoyé' : 'Transfert Envoyé';
+      case 'bill_payment': return isDarija ? 'Facture' : 'Paiement Facture';
+      case 'recharge': return isDarija ? 'Recharge' : 'Recharge Express';
+      case 'round_up': return isDarija ? 'Épargne automatique' : 'Épargne Arrondi';
       default: return 'Mouvement';
     }
   };
@@ -196,7 +198,7 @@ export function WalletPage({ lang }: WalletPageProps) {
           <WalletBalanceCard
             balance={balance}
             dailySpent={dailySpent}
-            lang={lang}
+            language={language}
             onAddFunds={() => setActiveTab(activeTab === 'add' ? 'none' : 'add')}
             onSendP2P={() => setShowP2P(true)}
             onPayBill={() => setActiveTab(activeTab === 'bill' ? 'none' : 'bill')}
@@ -209,7 +211,7 @@ export function WalletPage({ lang }: WalletPageProps) {
             <div className="bg-white border border-slate-100 rounded-3xl p-5 shadow-sm animate-fadeIn relative">
               <button 
                 onClick={() => setActiveTab('none')}
-                className="absolute top-4 right-4 p-1.5 hover:bg-slate-50 text-slate-400 hover:text-slate-600 rounded-xl cursor-pointer"
+                className="absolute top-4 right-4 p-1.5 hover:bg-slate-50 text-slate-400 hover:text-slate-600 rounded-xl cursor-pointer text-left"
               >
                 <X size={16} />
               </button>
@@ -258,20 +260,26 @@ export function WalletPage({ lang }: WalletPageProps) {
                           {t.addMethodLabel}
                         </label>
                         <div className="grid grid-cols-2 gap-2">
-                          {['Carte Bancaire', 'Virement (Simulation)'].map((method) => (
-                            <button
-                              key={method}
-                              type="button"
-                              onClick={() => setAddMethod(method)}
-                              className={`p-2.5 border text-xs font-bold rounded-xl text-center transition-all cursor-pointer ${
-                                addMethod === method
-                                  ? 'border-emerald-500 bg-emerald-50/20 text-emerald-800 font-black ring-1 ring-emerald-500'
-                                  : 'border-slate-100 bg-slate-50/50 hover:bg-slate-50 text-slate-600'
-                              }`}
-                            >
-                              {method}
-                            </button>
-                          ))}
+                          {['Carte Bancaire', 'Virement (Simulation)'].map((method) => {
+                            const isCard = method === 'Carte Bancaire';
+                            const methodLabel = isCard 
+                              ? (isDarija ? "L-Carte l-Bancaire" : "Carte Bancaire")
+                              : (isDarija ? "Virement (Simulation)" : "Virement (Simulation)");
+                            return (
+                              <button
+                                key={method}
+                                type="button"
+                                onClick={() => setAddMethod(method)}
+                                className={`p-2.5 border text-xs font-bold rounded-xl text-center transition-all cursor-pointer ${
+                                  addMethod === method
+                                    ? 'border-emerald-500 bg-emerald-50/20 text-emerald-800 font-black ring-1 ring-emerald-500'
+                                    : 'border-slate-100 bg-slate-50/50 hover:bg-slate-50 text-slate-600'
+                                }`}
+                              >
+                                {methodLabel}
+                              </button>
+                            );
+                          })}
                         </div>
                       </div>
 
@@ -295,7 +303,7 @@ export function WalletPage({ lang }: WalletPageProps) {
                       <span>{t.billTitle}</span>
                     </h3>
                   </div>
-                  <BillPaymentForm lang={lang} onSuccess={() => {}} />
+                  <BillPaymentForm language={language} onSuccess={() => {}} />
                 </div>
               )}
 
@@ -308,7 +316,7 @@ export function WalletPage({ lang }: WalletPageProps) {
                       <span>{t.rechargeTitle}</span>
                     </h3>
                   </div>
-                  <RechargeForm lang={lang} onSuccess={() => {}} />
+                  <RechargeForm language={language} onSuccess={() => {}} />
                 </div>
               )}
 
@@ -400,10 +408,10 @@ export function WalletPage({ lang }: WalletPageProps) {
         {/* Right Column (Micro Savings Engines) */}
         <div className="lg:col-span-5 space-y-6">
           {/* A. Round up settings */}
-          <RoundUpSettingsComponent lang={lang} />
+          <RoundUpSettingsComponent language={language} />
 
           {/* B. Micro-saving gamified challenges */}
-          <MicroSavingsChallenges lang={lang} />
+          <MicroSavingsChallenges language={language} />
         </div>
 
       </div>
@@ -412,10 +420,11 @@ export function WalletPage({ lang }: WalletPageProps) {
       <P2PTransferModal
         isOpen={showP2P}
         onClose={() => setShowP2P(false)}
-        lang={lang}
+        language={language}
       />
 
     </div>
   );
 }
+
 export default WalletPage;

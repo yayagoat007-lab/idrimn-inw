@@ -264,6 +264,7 @@ export default function BucketsSettingsPage({
             <BucketForm
               bucket={activeFormBucket}
               buckets={buckets}
+              language={language}
               onSubmit={async (data) => {
                 if (activeFormBucket) {
                   await updateBucket(activeFormBucket.id, data);

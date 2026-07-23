@@ -10,6 +10,7 @@ import {
   ResponsiveContainer 
 } from 'recharts';
 import { HajjPoste } from '../../lib/hajj-budget-template';
+import { formatCurrency } from '../../lib/utils';
 
 interface HajjBudgetBreakdownProps {
   postes: HajjPoste[];
@@ -38,10 +39,10 @@ export function HajjBudgetBreakdown({ postes, lang }: HajjBudgetBreakdownProps) 
           <p className="font-black uppercase tracking-wider text-slate-300 mb-1.5">{label}</p>
           <div className="space-y-1 font-mono">
             <p className="text-emerald-400">
-              Min: <span className="font-extrabold">{payload[0].value.toLocaleString('fr-FR')} DH</span>
+              Min: <span className="font-extrabold">{formatCurrency(payload[0].value)}</span>
             </p>
             <p className="text-blue-400">
-              Max: <span className="font-extrabold">{payload[1].value.toLocaleString('fr-FR')} DH</span>
+              Max: <span className="font-extrabold">{formatCurrency(payload[1].value)}</span>
             </p>
           </div>
         </div>

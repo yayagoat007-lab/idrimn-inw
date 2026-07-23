@@ -1,12 +1,39 @@
 import React from 'react';
 import { Users, Landmark, Award, Percent } from 'lucide-react';
+import { useTranslation } from '../../hooks/use-translation';
 
 export function StatsCounter() {
+  const { lang } = useTranslation();
+
   const stats = [
-    { id: 1, label: 'Marocains inscrits', value: '14 500 +', icon: Users, color: 'text-emerald-600 bg-emerald-50' },
-    { id: 2, label: 'Non-bancarisés gérés', value: '45 %', icon: Landmark, color: 'text-blue-600 bg-blue-50' },
-    { id: 3, label: 'Utilisation 100% Cash', value: '79 %', icon: Percent, color: 'text-amber-600 bg-amber-50' },
-    { id: 4, label: 'Dirhams Économisés', value: '5,4 M +', icon: Award, color: 'text-purple-600 bg-purple-50' }
+    { 
+      id: 1, 
+      label: lang === 'darija' ? 'Mgharba m-sajjline' : 'Marocains inscrits', 
+      value: '14 500 +', 
+      icon: Users, 
+      color: 'text-emerald-600 bg-emerald-50' 
+    },
+    { 
+      id: 2, 
+      label: lang === 'darija' ? 'Bla hssab banki' : 'Non-bancarisés gérés', 
+      value: '45 %', 
+      icon: Landmark, 
+      color: 'text-blue-600 bg-blue-50' 
+    },
+    { 
+      id: 3, 
+      label: lang === 'darija' ? 'Isti\'mal 100% Cash' : 'Utilisation 100% Cash', 
+      value: '79 %', 
+      icon: Percent, 
+      color: 'text-amber-600 bg-amber-50' 
+    },
+    { 
+      id: 4, 
+      label: lang === 'darija' ? 'Drahem mkhbyine' : 'Dirhams Économisés', 
+      value: '5,4 M +', 
+      icon: Award, 
+      color: 'text-purple-600 bg-purple-50' 
+    }
   ];
 
   return (

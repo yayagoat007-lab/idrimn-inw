@@ -1,13 +1,17 @@
 import React from 'react';
 import { Milestone } from '../../lib/long-term-projection';
 import { CheckCircle2, Circle, Trophy, ArrowRight, Star } from 'lucide-react';
+import { formatCurrency } from '../../lib/utils';
+import { useTranslation } from '../../hooks/use-translation';
 
 interface LifeMilestoneTimelineProps {
   milestones: Milestone[];
-  language: 'fr' | 'darija';
+  language?: 'fr' | 'darija';
 }
 
-export function LifeMilestoneTimeline({ milestones, language }: LifeMilestoneTimelineProps) {
+export function LifeMilestoneTimeline({ milestones, language: propLanguage }: LifeMilestoneTimelineProps) {
+  const { lang } = useTranslation();
+  const language = propLanguage || lang;
   const t = {
     title: language === 'fr' ? 'Ta Frise Chronologique de Vie' : 'Moutsalsal dyal l-7ayat dyalk',
     subtitle: language === 'fr' 
@@ -123,7 +127,7 @@ export function LifeMilestoneTimeline({ milestones, language }: LifeMilestoneTim
                   <span className={`text-xs font-black font-mono ${
                     isRetirement ? 'text-indigo-600' : milestone.achieved ? 'text-emerald-600' : 'text-slate-600'
                   }`}>
-                    {milestone.projectedNetWorth.toLocaleString(language === 'fr' ? 'fr-FR' : 'ar-MA')} DH
+                    {formatCurrency(milestone.projectedNetWorth)}
                   </span>
                 </div>
               </div>

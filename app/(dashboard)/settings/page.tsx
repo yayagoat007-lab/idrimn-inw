@@ -27,16 +27,24 @@ import { useNotificationCenter } from '../../../hooks/use-notification-center';
 import { NotificationPreferencesPanel } from '../../../components/notifications/NotificationPreferencesPanel';
 import { getMREPreference, setMREPreference, SUPPORTED_CURRENCIES } from '../../../lib/currency-exchange';
 import { useAccounts } from '../../../hooks/use-accounts';
+import { formatCurrency } from '../../../lib/utils';
 
 // New Backup Integration
 import { useBackupRestore } from '../../../hooks/use-backup-restore';
 import BackupPreviewCard from '../../../components/settings/BackupPreviewCard';
 import { BackupPreview } from '../../../lib/full-backup';
+import { SubscriptionStatusBadge } from '../../../components/shared/SubscriptionStatusBadge';
 
 // Storage Health and Cleanup
 import StorageHealthCard from '../../../components/settings/StorageHealthCard';
 import StorageWarningBanner from '../../../components/shared/StorageWarningBanner';
 import DataIntegrityPanel from '../../../components/settings/DataIntegrityPanel';
+
+// Floussi Score Integration
+import { useFloussiScore } from '../../../hooks/use-floussi-score';
+import { FloussiScoreGauge } from '../../../components/score/FloussiScoreGauge';
+import { ScoreBreakdownCard } from '../../../components/score/ScoreBreakdownCard';
+import { NextTierTipCard } from '../../../components/score/NextTierTipCard';
 
 interface SettingsPageProps {
   profile: any;
@@ -56,6 +64,7 @@ export default function SettingsPage({
   onNavigate
 }: SettingsPageProps) {
   const userId = profile?.id || "mock-user-id-9999";
+  const { score, nextTierTip, isLoading: scoreLoading } = useFloussiScore(userId, language as 'fr' | 'darija');
   const { notificationPreferences, updatePreferences } = useNotificationCenter(userId);
   const { 
     accounts, 
@@ -294,6 +303,30 @@ export default function SettingsPage({
       {/* RENDER ACTIVE SUB-TAB CONTENT */}
       {activeSubTab === 'general' ? (
         <div className="space-y-6">
+          {/* Section Score Floussi */}
+          {score && (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fadeIn">
+              <div className="lg:col-span-1 bg-white border border-slate-100/80 rounded-2xl p-6 shadow-xs flex flex-col justify-between items-center">
+                <h3 className="font-extrabold text-sm text-gray-800 border-b border-gray-50 pb-3 w-full text-left">
+                  {language === 'darija' ? "Moustawa d l-Taqaddom" : "Votre Progression Floussi"}
+                </h3>
+                <div className="py-4 flex flex-col items-center justify-center flex-grow">
+                  <FloussiScoreGauge 
+                    score={score.totalScore} 
+                    tier={score.tier} 
+                    trend={score.trend} 
+                    variant="detailed" 
+                    language={language as 'fr' | 'darija'} 
+                  />
+                </div>
+              </div>
+              <div className="lg:col-span-2 space-y-6 flex flex-col justify-between">
+                <ScoreBreakdownCard components={score.components} language={language as 'fr' | 'darija'} />
+                <NextTierTipCard currentScore={score.totalScore} nextTierTip={nextTierTip} language={language as 'fr' | 'darija'} />
+              </div>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             {/* Profile Details Form */}
@@ -306,7 +339,7 @@ export default function SettingsPage({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-gray-700 mb-1">
-                      Nom Complet *
+                      {language === 'darija' ? "Smit-ek l-Kamla *" : "Nom Complet *"}
                     </label>
                     <input
                       type="text"
@@ -319,7 +352,7 @@ export default function SettingsPage({
 
                   <div>
                     <label className="block text-xs font-bold text-gray-700 mb-1">
-                      Ville de résidence
+                      {language === 'darija' ? "L-Mdinah dyal s-Souknah" : "Ville de résidence"}
                     </label>
                     <select
                       value={city}
@@ -338,7 +371,7 @@ export default function SettingsPage({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-gray-700 mb-1">
-                      Adresse Email
+                      {language === 'darija' ? "Email" : "Adresse Email"}
                     </label>
                     <input
                       type="email"
@@ -350,7 +383,7 @@ export default function SettingsPage({
 
                   <div>
                     <label className="block text-xs font-bold text-gray-700 mb-1">
-                      Téléphone (+212)
+                      {language === 'darija' ? "Ttilifoun (+212)" : "Téléphone (+212)"}
                     </label>
                     <input
                       type="text"
@@ -367,7 +400,7 @@ export default function SettingsPage({
                   className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer"
                 >
                   {updating && <RefreshCw size={14} className="animate-spin" />}
-                  <span>Enregistrer les modifications</span>
+                  <span>{language === 'darija' ? "Hfed l-tghyirat" : "Enregistrer les modifications"}</span>
                 </button>
               </form>
             </div>
@@ -415,7 +448,7 @@ export default function SettingsPage({
                         </div>
                         <div className="flex justify-between items-end mt-4">
                           <span className="text-xs font-black text-slate-950 font-mono">
-                            {acc.balance.toLocaleString('fr-FR')} DH
+                            {formatCurrency(acc.balance)}
                           </span>
                           <button
                             onClick={() => deleteAccount(acc.id)}
@@ -491,7 +524,7 @@ export default function SettingsPage({
             <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-xs space-y-4 h-fit">
               <h3 className="font-extrabold text-sm text-gray-800 border-b border-gray-50 pb-3 flex items-center gap-1.5">
                 <Languages size={16} className="text-emerald-600" />
-                Choix de la langue
+                {language === 'darija' ? "Khtar l-Lughah" : "Choix de la langue"}
               </h3>
 
               <div className="space-y-2">
@@ -586,14 +619,39 @@ export default function SettingsPage({
           <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-xs space-y-6">
             <div className="text-center max-w-xl mx-auto space-y-1">
               <span className="text-[10px] bg-amber-50 text-amber-700 font-extrabold px-2.5 py-0.5 rounded uppercase tracking-wider">
-                Abonnements Floussi
+                {language === 'darija' ? "Ishtirakat Floussi" : "Abonnements Floussi"}
               </span>
               <h3 className="text-lg font-extrabold text-gray-900 tracking-tight">
-                Passez au niveau supérieur de gestion budgétaire
+                {language === 'darija' ? "Zid l-gdam f t-tadbir dyal l-budget dyalk" : "Passez au niveau supérieur de gestion budgétaire"}
               </h3>
-              <p className="text-xs text-gray-500">
-                Libérez votre plein potentiel d'épargne avec nos outils de planification exclusifs.
+              <p className="text-xs text-gray-500 pb-2">
+                {language === 'darija' 
+                  ? "Khlles rassek o t-ba3 l-iddikhar dyalk b l-wasayil l-khasa dyalna." 
+                  : "Libérez votre plein potentiel d'épargne avec nos outils de planification exclusifs."}
               </p>
+
+              {/* Current active status detailed badge & cancellation */}
+              <div className="flex flex-col items-center justify-center gap-2 pt-2 pb-4">
+                <SubscriptionStatusBadge 
+                  tier={profile?.subscription_tier || 'free'}
+                  language={language as 'fr' | 'darija'}
+                  variant="detailed"
+                  className="w-full max-w-md mx-auto"
+                />
+                
+                {profile?.subscription_tier && profile?.subscription_tier !== 'free' && (
+                  <button
+                    onClick={() => {
+                      if (confirm(language === 'darija' ? "Wash mti9en bghiti t-cancel l-ishtirak dyalk?" : "Êtes-vous sûr de vouloir résilier votre abonnement ?")) {
+                        onUpgrade('free');
+                      }
+                    }}
+                    className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-rose-600 hover:text-rose-700 hover:bg-rose-50 border border-rose-200/50 rounded-xl transition-all cursor-pointer"
+                  >
+                    {language === 'darija' ? "Ghi l'ishtirak (Downgrade l Fabor)" : "Résilier l'abonnement (Downgrade vers Gratuit)"}
+                  </button>
+                )}
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
@@ -615,7 +673,7 @@ export default function SettingsPage({
                         </h4>
                         {key === 'premium' && (
                           <span className="bg-amber-100 text-amber-800 text-[8px] font-extrabold uppercase px-1.5 py-0.5 rounded">
-                            Populaire
+                            {language === 'darija' ? "Ma'rouf bzaff" : "Populaire"}
                           </span>
                         )}
                       </div>
@@ -642,7 +700,9 @@ export default function SettingsPage({
                           : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs cursor-pointer'
                       }`}
                     >
-                      {isCurrent ? "Plan Actuel" : "Choisir ce plan"}
+                      {isCurrent 
+                        ? (language === 'darija' ? "L-Ishtirak dyal daba" : "Plan Actuel") 
+                        : (language === 'darija' ? "Khtar had l-plan" : "Choisir ce plan")}
                     </button>
                   </div>
                 );

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { CommunityPost, Comment } from '../../types';
 import { ReactionBar } from './ReactionBar';
 import { CommentSection } from './CommentSection';
+import { Language } from '../../lib/i18n';
 import { 
   MessageSquare, 
   MapPin, 
@@ -15,20 +16,21 @@ import {
 interface PostCardProps {
   post: CommunityPost;
   comments: Comment[];
-  lang: 'fr' | 'darija';
+  language: Language;
   onReact: (postId: string, emoji: string) => void;
   onAddComment: (postId: string, content: string) => void;
 }
 
-export function PostCard({ post, comments = [], lang, onReact, onAddComment }: PostCardProps) {
+export function PostCard({ post, comments = [], language, onReact, onAddComment }: PostCardProps) {
   const [showComments, setShowComments] = useState(false);
+  const isDarija = language === 'darija';
 
   const t = {
-    achievement: lang === 'darija' ? 'Khabar Zarif (Exploit)' : 'Exploit Épargne',
-    tip: lang === 'darija' ? 'Fikra (Astuce)' : 'Astuce Budget',
-    question: lang === 'darija' ? 'So2al (Question)' : 'Question Entraide',
-    commentsToggle: lang === 'darija' ? `Ta3liqat (${post.commentsCount})` : `Commentaires (${post.commentsCount})`,
-    relatedGoal: lang === 'darija' ? 'Hadaf dyalo :' : 'Objectif lié :'
+    achievement: isDarija ? 'Khabar Zarif (Exploit)' : 'Exploit Épargne',
+    tip: isDarija ? 'Fikra (Astuce)' : 'Astuce Budget',
+    question: isDarija ? 'So2al (Question)' : 'Question Entraide',
+    commentsToggle: isDarija ? `Ta3liqat (${post.commentsCount})` : `Commentaires (${post.commentsCount})`,
+    relatedGoal: isDarija ? 'Hadaf dyalo :' : 'Objectif lié :'
   };
 
   const getBadgeStyle = () => {
@@ -134,7 +136,7 @@ export function PostCard({ post, comments = [], lang, onReact, onAddComment }: P
         <CommentSection
           postId={post.id}
           comments={comments}
-          lang={lang}
+          language={language}
           onAddComment={(content) => onAddComment(post.id, content)}
         />
       )}

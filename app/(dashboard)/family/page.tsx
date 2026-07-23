@@ -10,7 +10,7 @@ import { FamilyInviteModal } from '../../../components/family/FamilyInviteModal'
 import { FamilyPermissionEditor } from '../../../components/family/FamilyPermissionEditor';
 import { PlanGate } from '../../../components/shared/PlanGate';
 import { Heart, Plus, Users } from 'lucide-react';
-import { getTranslation, Language } from '../../../lib/i18n';
+import { getTranslation, Language, t } from '../../../lib/i18n';
 import { FamilyRole } from '../../../types';
 
 interface FamilyPageProps {
@@ -99,20 +99,20 @@ export default function FamilyPage({ language }: FamilyPageProps) {
         <div>
           <h2 className="text-xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
             <Heart className="text-emerald-600" />
-            <span>{getTranslation('family', language) || "Dar / Foyer"}</span>
+            <span>{t('familyGroupTitle', language)}</span>
           </h2>
           <p className="text-xs text-slate-500">
-            Gestion collaborative des enveloppes du foyer, supervision parentale et éducation financière
+            {t('familyGroupDesc', language)}
           </p>
         </div>
 
         {activeTab === 'members' && (
           <button
             onClick={() => setShowInviteModal(true)}
-            className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-900 text-white font-black text-xs py-2 px-4 rounded-xl transition-all shadow-xs"
+            className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-900 text-white font-black text-xs py-2 px-4 rounded-xl transition-all shadow-xs cursor-pointer"
           >
             <Plus className="w-4 h-4" />
-            <span>Inviter</span>
+            <span>{t('inviterProcheButton', language)}</span>
           </button>
         )}
       </div>
@@ -122,14 +122,14 @@ export default function FamilyPage({ language }: FamilyPageProps) {
         {/* Navigation Tabs */}
         <div className="flex gap-2 border-b border-slate-100 pb-3">
           {[
-            { id: 'dashboard', label: 'Dashboard Foyer' },
-            { id: 'members', label: 'Proches & Enfants' },
-            { id: 'permissions', label: 'Gérer les Permissions' }
+            { id: 'dashboard', label: t('familyDashboardTitle', language) },
+            { id: 'members', label: t('prochesEnfantsTitle', language) },
+            { id: 'permissions', label: t('gererPermissionsTitle', language) }
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`pb-1 px-3 text-xs font-black uppercase tracking-wider border-b-2 transition-all ${
+              className={`pb-1 px-3 text-xs font-black uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
                 activeTab === tab.id 
                   ? 'border-emerald-600 text-slate-800' 
                   : 'border-transparent text-slate-400 hover:text-slate-600'
@@ -142,7 +142,7 @@ export default function FamilyPage({ language }: FamilyPageProps) {
 
         {/* Tab contents */}
         {activeTab === 'dashboard' && stats && (
-          <FamilyDashboard stats={stats} />
+          <FamilyDashboard stats={stats} language={language} />
         )}
 
         {activeTab === 'members' && (
@@ -154,6 +154,7 @@ export default function FamilyPage({ language }: FamilyPageProps) {
                   onRoleChange={handleRoleChangeCast}
                   onRemove={removeMember}
                   isAdmin={true}
+                  language={language}
                 />
               </div>
             ))}
@@ -165,6 +166,7 @@ export default function FamilyPage({ language }: FamilyPageProps) {
             members={members}
             buckets={availableBuckets}
             onTogglePermission={handleTogglePermission}
+            language={language}
           />
         )}
 
@@ -174,6 +176,7 @@ export default function FamilyPage({ language }: FamilyPageProps) {
             onClose={() => setShowInviteModal(false)}
             onInvite={handleInviteSubmit}
             availableBuckets={availableBuckets}
+            language={language}
           />
         )}
       </PlanGate>

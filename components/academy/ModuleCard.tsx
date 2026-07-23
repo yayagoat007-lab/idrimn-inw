@@ -1,13 +1,14 @@
 import React from 'react';
 import { AcademyModule } from '../../lib/academy-content';
 import { BookOpen, Lock, CheckCircle2, Award } from 'lucide-react';
+import { useTranslation } from '../../hooks/use-translation';
 
 interface ModuleCardProps {
   module: AcademyModule;
   progress: number;
   isUnlocked: boolean;
   onSelect: () => void;
-  language: 'fr' | 'darija';
+  language?: 'fr' | 'darija';
   hasCertificate: boolean;
   onViewCertificate: () => void;
 }
@@ -17,10 +18,12 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({
   progress,
   isUnlocked,
   onSelect,
-  language,
+  language: propLanguage,
   hasCertificate,
   onViewCertificate
 }) => {
+  const { lang } = useTranslation();
+  const language = propLanguage || lang;
   const getCategoryLabel = (cat: string) => {
     switch (cat) {
       case 'budget': return language === 'darija' ? 'Mizaniya (Budget)' : 'Budget';

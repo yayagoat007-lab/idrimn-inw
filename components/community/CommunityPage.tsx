@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useCommunityFeed } from '../../hooks/use-community-feed';
 import { useChallenges } from '../../hooks/use-challenges';
 import { useSavingsGroups } from '../../hooks/use-savings-groups';
+import { Language } from '../../lib/i18n';
 import { PostCard } from './PostCard';
 import { ChallengeCard } from './ChallengeCard';
 import { SavingsGroupCard } from './SavingsGroupCard';
@@ -25,10 +26,11 @@ import {
 } from 'lucide-react';
 
 interface CommunityPageProps {
-  lang: 'fr' | 'darija';
+  language: Language;
 }
 
-export function CommunityPage({ lang }: CommunityPageProps) {
+export function CommunityPage({ language }: CommunityPageProps) {
+  const isDarija = language === 'darija';
   const [activeTab, setActiveTab] = useState<'feed' | 'challenges' | 'groups'>('feed');
 
   // Hooks state engines
@@ -69,26 +71,26 @@ export function CommunityPage({ lang }: CommunityPageProps) {
 
   // Dictionary translation mapping
   const t = {
-    title: lang === 'darija' ? 'L-Comunauté Floussi' : 'La Communauté Floussi',
-    subtitle: lang === 'darija' ? 'T-sharek, d-deffa3, o t-bni s7abek dyal l-iddikhar' : 'Échangez des astuces, relevez des défis et épargnez à plusieurs sans tabou !',
-    tabFeed: lang === 'darija' ? 'Nashrat (Le Feed)' : 'Le Feed',
-    tabChallenges: lang === 'darija' ? 'Tahadiyat (Défis)' : 'Défis Hebdo',
-    tabGroups: lang === 'darija' ? 'Majmou3at (Groupes)' : 'Groupes d\'Épargne',
-    newPost: lang === 'darija' ? 'Kteb Post' : 'Nouvelle Publication',
-    newGroup: lang === 'darija' ? 'Fe7el Group' : 'Créer un Groupe',
-    allCities: lang === 'darija' ? 'Ga3 l-Moudoun' : 'Toutes les villes',
-    myCity: lang === 'darija' ? `Ma Ville (${userCity})` : `Ma ville (${userCity})`,
-    filterAll: lang === 'darija' ? 'Koulchi' : 'Tout voir',
-    filterAchievements: lang === 'darija' ? 'Enjazat (Exploits)' : 'Exploits',
-    filterTips: lang === 'darija' ? 'Nassa2i7 (Astuces)' : 'Astuces',
-    filterQuestions: lang === 'darija' ? 'As2ila (Questions)' : 'Questions',
-    searchPlaceholder: lang === 'darija' ? 'Qleb 3la astuce...' : 'Rechercher une publication...',
-    emptyFeed: lang === 'darija' ? 'Makan hta post f had l-weqt. Kteb l-owl!' : 'Aucune publication ne correspond à vos filtres. Soyez le premier à publier !',
-    shareStoryBtn: lang === 'darija' ? 'Share Story dyalk' : 'Partager un Exploit',
-    motivationCardTitle: lang === 'darija' ? 'Aji n-t7addaw rassa ! 💪' : 'Relevez le défi de la discipline ! 💪',
-    motivationCardDesc: lang === 'darija' ? 'Koulma d-khalti f tahadi, kat-rbe7 n9at XP o kat-tla3 f l-niveau d-Dahabi.' : 'Rejoignez nos challenges hebdomadaires pour gagner de l\'expérience (XP), débloquer des badges et muscler votre rigueur financière !',
-    groupMotivationTitle: lang === 'darija' ? 'Sando9 l-Solidaire 🔒' : 'L\'épargne collective solidaire 🔒',
-    groupMotivationDesc: lang === 'darija' ? 'Ibni sando9 m3a s7abek d l-Aïd, kraya, or l-safar dyalkoum.' : 'Créez une cagnotte collective avec vos proches pour financer l\'Aïd El Adha, un voyage ou un cadeau commun, en toute transparence.',
+    title: isDarija ? 'L-Comunauté Floussi' : 'La Communauté Floussi',
+    subtitle: isDarija ? 'T-sharek, d-deffa3, o t-bni s7abek dyal l-iddikhar' : 'Échangez des astuces, relevez des défis et épargnez à plusieurs sans tabou !',
+    tabFeed: isDarija ? 'Nashrat (Le Feed)' : 'Le Feed',
+    tabChallenges: isDarija ? 'Tahadiyat (Défis)' : 'Défis Hebdo',
+    tabGroups: isDarija ? 'Majmou3at (Groupes)' : 'Groupes d\'Épargne',
+    newPost: isDarija ? 'Kteb Post' : 'Nouvelle Publication',
+    newGroup: isDarija ? 'Fe7el Group' : 'Créer un Groupe',
+    allCities: isDarija ? 'Ga3 l-Moudoun' : 'Toutes les villes',
+    myCity: isDarija ? `Ma Ville (${userCity})` : `Ma ville (${userCity})`,
+    filterAll: isDarija ? 'Koulchi' : 'Tout voir',
+    filterAchievements: isDarija ? 'Enjazat (Exploits)' : 'Exploits',
+    filterTips: isDarija ? 'Nassa2i7 (Astuces)' : 'Astuces',
+    filterQuestions: isDarija ? 'As2ila (Questions)' : 'Questions',
+    searchPlaceholder: isDarija ? 'Qleb 3la astuce...' : 'Rechercher une publication...',
+    emptyFeed: isDarija ? 'Makan hta post f had l-weqt. Kteb l-owl!' : 'Aucune publication ne correspond à vos filtres. Soyez le premier à publier !',
+    shareStoryBtn: isDarija ? 'Share Story dyalk' : 'Partager un Exploit',
+    motivationCardTitle: isDarija ? 'Aji n-t7addaw rassa ! 💪' : 'Relevez le défi de la discipline ! 💪',
+    motivationCardDesc: isDarija ? 'Koulma d-khalti f tahadi, kat-rbe7 n9at XP o kat-tla3 f l-niveau d-Dahabi.' : 'Rejoignez nos challenges hebdomadaires pour gagner de l\'expérience (XP), débloquer des badges et muscler votre rigueur financière !',
+    groupMotivationTitle: isDarija ? 'Sando9 l-Solidaire 🔒' : 'L\'épargne collective solidaire 🔒',
+    groupMotivationDesc: isDarija ? 'Ibni sando9 m3a s7abek d l-Aïd, kraya, or l-safar dyalkoum.' : 'Créez une cagnotte collective avec vos proches pour financer l\'Aïd El Adha, un voyage ou un cadeau commun, en toute transparence.',
   };
 
   // Filter and Search logic for feed posts
@@ -290,7 +292,7 @@ export function CommunityPage({ lang }: CommunityPageProps) {
                       key={post.id}
                       post={post}
                       comments={comments[post.id] || []}
-                      lang={lang}
+                      language={language}
                       onReact={addReaction}
                       onAddComment={addComment}
                     />
@@ -366,7 +368,7 @@ export function CommunityPage({ lang }: CommunityPageProps) {
                 <ChallengeCard
                   key={challenge.id}
                   challenge={challenge as any}
-                  lang={lang}
+                  language={language}
                   onJoin={joinChallenge}
                   onLeave={leaveChallenge}
                 />
@@ -405,7 +407,7 @@ export function CommunityPage({ lang }: CommunityPageProps) {
                     group={group}
                     contributions={groupContributions}
                     isAdmin={isCreator(group)}
-                    lang={lang}
+                    language={language}
                     onContribute={contribute}
                   />
                 );
@@ -421,7 +423,7 @@ export function CommunityPage({ lang }: CommunityPageProps) {
       <CreatePostModal
         isOpen={isPostModalOpen}
         onClose={() => setIsPostModalOpen(false)}
-        lang={lang}
+        language={language}
         onCreatePost={createPost}
       />
 
@@ -429,7 +431,7 @@ export function CommunityPage({ lang }: CommunityPageProps) {
       <CreateGroupModal
         isOpen={isGroupModalOpen}
         onClose={() => setIsGroupModalOpen(false)}
-        lang={lang}
+        language={language}
         onCreateGroup={createGroup}
       />
 
@@ -440,7 +442,7 @@ export function CommunityPage({ lang }: CommunityPageProps) {
         goalName={selectedStoryGoal?.name || ''}
         targetAmount={selectedStoryGoal?.amount || 0}
         themeId="atlas"
-        lang={lang}
+        language={language}
       />
 
     </div>

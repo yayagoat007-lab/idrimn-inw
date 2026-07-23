@@ -12,7 +12,8 @@ export type StorageCategory =
   | 'preferences' 
   | 'security' 
   | 'onboarding' 
-  | 'cache_ephemeral';
+  | 'cache_ephemeral'
+  | 'academy';
 
 export interface StorageKeyEntry {
   pattern: string;
@@ -32,7 +33,9 @@ export const KNOWN_TABLES = [
   'challenges',
   'posts',
   'comments',
-  'notifications'
+  'notifications',
+  'net_worth_items',
+  'monthly_incomes'
 ];
 
 export const KNOWN_TOURS = [
@@ -105,6 +108,12 @@ export const STORAGE_KEY_REGISTRY: StorageKeyEntry[] = [
     pattern: 'floussi_gamification_${userId}',
     category: 'gamification',
     description: "État de gamification de l'utilisateur (niveau, XP, badges débloqués)",
+    isCritical: true,
+  },
+  {
+    pattern: 'floussi_score_history_${userId}',
+    category: 'gamification',
+    description: "Historique d'évolution du score Floussi global quotidien pour l'utilisateur",
     isCritical: true,
   },
   {
@@ -202,6 +211,208 @@ export const STORAGE_KEY_REGISTRY: StorageKeyEntry[] = [
     category: 'preferences',
     description: "Historique des recherches récentes effectuées par l'utilisateur dans le moteur global",
     isCritical: false,
+  },
+
+  // 16 NEW MANDATORY PATTERNS REQUESTED BY THE USER
+  {
+    pattern: 'floussi_remittances',
+    category: 'wallet',
+    description: "Historique d'envois de fonds (remittances) des Marocains Résidant à l'Étranger (MRE) vers leurs proches",
+    isCritical: true,
+  },
+  {
+    pattern: 'floussi_savings_groups',
+    category: 'community',
+    description: "Groupes d'épargne collaborative (Dardat/Tontines communautaires)",
+    isCritical: true,
+  },
+  {
+    pattern: 'floussi_savings_group_contributions',
+    category: 'community',
+    description: "Historique des cotisations des membres aux différents groupes d'épargne collaborative",
+    isCritical: true,
+  },
+  {
+    pattern: 'floussi_academy_lessons_${userId}',
+    category: 'academy',
+    description: "Progression pédagogique de l'utilisateur dans les cours et leçons de l'Académie financière",
+    isCritical: true,
+  },
+  {
+    pattern: 'floussi_academy_certs_${userId}',
+    category: 'academy',
+    description: "Certificats de réussite obtenus par l'utilisateur après complétion des quiz de l'Académie",
+    isCritical: true,
+  },
+  {
+    pattern: 'floussi_ref_code_${userId}',
+    category: 'gamification',
+    description: "Code de parrainage unique de l'utilisateur pour le programme d'invitation",
+    isCritical: true,
+  },
+  {
+    pattern: 'floussi_referrals_${userId}',
+    category: 'gamification',
+    description: "Liste et statut des filleuls parrainés par l'utilisateur",
+    isCritical: true,
+  },
+  {
+    pattern: 'floussi_cnss_dossiers',
+    category: 'core_data',
+    description: "Dossiers de remboursement médical CNSS suivis par l'utilisateur",
+    isCritical: true,
+  },
+  {
+    pattern: 'floussi_sidi_history_${userId}',
+    category: 'sidi',
+    description: "Historique complet des conversations et échanges textuels avec l'assistant IA Sidi",
+    isCritical: false,
+  },
+  {
+    pattern: 'floussi_sidi_pending_proactive_${userId}',
+    category: 'sidi',
+    description: "Conseils proactifs de l'assistant Sidi en attente de traitement ou d'affichage",
+    isCritical: false,
+  },
+  {
+    pattern: 'floussi_last_winback_shown_${userId}',
+    category: 'preferences',
+    description: "Timestamp de la dernière présentation de l'alerte ou offre de reconquête (winback)",
+    isCritical: false,
+  },
+  {
+    pattern: 'floussi_anniversary_shown_${userId}_${currentYear}',
+    category: 'preferences',
+    description: "Indicateur de visionnage de la célébration de l'anniversaire d'inscription pour l'année en cours",
+    isCritical: false,
+  },
+  {
+    pattern: 'floussi_wrapped_seen_${userId}_${currentYear}',
+    category: 'preferences',
+    description: "Indicateur confirmant que l'utilisateur a visualisé sa rétrospective annuelle (Wrapped) pour l'année en cours",
+    isCritical: false,
+  },
+  {
+    pattern: 'floussi_long_term_assumptions_${userId}',
+    category: 'core_data',
+    description: "Hypothèses et configurations de planification financière à long terme (retraite/patrimoine)",
+    isCritical: true,
+  },
+  {
+    pattern: 'notifs_${userId}',
+    category: 'core_data',
+    description: "Notifications in-app historiques de l'utilisateur (note : n'utilise pas le préfixe floussi_ pour des raisons historiques)",
+    isCritical: true,
+  },
+  {
+    pattern: 'notif_prefs_${userId}',
+    category: 'preferences',
+    description: "Préférences de réception des notifications in-app et push (note : n'utilise pas le préfixe floussi_ pour des raisons historiques)",
+    isCritical: false,
+  },
+
+  // 14 ADDITIONAL LOCALSTORAGE KEYS FOUND DURING AUDIT FOR COMPLETE EXHAUSTIVENESS
+  {
+    pattern: 'floussi_behavior_history_${userId}',
+    category: 'core_data',
+    description: "Historique d'évolution du profil comportemental de l'utilisateur",
+    isCritical: true,
+  },
+  {
+    pattern: 'floussi_last_backup_${userId}',
+    category: 'preferences',
+    description: "Timestamp de la dernière sauvegarde réussie effectuée par l'utilisateur",
+    isCritical: false,
+  },
+  {
+    pattern: 'floussi_onboarding_step',
+    category: 'onboarding',
+    description: "Étape courante du tunnel d'onboarding de l'utilisateur",
+    isCritical: false,
+  },
+  {
+    pattern: 'floussi_student_name',
+    category: 'preferences',
+    description: "Nom de l'étudiant configuré pour les certificats de l'Académie",
+    isCritical: false,
+  },
+  {
+    pattern: 'floussi_first_goal_quickwin_completed',
+    category: 'gamification',
+    description: "Indicateur d'accomplissement du micro-défi d'aide au premier objectif",
+    isCritical: false,
+  },
+  {
+    pattern: 'floussi_restart_dashboard_tour',
+    category: 'onboarding',
+    description: "Indicateur pour forcer le redémarrage du tour guidé du tableau de bord",
+    isCritical: false,
+  },
+  {
+    pattern: 'floussi_life_plan_initialized',
+    category: 'onboarding',
+    description: "Indicateur d'initialisation du plan de vie financière",
+    isCritical: false,
+  },
+  {
+    pattern: 'floussi_initial_buckets',
+    category: 'onboarding',
+    description: "Allocation initiale recommandée de seaux (buckets) lors de l'onboarding",
+    isCritical: false,
+  },
+  {
+    pattern: 'floussi_active_theme_${userId}',
+    category: 'preferences',
+    description: "Thème actif personnalisé de l'utilisateur",
+    isCritical: false,
+  },
+  {
+    pattern: 'floussi_active_theme',
+    category: 'preferences',
+    description: "Thème global par défaut",
+    isCritical: false,
+  },
+  {
+    pattern: 'floussi_setup_checklist_dismissed_${userId}',
+    category: 'preferences',
+    description: "Indicateur de masquage de la checklist de démarrage",
+    isCritical: false,
+  },
+  {
+    pattern: 'floussi_checklist_rewarded_${userId}',
+    category: 'gamification',
+    description: "Liste des récompenses obtenues pour la complétion des éléments de checklist",
+    isCritical: true,
+  },
+  {
+    pattern: 'theme_auto_night',
+    category: 'preferences',
+    description: "Préférence pour l'activation automatique du mode nuit",
+    isCritical: false,
+  },
+  {
+    pattern: 'theme_oled_black',
+    category: 'preferences',
+    description: "Préférence pour le thème noir pur OLED",
+    isCritical: false,
+  },
+  {
+    pattern: 'floussi_dashboard_layout_${userId}',
+    category: 'preferences',
+    description: "Dispositions et personnalisations configurables des widgets du tableau de bord",
+    isCritical: false,
+  },
+  {
+    pattern: 'floussi_dashboard_customized_${userId}',
+    category: 'preferences',
+    description: "Indicateur indiquant si l'utilisateur a personnalisé manuellement son tableau de bord",
+    isCritical: false,
+  },
+  {
+    pattern: 'floussi_dashboard_preset_offered_${userId}',
+    category: 'preferences',
+    description: "Indicateur indiquant si le preset adapté au persona a déjà été proposé à l'utilisateur",
+    isCritical: false,
   }
 ];
 
@@ -239,32 +450,49 @@ export function getAllKeysForUser(userId: string): string[] {
       const needsUserId = pattern.includes('${userId}');
       const needsTable = pattern.includes('${table}');
       const needsTourId = pattern.includes('${tourId}');
+      const needsCurrentYear = pattern.includes('${currentYear}');
 
-      const combinations: Record<string, string>[] = [];
+      let combinations: Record<string, string>[] = [{}];
 
-      if (needsTable && needsUserId) {
-        // Table & User
-        for (const table of KNOWN_TABLES) {
-          combinations.push({ userId, table });
+      if (needsUserId) {
+        const next: Record<string, string>[] = [];
+        for (const c of combinations) {
+          next.push({ ...c, userId });
         }
-      } else if (needsTourId && needsUserId) {
-        // Tour & User
-        for (const tourId of KNOWN_TOURS) {
-          combinations.push({ userId, tourId });
+        combinations = next;
+      }
+
+      if (needsTable) {
+        const next: Record<string, string>[] = [];
+        for (const c of combinations) {
+          for (const table of KNOWN_TABLES) {
+            next.push({ ...c, table });
+          }
         }
-      } else if (needsUserId) {
-        // Just User
-        combinations.push({ userId });
-      } else if (needsTable) {
-        // Just Table
-        for (const table of KNOWN_TABLES) {
-          combinations.push({ table });
+        combinations = next;
+      }
+
+      if (needsTourId) {
+        const next: Record<string, string>[] = [];
+        for (const c of combinations) {
+          for (const tourId of KNOWN_TOURS) {
+            next.push({ ...c, tourId });
+          }
         }
-      } else if (needsTourId) {
-        // Just Tour
-        for (const tourId of KNOWN_TOURS) {
-          combinations.push({ tourId });
+        combinations = next;
+      }
+
+      if (needsCurrentYear) {
+        const next: Record<string, string>[] = [];
+        const currentYearStr = new Date().getFullYear().toString();
+        // Check current year, and also previous year for robustness
+        const years = [currentYearStr, (new Date().getFullYear() - 1).toString()];
+        for (const c of combinations) {
+          for (const year of years) {
+            next.push({ ...c, currentYear: year });
+          }
         }
+        combinations = next;
       }
 
       for (const params of combinations) {

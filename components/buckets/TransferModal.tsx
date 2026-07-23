@@ -3,6 +3,7 @@ import { Bucket } from '../../types';
 import { formatCurrency } from '../../lib/utils';
 import { useFocusTrap } from '../../hooks/use-focus-trap';
 import { X, ArrowRight, ArrowRightLeft } from 'lucide-react';
+import { Language, t } from '../../lib/i18n';
 
 interface TransferModalProps {
   isOpen: boolean;
@@ -10,6 +11,7 @@ interface TransferModalProps {
   buckets: Bucket[];
   sourceBucket?: Bucket | null;
   onTransfer: (fromId: string, toId: string, amount: number, note: string) => void;
+  language: Language;
 }
 
 export function TransferModal({
@@ -17,7 +19,8 @@ export function TransferModal({
   onClose,
   buckets,
   sourceBucket,
-  onTransfer
+  onTransfer,
+  language
 }: TransferModalProps) {
   const [fromId, setFromId] = useState('');
   const [toId, setToId] = useState('');
@@ -61,19 +64,19 @@ export function TransferModal({
     setError('');
 
     if (!fromId || !toId) {
-      setError("Veuillez sélectionner les deux compartiments.");
+      setError(t('selectBothCompartments', language));
       return;
     }
     if (fromId === toId) {
-      setError("Les compartiments source et destination doivent être différents.");
+      setError(t('compartmentsMustBeDifferent', language));
       return;
     }
     if (amount <= 0) {
-      setError("Le montant du transfert doit être supérieur à 0 DH.");
+      setError(t('transferAmountGreaterZero', language));
       return;
     }
     if (amount > availableToTransfer) {
-      setError(`Le solde disponible dans ${selectedFromBucket?.name} (${formatCurrency(availableToTransfer)}) est insuffisant.`);
+      setError(`${t('insufficientBalance', language)} ${selectedFromBucket?.name} (${formatCurrency(availableToTransfer)}) ${t('isInsufficient', language)}`);
       return;
     }
 
@@ -96,10 +99,10 @@ export function TransferModal({
             </div>
             <div>
               <h3 className="font-extrabold text-sm text-slate-800 uppercase tracking-wider">
-                Virement entre Sanadiq
+                {t('virementEntreSanadiq', language)}
               </h3>
               <p className="text-[10px] text-slate-400 font-bold mt-0.5">
-                Transférer des allocations d'un sandoq à un autre
+                {t('virementSandoqDesc', language)}
               </p>
             </div>
           </div>
@@ -123,7 +126,7 @@ export function TransferModal({
 
           {/* Source Selector */}
           <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase text-slate-400">Depuis le Sandoq (Source)</label>
+            <label className="text-[10px] font-black uppercase text-slate-400">{t('fromSandoqLabel', language)}</label>
             <select
               value={fromId}
               onChange={(e) => handleFromChange(e.target.value)}
@@ -131,7 +134,7 @@ export function TransferModal({
             >
               {buckets.map(b => (
                 <option key={b.id} value={b.id}>
-                  {b.name} (Dispo : {formatCurrency(Math.max(0, b.allocated_amount - b.spent_amount))})
+                  {b.name} ({t('dispo', language)} : {formatCurrency(Math.max(0, b.allocated_amount - b.spent_amount))})
                 </option>
               ))}
             </select>
@@ -144,7 +147,7 @@ export function TransferModal({
 
           {/* Destination Selector */}
           <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase text-slate-400">Vers le Sandoq (Destination)</label>
+            <label className="text-[10px] font-black uppercase text-slate-400">{t('toSandoqLabel', language)}</label>
             <select
               value={toId}
               onChange={(e) => setToId(e.target.value)}
@@ -154,7 +157,7 @@ export function TransferModal({
                 .filter(b => b.id !== fromId)
                 .map(b => (
                   <option key={b.id} value={b.id}>
-                    {b.name} (Solde : {formatCurrency(b.allocated_amount)})
+                    {b.name} ({t('solde', language)} : {formatCurrency(b.allocated_amount)})
                   </option>
                 ))}
             </select>
@@ -163,7 +166,7 @@ export function TransferModal({
           {/* Amount and Note */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
             <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase text-slate-400">Montant à Transférer (DH)</label>
+              <label className="text-[10px] font-black uppercase text-slate-400">{t('amountToTransferLabel', language)}</label>
               <input
                 type="number"
                 required
@@ -176,12 +179,12 @@ export function TransferModal({
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase text-slate-400">Note / Justification (Optionnel)</label>
+              <label className="text-[10px] font-black uppercase text-slate-400">{t('noteLabel', language)}</label>
               <input
                 type="text"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
-                placeholder="ex: Ajustement fin de mois"
+                placeholder={t('notePlaceholder', language)}
                 className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold text-slate-800 focus:outline-hidden focus:ring-1 focus:ring-emerald-500"
               />
             </div>
@@ -194,13 +197,13 @@ export function TransferModal({
               onClick={onClose}
               className="px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-extrabold text-xs uppercase tracking-wider rounded-2xl transition-colors cursor-pointer"
             >
-              Annuler
+              {t('cancel', language)}
             </button>
             <button
               type="submit"
               className="px-5.5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs uppercase tracking-wider rounded-2xl transition-all shadow-md cursor-pointer"
             >
-              Confirmer le Transfert
+              {t('confirmTransfer', language)}
             </button>
           </div>
 

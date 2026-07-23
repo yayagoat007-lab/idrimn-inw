@@ -3,12 +3,14 @@ import { useMicroSavings } from '../../hooks/use-micro-savings';
 import { useBuckets } from '../../hooks/use-buckets';
 import { useAuth } from '../../hooks/use-auth';
 import { ToggleLeft, ToggleRight, Target, HelpCircle, Coins, Sparkles } from 'lucide-react';
+import { Language } from '../../lib/i18n';
 
 interface RoundUpSettingsProps {
-  lang: 'fr' | 'darija';
+  language: Language;
 }
 
-export function RoundUpSettingsComponent({ lang }: RoundUpSettingsProps) {
+export function RoundUpSettingsComponent({ language }: RoundUpSettingsProps) {
+  const isDarija = language === 'darija';
   const { user } = useAuth();
   const { buckets } = useBuckets(user?.id || '');
   const { settings, updateRoundUpSettings } = useMicroSavings(user?.id || '');
@@ -18,15 +20,15 @@ export function RoundUpSettingsComponent({ lang }: RoundUpSettingsProps) {
   const thresholds: (5 | 10 | 20 | 50)[] = [5, 10, 20, 50];
 
   const t = {
-    title: lang === 'darija' ? 'Khedem L-Arrondi (Round-up)' : 'Épargne par Arrondi automatique',
-    desc: lang === 'darija' ? 'Arrondir kol kherdja l-a9rab 3adad o ssa7e7 l-far9 f sandoq' : 'Arrondir chaque dépense à la tranche supérieure et placer la différence de côté automatiquement.',
-    enabled: lang === 'darija' ? 'Mkhdem' : 'Activé',
-    disabled: lang === 'darija' ? 'Mteffi' : 'Désactivé',
-    thresholdLabel: lang === 'darija' ? 'A9rab 3adad (Seuil) :' : 'Arrondir au multiple de :',
-    bucketLabel: lang === 'darija' ? 'Sandoq l-mousstafid (Cible) :' : 'Sandoq de destination :',
-    selectBucket: lang === 'darija' ? 'Khtar sandoq' : 'Sélectionner un sandoq...',
-    savedTotal: lang === 'darija' ? 'Kamline jme3ti :' : 'Total épargné par arrondi :',
-    noBuckets: lang === 'darija' ? 'Khass t-khtar sandoq s-sghir lowwel' : 'Veuillez créer un sandoq (enveloppe) dans l\'onglet Budget d\'abord.'
+    title: isDarija ? 'Khedem L-Arrondi (Round-up)' : 'Épargne par Arrondi automatique',
+    desc: isDarija ? 'Arrondir kol kherdja l-a9rab 3adad o ssa7e7 l-far9 f sandoq' : 'Arrondir chaque dépense à la tranche supérieure et placer la différence de côté automatiquement.',
+    enabled: isDarija ? 'Mkhdem' : 'Activé',
+    disabled: isDarija ? 'Mteffi' : 'Désactivé',
+    thresholdLabel: isDarija ? 'A9rab 3adad (Seuil) :' : 'Arrondir au multiple de :',
+    bucketLabel: isDarija ? 'Sandoq l-mousstafid (Cible) :' : 'Sandoq de destination :',
+    selectBucket: isDarija ? 'Khtar sandoq' : 'Sélectionner un sandoq...',
+    savedTotal: isDarija ? 'Kamline jme3ti :' : 'Total épargné par arrondi :',
+    noBuckets: isDarija ? 'Khass t-khtar sandoq s-sghir lowwel' : 'Veuillez créer un sandoq (enveloppe) dans l\'onglet Budget d\'abord.'
   };
 
   const handleToggle = () => {
@@ -58,7 +60,7 @@ export function RoundUpSettingsComponent({ lang }: RoundUpSettingsProps) {
         <button 
           type="button"
           onClick={handleToggle}
-          className="text-slate-400 hover:text-emerald-600 transition-colors cursor-pointer"
+          className="text-slate-400 hover:text-emerald-600 transition-colors cursor-pointer text-left"
         >
           {settings.enabled ? (
             <ToggleRight className="text-emerald-600" size={38} />

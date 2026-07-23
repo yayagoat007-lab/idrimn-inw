@@ -2,6 +2,7 @@ import React from 'react';
 import { MoroccanEvent } from '../../types';
 import { formatCurrency } from '../../lib/utils';
 import { Calendar, Moon, Sparkles, Heart, Landmark, HelpCircle, ArrowUpRight } from 'lucide-react';
+import { Language, t } from '../../lib/i18n';
 
 interface EventCardProps {
   key?: any;
@@ -9,7 +10,7 @@ interface EventCardProps {
   daysRemaining: number;
   status: 'active' | 'upcoming' | 'past';
   onContribute: (id: string, amount: number) => void;
-  language: 'fr' | 'darija';
+  language: Language;
 }
 
 export function EventCard({
@@ -39,17 +40,17 @@ export function EventCard({
   const statusBadges = {
     active: (
       <span className="px-2 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-full text-[9px] font-black uppercase tracking-wider animate-pulse">
-        Actif
+        {t('active', language)}
       </span>
     ),
     upcoming: (
       <span className="px-2 py-0.5 bg-blue-50 border border-blue-100 text-blue-800 rounded-full text-[9px] font-black uppercase tracking-wider">
-        À venir
+        {t('upcoming', language)}
       </span>
     ),
     past: (
       <span className="px-2 py-0.5 bg-slate-100 border border-slate-200 text-slate-500 rounded-full text-[9px] font-black uppercase tracking-wider">
-        Passé
+        {t('past', language)}
       </span>
     )
   };
@@ -78,24 +79,24 @@ export function EventCard({
 
       <div className="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-2xl text-center">
         <div>
-          <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Budget Alloué</p>
+          <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">{t('allocated', language)}</p>
           <p className="font-black text-xs text-slate-800">{formatCurrency(event.budget_allocated)}</p>
         </div>
         <div>
-          <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Dépensé</p>
+          <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">{t('spent', language)}</p>
           <p className="font-black text-xs text-slate-800">{formatCurrency(event.budget_spent)}</p>
         </div>
       </div>
 
       <div className="space-y-1.5">
         <div className="flex justify-between text-[11px] font-bold text-slate-600">
-          <span>{percent}% utilisé</span>
+          <span>{percent}% {t('used', language)}</span>
           <span className="text-slate-400">
             {status === 'upcoming' 
-              ? `Dans ${daysRemaining} jours` 
+              ? t('daysRemaining', language).replace('{days}', String(daysRemaining)) 
               : status === 'active' 
-                ? 'Événement en cours' 
-                : 'Terminé'}
+                ? t('eventInProgress', language) 
+                : t('completed', language)}
           </span>
         </div>
         <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
@@ -112,7 +113,7 @@ export function EventCard({
           className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
         >
           <ArrowUpRight size={13} />
-          <span>Allouer 500 DH</span>
+          <span>{t('allocateAmount', language).replace('{amount}', '500')}</span>
         </button>
       )}
     </div>

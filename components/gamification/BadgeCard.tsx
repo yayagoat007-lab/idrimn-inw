@@ -1,5 +1,6 @@
 import React from 'react';
 import { Sparkles, Lock } from 'lucide-react';
+import { useTranslation } from '../../hooks/use-translation';
 
 interface BadgeCardProps {
   title: string;
@@ -11,6 +12,7 @@ interface BadgeCardProps {
 }
 
 export function BadgeCard({ title, description, emoji, xpValue, unlockedAt, category }: BadgeCardProps) {
+  const { lang } = useTranslation();
   const isUnlocked = !!unlockedAt;
 
   return (
@@ -53,9 +55,11 @@ export function BadgeCard({ title, description, emoji, xpValue, unlockedAt, cate
       </div>
 
       <div className="border-t border-slate-100 pt-3 flex justify-between items-center text-[9px] font-black uppercase tracking-widest">
-        <span className="text-slate-400">Statut :</span>
+        <span className="text-slate-400">{lang === 'darija' ? "L-Hala :" : "Statut :"}</span>
         <span className={isUnlocked ? 'text-emerald-600' : 'text-slate-400'}>
-          {isUnlocked ? '✓ Débloqué' : '🔒 Verrouillé'}
+          {isUnlocked
+            ? (lang === 'darija' ? '✓ Mhloul' : '✓ Débloqué')
+            : (lang === 'darija' ? '🔒 Masdoud' : '🔒 Verrouillé')}
         </span>
       </div>
     </div>

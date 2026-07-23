@@ -1,5 +1,6 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { useTranslation } from '../../hooks/use-translation';
 
 interface BenchmarkChartProps {
   data: {
@@ -13,16 +14,21 @@ interface BenchmarkChartProps {
 }
 
 export function BenchmarkChart({ data }: BenchmarkChartProps) {
+  const { lang } = useTranslation();
+
+  const userLabel = lang === 'darija' ? "Masrouf dyali (DH)" : "Mes dépenses (DH)";
+  const benchmarkLabel = lang === 'darija' ? "Moyenne l-Maghrib (DH)" : "Moyenne Maroc (DH)";
+
   const chartData = data.map(item => ({
     name: item.category.charAt(0).toUpperCase() + item.category.slice(1),
-    'Mes dépenses (DH)': Math.round(item.userAmount),
-    'Moyenne Maroc (DH)': Math.round(item.benchmarkAmount)
+    [userLabel]: Math.round(item.userAmount),
+    [benchmarkLabel]: Math.round(item.benchmarkAmount)
   }));
 
   return (
     <div className="border border-slate-150 rounded-2xl bg-white p-5 shadow-xs">
       <h4 className="text-xs font-black text-slate-800 mb-4 uppercase tracking-wider">
-        Toi vs Indice de Référence National (HCP)
+        {lang === 'darija' ? "Nta vs l-Moyenne d l-Mgharba (HCP)" : "Toi vs Indice de Référence National (HCP)"}
       </h4>
 
       <div className="h-[240px] w-full text-[10px] font-bold">
@@ -38,8 +44,8 @@ export function BenchmarkChart({ data }: BenchmarkChartProps) {
               contentStyle={{ background: '#FFFFFF', borderRadius: '12px', border: '1px solid #E2E8F0', fontFamily: 'sans-serif' }}
             />
             <Legend verticalAlign="top" height={36} iconType="circle" iconSize={8} />
-            <Bar dataKey="Mes dépenses (DH)" fill="#10B981" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="Moyenne Maroc (DH)" fill="#94A3B8" radius={[4, 4, 0, 0]} />
+            <Bar dataKey={userLabel} fill="#10B981" radius={[4, 4, 0, 0]} />
+            <Bar dataKey={benchmarkLabel} fill="#94A3B8" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -47,3 +53,4 @@ export function BenchmarkChart({ data }: BenchmarkChartProps) {
   );
 }
 export default BenchmarkChart;
+

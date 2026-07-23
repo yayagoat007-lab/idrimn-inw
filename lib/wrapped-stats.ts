@@ -17,6 +17,8 @@ export interface WrappedStats {
   tontinesCompleted: number;
   personalityBadgeFr: string;
   personalityBadgeDarija: string;
+  floussiScore?: number;
+  floussiTier?: string;
 }
 
 const MONTHS_FR = [
@@ -246,6 +248,33 @@ export function calculateWrappedStats(
   const personalityBadgeFr = `${profileDetails.nameFr} ${year}`;
   const personalityBadgeDarija = `${profileDetails.nameDarija} ${year}`;
 
+  // Retrieve latest Floussi Score & Tier
+  let floussiScore = 350;
+  let floussiTier = "Discipliné";
+  try {
+    const historyKey = `floussi_score_history_mock-user-id-9999`;
+    const savedHistory = localStorage.getItem(historyKey);
+    if (savedHistory) {
+      const historyList = JSON.parse(savedHistory);
+      if (Array.isArray(historyList) && historyList.length > 0) {
+        historyList.sort((a, b) => a.date.localeCompare(b.date));
+        floussiScore = historyList[historyList.length - 1].score;
+      }
+    }
+    
+    if (floussiScore >= 850) {
+      floussiTier = 'Légende';
+    } else if (floussiScore >= 700) {
+      floussiTier = 'Maître';
+    } else if (floussiScore >= 500) {
+      floussiTier = 'Stratège';
+    } else if (floussiScore >= 300) {
+      floussiTier = 'Discipliné';
+    } else {
+      floussiTier = 'Débutant';
+    }
+  } catch (_) {}
+
   return {
     year,
     totalSaved,
@@ -261,7 +290,9 @@ export function calculateWrappedStats(
     ocrReceiptsScanned,
     tontinesCompleted,
     personalityBadgeFr,
-    personalityBadgeDarija
+    personalityBadgeDarija,
+    floussiScore,
+    floussiTier
   };
 }
 

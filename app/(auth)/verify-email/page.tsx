@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, RefreshCw, CheckCircle2, ArrowLeft, ShieldAlert } from 'lucide-react';
 import { getTranslation, Language } from '../../../lib/i18n';
+import { useTranslation } from '../../../hooks/use-translation';
 import AuthLayout from '../layout';
 
 interface VerifyEmailPageProps {
@@ -11,7 +12,9 @@ interface VerifyEmailPageProps {
   emailAddress?: string;
 }
 
-export default function VerifyEmailPage({ onNavigateLogin, language = 'fr', emailAddress = '' }: VerifyEmailPageProps) {
+export default function VerifyEmailPage({ onNavigateLogin, language: propLanguage, emailAddress = '' }: VerifyEmailPageProps) {
+  const { lang } = useTranslation();
+  const language = propLanguage || lang;
   const [cooldown, setCooldown] = useState(0);
   const [loading, setLoading] = useState(false);
   const [sentSuccess, setSentSuccess] = useState(false);
@@ -37,7 +40,7 @@ export default function VerifyEmailPage({ onNavigateLogin, language = 'fr', emai
       setSentSuccess(true);
       setCooldown(60);
     } catch (err: any) {
-      setError(err.message || "Impossible de renvoyer l'email.");
+      setError(err.message || (language === 'darija' ? "Ma 9dernach n-sifto email." : "Impossible de renvoyer l'email."));
     } finally {
       setLoading(false);
     }
@@ -78,16 +81,26 @@ export default function VerifyEmailPage({ onNavigateLogin, language = 'fr', emai
         {sentSuccess && (
           <div className="p-3 bg-emerald-50 border border-emerald-100 text-emerald-800 rounded-xl text-xs font-bold leading-relaxed">
             <CheckCircle2 size={16} className="text-emerald-600 inline-block mr-1.5 align-text-bottom" />
-            <span>Nouveau lien de vérification envoyé avec succès !</span>
+            <span>
+              {language === 'darija' ? "Rabit jdid d t-ta7qoq tsifet b najah !" : "Nouveau lien de vérification envoyé avec succès !"}
+            </span>
           </div>
         )}
 
         <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 text-left space-y-2 text-[11px] text-slate-500 font-medium leading-relaxed">
-          <p className="font-bold text-slate-700">Pas encore reçu ?</p>
+          <p className="font-bold text-slate-700">
+            {language === 'darija' ? "Maza ma wsalekch ?" : "Pas encore reçu ?"}
+          </p>
           <ul className="list-disc pl-4 space-y-1">
-            <li>Vérifiez votre dossier de courriers indésirables (Spam).</li>
-            <li>Assurez-vous que l'adresse saisie lors de l'inscription est correcte.</li>
-            <li>Attendez quelques instants puis cliquez sur le bouton ci-dessous pour renvoyer le lien.</li>
+            <li>
+              {language === 'darija' ? "Chouf f s-sandoq d s-spam (Spam)." : "Vérifiez votre dossier de courriers indésirables (Spam)."}
+            </li>
+            <li>
+              {language === 'darija' ? "T7a9aq mn email lli dakhalti f l-ouwel s7i7." : "Assurez-vous que l'adresse saisie lors de l'inscription est correcte."}
+            </li>
+            <li>
+              {language === 'darija' ? "Sbar chwiya o cli9i 3la l-bouton l-ta7t bach n-sifto rabit jdid." : "Attendez quelques instants puis cliquez sur le bouton ci-dessous pour renvoyer le lien."}
+            </li>
           </ul>
         </div>
 
@@ -100,7 +113,9 @@ export default function VerifyEmailPage({ onNavigateLogin, language = 'fr', emai
             <RefreshCw size={14} className="animate-spin" />
           ) : (
             <span>
-              {cooldown > 0 ? `Renvoyer le lien dans ${cooldown}s` : getTranslation('resendEmailButton', language)}
+              {cooldown > 0 
+                ? (language === 'darija' ? `A3id l-irsal f ${cooldown}s` : `Renvoyer le lien dans ${cooldown}s`) 
+                : getTranslation('resendEmailButton', language)}
             </span>
           )}
         </button>

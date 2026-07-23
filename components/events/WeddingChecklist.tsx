@@ -19,6 +19,7 @@ import {
   ChevronRight,
   Info
 } from 'lucide-react';
+import { formatCurrency } from '../../lib/utils';
 
 interface WeddingChecklistProps {
   lang: 'fr' | 'darija';
@@ -98,13 +99,17 @@ export function WeddingChecklist({ lang }: WeddingChecklistProps) {
     const dateStr = eventDate.toISOString().split('T')[0];
 
     await createEvent({
-      name: `Mariage Traditional (${WEDDING_REGIONS[selectedRegion].labelFr})`,
+      name: lang === 'darija' 
+        ? `L-3ors t-Taqraydi (${WEDDING_REGIONS[selectedRegion].labelDarija})`
+        : `Mariage Traditionnel (${WEDDING_REGIONS[selectedRegion].labelFr})`,
       type: 'wedding',
       start_date: dateStr,
       end_date: dateStr,
       budget_allocated: customBudget,
       budget_spent: 0,
-      notes: "Suivi des frais de la salle, traiteur et Neggafa.",
+      notes: lang === 'darija'
+        ? "Ttabba3 khlass d l-9a3a, t-traiteur o n-neggafa."
+        : "Suivi des frais de la salle, traiteur et Neggafa.",
       is_recurring: false
     });
   };
@@ -142,7 +147,9 @@ export function WeddingChecklist({ lang }: WeddingChecklistProps) {
         <div className="space-y-1">
           <span className="text-[10px] uppercase font-black tracking-widest text-pink-600 flex items-center gap-1">
             <Heart size={12} className="fill-pink-600 animate-pulse" />
-            <span>Lilet L-Omar • Mariage Traditionnel</span>
+            <span>
+              {lang === 'darija' ? "Lilet L-Omar • L-3ors l-Maghribi" : "Lilet L-Omar • Mariage Traditionnel"}
+            </span>
           </span>
           <h2 className="text-base font-black text-slate-800 uppercase tracking-tight">
             {t.title}
@@ -165,7 +172,9 @@ export function WeddingChecklist({ lang }: WeddingChecklistProps) {
           <div className="bg-pink-50 border border-pink-100 p-3 rounded-2xl flex items-center gap-2">
             <Calendar size={15} className="text-pink-600" />
             <div className="text-right">
-              <span className="text-[9px] uppercase font-black text-pink-500 block">Cortège Activé</span>
+              <span className="text-[9px] uppercase font-black text-pink-500 block">
+                {lang === 'darija' ? "Khidma d l-farh khdama" : "Cortège Activé"}
+              </span>
               <span className="text-xs font-black font-mono text-pink-900">
                 Date : {weddingEvent.start_date}
               </span>
@@ -265,7 +274,7 @@ export function WeddingChecklist({ lang }: WeddingChecklistProps) {
                 <div className="flex items-center gap-4 shrink-0 font-mono text-xs">
                   <div className="text-right">
                     <span className="text-[8px] uppercase font-black text-slate-400 block">{t.allocatedCol}</span>
-                    <span className="font-black text-slate-700">{allocatedAmt.toLocaleString('fr-FR')} DH</span>
+                    <span className="font-black text-slate-700">{formatCurrency(allocatedAmt)}</span>
                   </div>
 
                   <div className="text-right">
@@ -291,10 +300,12 @@ export function WeddingChecklist({ lang }: WeddingChecklistProps) {
             <div>
               <span className="text-[8px] uppercase font-black text-slate-400 block">{t.totalText}</span>
               <span className="text-base font-black text-pink-400">
-                {totalSpent.toLocaleString('fr-FR')} DH
+                {formatCurrency(totalSpent)}
               </span>
               <span className="text-[10px] text-slate-300 font-semibold uppercase block mt-0.5">
-                Sur un budget de {weddingEvent.budget_allocated.toLocaleString('fr-FR')} DH
+                {lang === 'darija' 
+                  ? `Mn l-mizaniya dyal ${formatCurrency(weddingEvent.budget_allocated)}` 
+                  : `Sur un budget de ${formatCurrency(weddingEvent.budget_allocated)}`}
               </span>
             </div>
 
@@ -330,7 +341,9 @@ export function WeddingChecklist({ lang }: WeddingChecklistProps) {
         {/* Event Label descriptor */}
         <div className="flex gap-4">
           <div className="flex-1">
-            <label className="text-[8px] uppercase font-black text-slate-400 tracking-wider block mb-1">Motif de la split (Ex: Mariage d'Imane)</label>
+            <label className="text-[8px] uppercase font-black text-slate-400 tracking-wider block mb-1">
+              {lang === 'darija' ? "Sbba d l-farreq d l-flous (Ex: Mariage d'Imane)" : "Motif du split (Ex: Mariage d'Imane)"}
+            </label>
             <input
               type="text"
               value={splitLabel}
@@ -342,7 +355,9 @@ export function WeddingChecklist({ lang }: WeddingChecklistProps) {
 
         {/* Multi-contributors list */}
         {members.length === 0 ? (
-          <p className="text-[11px] text-slate-400 font-bold uppercase">Aucun membre de la famille configuré pour la répartition.</p>
+          <p className="text-[11px] text-slate-400 font-bold uppercase">
+            {lang === 'darija' ? "Hatta wahed mn l-3aila ma m9add l l-farreq." : "Aucun membre de la famille configuré pour la répartition."}
+          </p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {members.map(m => {
@@ -360,7 +375,7 @@ export function WeddingChecklist({ lang }: WeddingChecklistProps) {
                     />
                     <div>
                       <h4 className="text-xs font-black text-slate-700 uppercase tracking-tight">{m.name}</h4>
-                      <p className="text-[9px] text-slate-400 font-bold uppercase font-mono">{computedShare.toLocaleString('fr-FR')} DH ({ratio}%)</p>
+                      <p className="text-[9px] text-slate-400 font-bold uppercase font-mono">{formatCurrency(computedShare)} ({ratio}%)</p>
                     </div>
                   </div>
 
@@ -385,12 +400,18 @@ export function WeddingChecklist({ lang }: WeddingChecklistProps) {
         <div className="bg-slate-50 border border-slate-150 p-3 rounded-2xl flex items-center justify-between font-mono text-[10px]">
           <span className="text-slate-400 uppercase font-bold flex items-center gap-1">
             <Info size={13} />
-            <span>Contrôle d'intégrité</span>
+            <span>{lang === 'darija' ? "Morajabat s-salama" : "Contrôle d'intégrité"}</span>
           </span>
           {Object.values(splitRatios).reduce((s, r) => s + r, 0) === 100 ? (
-            <span className="text-emerald-600 font-black uppercase">Répartition valide (100%)</span>
+            <span className="text-emerald-600 font-black uppercase">
+              {lang === 'darija' ? "L-Farreq m9add (100%)" : "Répartition valide (100%)"}
+            </span>
           ) : (
-            <span className="text-amber-600 font-black uppercase">Incohérent: Total = {Object.values(splitRatios).reduce((s, r) => s + r, 0)}% (doit valoir 100%)</span>
+            <span className="text-amber-600 font-black uppercase">
+              {lang === 'darija' 
+                ? `Chi khata2: Total = ${Object.values(splitRatios).reduce((s, r) => s + r, 0)}% (khass t-koun 100%)` 
+                : `Incohérent: Total = ${Object.values(splitRatios).reduce((s, r) => s + r, 0)}% (doit valoir 100%)`}
+            </span>
           )}
         </div>
       </div>

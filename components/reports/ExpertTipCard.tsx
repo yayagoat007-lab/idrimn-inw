@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Sparkles, Check, ChevronRight } from 'lucide-react';
+import { useTranslation } from '../../hooks/use-translation';
 
 interface ExpertTipCardProps {
   category: string;
@@ -9,6 +10,7 @@ interface ExpertTipCardProps {
 }
 
 export function ExpertTipCard({ category, title, content, onApply }: ExpertTipCardProps) {
+  const { lang } = useTranslation();
   const [applied, setApplied] = useState(false);
 
   const handleApplyClick = () => {
@@ -24,7 +26,7 @@ export function ExpertTipCard({ category, title, content, onApply }: ExpertTipCa
       </div>
 
       <span className="text-[9px] font-black uppercase tracking-widest text-amber-600">
-        Conseil de l'expert : {category}
+        {lang === 'darija' ? "Nasiha d l-Expert : " : "Conseil de l'expert : "}{category}
       </span>
 
       <h4 className="text-xs font-black text-slate-800 mt-1 mb-2">
@@ -47,11 +49,11 @@ export function ExpertTipCard({ category, title, content, onApply }: ExpertTipCa
         {applied ? (
           <>
             <Check className="w-3.5 h-3.5" />
-            <span>Conseil Appliqué !</span>
+            <span>{lang === 'darija' ? "Nasiha t-khddmat !" : "Conseil Appliqué !"}</span>
           </>
         ) : (
           <>
-            <span>Appliquer ce conseil</span>
+            <span>{lang === 'darija' ? "Khddem had n-nasiha" : "Appliquer ce conseil"}</span>
             <ChevronRight className="w-3.5 h-3.5" />
           </>
         )}
@@ -60,3 +62,4 @@ export function ExpertTipCard({ category, title, content, onApply }: ExpertTipCa
   );
 }
 export default ExpertTipCard;
+

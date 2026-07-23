@@ -1,14 +1,18 @@
 import React from 'react';
 import { SidiMessage } from '../../hooks/use-sidi-chat';
 import { SidiAvatar } from './SidiAvatar';
+import { BillPaymentForm } from '../wallet/BillPaymentForm';
+import { RechargeForm } from '../wallet/RechargeForm';
 
 interface SidiMessageBubbleProps {
   message: SidiMessage;
   onActionButtonClick: (payload: Record<string, any>) => void;
+  language: 'fr' | 'darija';
 }
 
-export function SidiMessageBubble({ message, onActionButtonClick }: SidiMessageBubbleProps) {
+export function SidiMessageBubble({ message, onActionButtonClick, language }: SidiMessageBubbleProps) {
   const isUser = message.sender === 'user';
+  const isFormMessage = message.intentId === 'pay_bill_via_sidi' || message.intentId === 'recharge_via_sidi';
   
   // Choose Sidi's avatar mood based on intent category or words
   const getAvatarMood = (): 'neutral' | 'happy' | 'worried' => {
@@ -47,7 +51,7 @@ export function SidiMessageBubble({ message, onActionButtonClick }: SidiMessageB
       )}
 
       {/* Message Bubble Container */}
-      <div className={`flex flex-col max-w-[75%] ${isUser ? 'items-end' : 'items-start'}`}>
+      <div className={`flex flex-col ${isFormMessage ? 'w-full max-w-[90%]' : 'max-w-[75%]'} ${isUser ? 'items-end' : 'items-start'}`}>
         <div
           className={`rounded-2xl px-4 py-2.5 text-xs font-semibold leading-relaxed shadow-sm border ${
             isUser
@@ -58,15 +62,28 @@ export function SidiMessageBubble({ message, onActionButtonClick }: SidiMessageB
           {/* Main message text */}
           <p className="whitespace-pre-line">{message.text}</p>
 
+          {/* Embedded Forms */}
+          {message.intentId === 'pay_bill_via_sidi' && (
+            <div className="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-100 text-left">
+              <BillPaymentForm language={language} onSuccess={() => {}} />
+            </div>
+          )}
+
+          {message.intentId === 'recharge_via_sidi' && (
+            <div className="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-100 text-left">
+              <RechargeForm language={language} onSuccess={() => {}} />
+            </div>
+          )}
+
           {/* Quick Buttons/Actions inside bubble */}
           {message.quickButtons && message.quickButtons.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-3" id={`quick-actions-${message.id}`}>
               {message.quickButtons.map((btn, idx) => (
                 <button
-                  key={idx}
-                  id={`action-btn-${idx}`}
-                  onClick={() => onActionButtonClick(btn.payload)}
-                  className="px-3 py-1.5 text-[10px] font-black tracking-wide uppercase rounded-lg bg-amber-50 border border-amber-200 text-amber-800 hover:bg-amber-100 transition-colors"
+                   key={idx}
+                   id={`action-btn-${idx}`}
+                   onClick={() => onActionButtonClick(btn.payload)}
+                   className="px-3 py-1.5 text-[10px] font-black tracking-wide uppercase rounded-lg bg-amber-50 border border-amber-200 text-amber-800 hover:bg-amber-100 transition-colors"
                 >
                   {btn.label}
                 </button>

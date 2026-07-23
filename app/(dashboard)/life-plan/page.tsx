@@ -4,6 +4,7 @@ import { ScenarioComparisonChart } from '../../../components/life-plan/ScenarioC
 import { LifeMilestoneTimeline } from '../../../components/life-plan/LifeMilestoneTimeline';
 import { AssumptionsEditor } from '../../../components/life-plan/AssumptionsEditor';
 import { PlanGate } from '../../../components/shared/PlanGate';
+import { useTranslation } from '../../../hooks/use-translation';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -30,12 +31,15 @@ import {
   AlertTriangle,
   Info
 } from 'lucide-react';
+import { formatCurrency as globalFormatCurrency } from '../../../lib/utils';
 
 interface LifePlanPageProps {
-  language: 'fr' | 'darija';
+  language?: 'fr' | 'darija';
 }
 
-export default function LifePlanPage({ language }: LifePlanPageProps) {
+export default function LifePlanPage({ language: propLanguage }: LifePlanPageProps) {
+  const { lang } = useTranslation();
+  const language = propLanguage || lang;
   const userId = "mock-user-id-9999";
   const {
     assumptions,
@@ -110,7 +114,7 @@ export default function LifePlanPage({ language }: LifePlanPageProps) {
 
   // Format monetary values
   const formatCurrency = (val: number) => {
-    return `${val.toLocaleString(language === 'fr' ? 'fr-FR' : 'ar-MA')} DH`;
+    return globalFormatCurrency(val, language);
   };
 
   const selectedProj = projections[Math.min(selectedYear, projections.length - 1)] || projections[0];
@@ -620,7 +624,7 @@ export default function LifePlanPage({ language }: LifePlanPageProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-emerald-50/10 rounded-2xl border border-emerald-100" id="premium-advice-box">
               <div className="space-y-3">
                 <span className="text-[10px] font-black uppercase text-emerald-600 tracking-wider block">
-                  Analyse d'Assurance Retraite & Optimisation d'Impôt IGR
+                  {language === 'fr' ? "Analyse d'Assurance Retraite & Optimisation d'Impôt IGR" : "7issab d l-Assurance Retraite o t-Takhfiss d-Dariba IGR"}
                 </span>
                 <p className="text-xs text-slate-600 font-medium leading-relaxed">
                   {language === 'fr'
@@ -629,19 +633,19 @@ export default function LifePlanPage({ language }: LifePlanPageProps) {
                 </p>
                 <div className="bg-emerald-900 text-white p-3.5 rounded-xl text-xs font-bold space-y-1.5">
                   <div className="flex justify-between font-mono text-[10px] text-emerald-300">
-                    <span>Niche fiscale marocaine :</span>
+                    <span>{language === 'fr' ? "Niche fiscale marocaine :" : "Niche fiscale f l-Maroc :"}</span>
                     <span>Art. 28 CGI</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Gain annuel estimé pour votre tranche :</span>
-                    <span className="font-mono text-emerald-300 font-black">+{Math.round(assumptions.averageMonthlySalary * 0.12 * 0.30).toLocaleString()} DH / an</span>
+                    <span>{language === 'fr' ? "Gain annuel estimé pour votre tranche :" : "Taqdir d l-ribh d s-sana l had l-fi'a :"}</span>
+                    <span className="font-mono text-emerald-300 font-black">+{formatCurrency(Math.round(assumptions.averageMonthlySalary * 0.12 * 0.30))} {language === 'fr' ? '/ an' : '/ s-sana'}</span>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-3">
                 <span className="text-[10px] font-black uppercase text-emerald-600 tracking-wider block">
-                  Recommandation Sidi AI pour ton Patrimoine Net
+                  {language === 'fr' ? "Recommandation Sidi AI pour ton Patrimoine Net" : "Nassiha d Sidi AI l l-Patrimoine dyalk"}
                 </span>
                 <p className="text-xs text-slate-600 font-medium leading-relaxed">
                   {language === 'fr'
@@ -650,7 +654,9 @@ export default function LifePlanPage({ language }: LifePlanPageProps) {
                 </p>
                 <div className="flex gap-2 text-emerald-700">
                   <CheckCircle size={14} className="shrink-0 mt-0.5" />
-                  <span className="text-[10px] font-black uppercase tracking-wider">Plan d’action d’investissement à long terme validé par Sidi</span>
+                  <span className="text-[10px] font-black uppercase tracking-wider">
+                    {language === 'fr' ? "Plan d’action d’investissement à long terme validé par Sidi" : "Moukhtat d l-istithmar f l-mdha l-b3id m-sadeq 3lih Sidi"}
+                  </span>
                 </div>
               </div>
             </div>

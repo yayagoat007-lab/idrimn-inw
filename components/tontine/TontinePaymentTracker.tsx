@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Tontine, TontineMember, TontinePayment } from '../../types';
 import { Check, AlertTriangle, ShieldCheck, Download, Sparkles, RefreshCw } from 'lucide-react';
 import { formatCurrency } from '../../lib/utils';
+import { t, Language } from '../../lib/i18n';
 
 interface TontinePaymentTrackerProps {
   tontine: Tontine;
@@ -9,9 +10,11 @@ interface TontinePaymentTrackerProps {
   payments: TontinePayment[];
   onConfirmPayment: (memberId: string, round: number, pin: string) => Promise<boolean>;
   isAdmin: boolean;
+  language: Language;
 }
 
-export function TontinePaymentTracker({ tontine, members, payments, onConfirmPayment, isAdmin }: TontinePaymentTrackerProps) {
+export function TontinePaymentTracker({ tontine, members, payments, onConfirmPayment, isAdmin, language }: TontinePaymentTrackerProps) {
+  const isDarija = language === 'darija';
   const [showPinModal, setShowPinModal] = useState(false);
   const [selectedCell, setSelectedCell] = useState<{ memberId: string; round: number } | null>(null);
   const [pinCode, setPinCode] = useState('');
@@ -37,7 +40,7 @@ export function TontinePaymentTracker({ tontine, members, payments, onConfirmPay
   const handlePinSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (pinCode.length !== 4) {
-      setErrorText("Le code PIN doit comporter 4 chiffres.");
+      setErrorText(isDarija ? "Koud PIN khass fih 4 d l-arqaam exact." : "Le code PIN doit comporter 4 chiffres.");
       return;
     }
     if (!selectedCell) return;
@@ -50,10 +53,10 @@ export function TontinePaymentTracker({ tontine, members, payments, onConfirmPay
         setShowPinModal(false);
         setSelectedCell(null);
       } else {
-        setErrorText("Code PIN incorrect ou double-signature requise.");
+        setErrorText(isDarija ? "PIN ghalat aw khass t-shih khor." : "Code PIN incorrect ou double-signature requise.");
       }
     } catch (err: any) {
-      setErrorText(err?.message || "Erreur d'authentification.");
+      setErrorText(err?.message || (isDarija ? "Ghalat f l-authentification." : "Erreur d'authentification."));
     } finally {
       setIsSubmitting(false);
     }
@@ -85,19 +88,19 @@ export function TontinePaymentTracker({ tontine, members, payments, onConfirmPay
       <div className="flex justify-between items-center pb-3 border-b border-slate-100">
         <div>
           <h4 className="text-xs font-black text-slate-800 uppercase tracking-wider">
-            Matrice des Cotisations ("Chkoun Khalass")
+            {isDarija ? "Matrice dyal mousahamat (\"Chkoun Khalass\")" : "Matrice des Cotisations (\"Chkoun Khalass\")"}
           </h4>
           <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wide">
-            Cliquez sur une case pour valider un paiement
+            {isDarija ? "Klike f koula blassa bach t-khless" : "Cliquez sur une case pour valider un paiement"}
           </p>
         </div>
 
         <button
           onClick={handleExportCSV}
-          className="flex items-center gap-1.5 border border-slate-200 hover:border-slate-300 text-slate-600 font-black text-[9px] uppercase px-3 py-1.5 rounded-xl transition-all"
+          className="flex items-center gap-1.5 border border-slate-200 hover:border-slate-300 text-slate-600 font-black text-[9px] uppercase px-3 py-1.5 rounded-xl transition-all cursor-pointer"
         >
           <Download className="w-3.5 h-3.5 text-emerald-600" />
-          <span>Exporter CSV</span>
+          <span>{isDarija ? "Ssefet CSV" : "Exporter CSV"}</span>
         </button>
       </div>
 
@@ -106,9 +109,9 @@ export function TontinePaymentTracker({ tontine, members, payments, onConfirmPay
         <table className="w-full border-collapse">
           <thead>
             <tr className="border-b border-slate-100">
-              <th className="py-2 text-[9px] font-bold text-slate-400 uppercase text-left pr-4">Participant</th>
+              <th className="py-2 text-[9px] font-bold text-slate-400 uppercase text-left pr-4">{isDarija ? "Participant" : "Participant"}</th>
               {rounds.map(r => (
-                <th key={r} className="py-2 text-[9px] font-bold text-slate-400 uppercase text-center min-w-[60px]">Rond {r}</th>
+                <th key={r} className="py-2 text-[9px] font-bold text-slate-400 uppercase text-center min-w-[60px]">{isDarija ? `Doora ${r}` : `Rond ${r}`}</th>
               ))}
             </tr>
           </thead>
@@ -134,7 +137,7 @@ export function TontinePaymentTracker({ tontine, members, payments, onConfirmPay
                         <button
                           onClick={() => handleCellClick(m.id, r)}
                           disabled={isPaid}
-                          className={`w-9 h-9 rounded-xl border flex flex-col items-center justify-center transition-all ${cellStyle}`}
+                          className={`w-9 h-9 rounded-xl border flex flex-col items-center justify-center transition-all cursor-pointer ${cellStyle}`}
                           title={`Rond ${r}: ${formatCurrency(amount)}`}
                         >
                           {isPaid ? (
@@ -164,13 +167,19 @@ export function TontinePaymentTracker({ tontine, members, payments, onConfirmPay
           <div className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl relative border border-slate-100">
             <h4 className="text-xs font-black text-slate-800 flex items-center gap-1.5 uppercase tracking-wider mb-2">
               <ShieldCheck className="w-4.5 h-4.5 text-emerald-600" />
-              <span>Validation de Versement</span>
+              <span>{isDarija ? "Ta'kid dyal l-khalass" : "Validation de Versement"}</span>
             </h4>
             <p className="text-[10px] text-slate-400 font-semibold leading-relaxed mb-4">
-              La transaction s'élève à <strong className="text-slate-800">{formatCurrency(tontine.contribution_amount)}</strong>. Entrez votre PIN 4 chiffres pour approuver.
+              {isDarija ? (
+                <>Had l-khalass fih <strong className="text-slate-800">{formatCurrency(tontine.contribution_amount)}</strong>. Kteb l-koud PIN dyalek de 4 d l-arqaam bach t-'aked.</>
+              ) : (
+                <>La transaction s'élève à <strong className="text-slate-800">{formatCurrency(tontine.contribution_amount)}</strong>. Entrez votre PIN 4 chiffres pour approuver.</>
+              )}
               {tontine.contribution_amount > 5000 && (
                 <span className="block mt-2 text-amber-600 bg-amber-50 p-2 rounded-lg border border-amber-100">
-                  ⚠️ Somme supérieure à 5 000 DH. Requiert la validation PIN de 2 administrateurs différents.
+                  {isDarija 
+                    ? "⚠️ L-flouss ktar men 5 000 DH. Khass l-PIN dyal 2 d l-administrateurs." 
+                    : "⚠️ Somme supérieure à 5 000 DH. Requiert la validation PIN de 2 administrateurs différents."}
                 </span>
               )}
             </p>
@@ -183,7 +192,7 @@ export function TontinePaymentTracker({ tontine, members, payments, onConfirmPay
                 pattern="\d{4}"
                 value={pinCode}
                 onChange={(e) => setPinCode(e.target.value)}
-                placeholder="PIN à 4 chiffres (ex: 1234)"
+                placeholder={isDarija ? "Koud PIN dyal 4 d l-arqaam (مثلا: 1234)" : "PIN à 4 chiffres (ex: 1234)"}
                 className="w-full border border-slate-200 rounded-xl p-3 text-center tracking-widest text-lg font-black outline-none focus:border-emerald-500"
               />
 
@@ -197,19 +206,19 @@ export function TontinePaymentTracker({ tontine, members, payments, onConfirmPay
                 <button
                   type="button"
                   onClick={() => { setShowPinModal(false); setSelectedCell(null); }}
-                  className="flex-1 border border-slate-200 hover:border-slate-300 text-slate-600 rounded-xl py-2 text-[10px] font-black uppercase tracking-wide transition-all"
+                  className="flex-1 border border-slate-200 hover:border-slate-300 text-slate-600 rounded-xl py-2 text-[10px] font-black uppercase tracking-wide transition-all cursor-pointer"
                 >
-                  Annuler
+                  {t('cancel', language)}
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 bg-slate-800 hover:bg-slate-900 text-white rounded-xl py-2 text-[10px] font-black uppercase tracking-wide transition-all flex items-center justify-center gap-1.5"
+                  className="flex-1 bg-slate-800 hover:bg-slate-900 text-white rounded-xl py-2 text-[10px] font-black uppercase tracking-wide transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   {isSubmitting ? (
                     <RefreshCw className="w-3.5 h-3.5 animate-spin" />
                   ) : (
-                    <span>Confirmer</span>
+                    <span>{isDarija ? "Ta'kid" : "Confirmer"}</span>
                   )}
                 </button>
               </div>

@@ -10,14 +10,13 @@ import { RemittanceHistory } from '../../../components/mre/RemittanceHistory';
 import { DualCurrencyAmount } from '../../../components/mre/DualCurrencyAmount';
 import { getMREPreference, setMREPreference, SUPPORTED_CURRENCIES } from '../../../lib/currency-exchange';
 import { Globe, Heart, ArrowRight, ShieldAlert, Sparkles, Send, Users, Compass, AlertCircle, RefreshCw, CheckCircle2 } from 'lucide-react';
-import { Language } from '../../../lib/i18n';
+import { Language, t } from '../../../lib/i18n';
 
 interface MREPageProps {
   language: Language;
 }
 
 export default function MREPage({ language }: MREPageProps) {
-  const isDarija = language === 'darija';
   const { profile } = useAuth();
   const userId = profile?.id || "mock-user-id-9999";
 
@@ -72,12 +71,10 @@ export default function MREPage({ language }: MREPageProps) {
             MRE - Marocains du Monde
           </span>
           <h2 className="text-xl sm:text-2xl font-black tracking-tight">
-            {isDarija ? 'فضاء الجالية المغربية المقيمة بالخارج' : 'Espace Marocains Résidant à l\'Étranger'}
+            {t('mreSpace', language)}
           </h2>
           <p className="text-xs text-emerald-100/80 font-medium max-w-2xl leading-relaxed">
-            {isDarija 
-              ? 'تتبع ميزانيتك العائلية بالمغرب عن بعد بكل سهولة، وسجل الحوالات المرسلة مع ميزة العرض المزدوج للعملة الصعبة والدرهم.' 
-              : 'Gérez à distance le budget de votre famille au Maroc. Envoyez des remises familiales et gardez un œil sur les dépenses du foyer en double devise.'}
+            {t('mreDesc', language)}
           </p>
         </div>
       </div>
@@ -91,24 +88,22 @@ export default function MREPage({ language }: MREPageProps) {
           </div>
           <div className="space-y-2">
             <h3 className="font-extrabold text-base text-slate-800">
-              {isDarija ? 'تفعيل وضعية مغاربة العالم' : 'Activer le Mode MRE'}
+              {t('activateMreMode', language)}
             </h3>
             <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
-              {isDarija
-                ? 'عند تفعيل هذه الوضعية، ستتمكن من إظهار الميزانية بالدرهم المغربي والعملة الصعبة لبلد إقامتك بالتوازي في الواجهة الرئيسية وتتبع الحوالات العائلية.'
-                : 'En activant cette option, vous bénéficierez de l\'affichage secondaire des devises (EUR, USD, CAD, GBP, AED) partout dans l\'application pour estimer vos dépenses en devises de référence.'}
+              {t('activateMreDesc', language)}
             </p>
           </div>
 
           <div className="p-4 bg-slate-50 border border-slate-100 rounded-2xl max-w-md mx-auto space-y-2 text-left">
             <h4 className="text-xs font-black text-slate-700 flex items-center gap-1.5 uppercase">
               <Sparkles size={12} className="text-emerald-600" />
-              {isDarija ? 'مزايا الوضعية :' : 'Fonctionnalités clé :'}
+              {t('mreFeaturesTitle', language)}
             </h4>
             <ul className="text-[11px] text-slate-500 font-bold space-y-1 pl-4 list-disc">
-              <li>{isDarija ? 'تحويل تلقائي تقريبي للمصاريف' : 'Double affichage instantané (ex: 2 500 DH ≈ 227 €)'}</li>
-              <li>{isDarija ? 'إدارة حوالات الوالدين والعائلة بالمغرب' : 'Suivi complet de vos remises de fonds mensuelles'}</li>
-              <li>{isDarija ? 'الاطلاع على ميزانيات sandoq العائلية عن بعد' : 'Visibilité instantanée sur les sandoqs de la famille au Maroc'}</li>
+              <li>{t('mreFeature1', language)}</li>
+              <li>{t('mreFeature2', language)}</li>
+              <li>{t('mreFeature3', language)}</li>
             </ul>
           </div>
 
@@ -122,7 +117,7 @@ export default function MREPage({ language }: MREPageProps) {
               }}
               className="py-3 px-8 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-2xl shadow-lg shadow-emerald-600/15 transition-all hover:-translate-y-0.5 cursor-pointer inline-flex items-center gap-2"
             >
-              <span>{isDarija ? 'تفعيل الوضعية الآن' : 'Activer le mode MRE'}</span>
+              <span>{t('activateMreNow', language)}</span>
               <ArrowRight size={14} />
             </button>
           </div>
@@ -144,19 +139,17 @@ export default function MREPage({ language }: MREPageProps) {
               <div className="space-y-1">
                 <h4 className="text-sm font-black text-slate-900 tracking-tight flex items-center gap-2">
                   <Users size={16} className="text-indigo-600" />
-                  {isDarija ? 'الميزانية العائلية بالمغرب عن بعد' : 'Foyer familial au Maroc'}
+                  {t('foyerMaroc', language)}
                 </h4>
                 <p className="text-[10px] text-slate-400 font-semibold">
-                  {isDarija 
-                    ? 'رؤية مباشرة ومبسطة لمصاريف عائلتك في المغرب هذا الشهر' 
-                    : 'Aperçu en lecture seule du sandoq partagé de vos proches à distance.'}
+                  {t('foyerMarocDesc', language)}
                 </p>
               </div>
 
               {familyLoading ? (
                 <div className="py-6 text-center text-slate-400 text-xs font-bold flex items-center justify-center gap-2">
                   <RefreshCw size={14} className="animate-spin text-emerald-600" />
-                  <span>{isDarija ? 'جاري التحميل...' : 'Mise à jour en direct...'}</span>
+                  <span>{t('updatingLive', language)}</span>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -164,7 +157,7 @@ export default function MREPage({ language }: MREPageProps) {
                   <div className="p-3 bg-indigo-50/40 border border-indigo-100/50 rounded-2xl flex justify-between items-center">
                     <div>
                       <span className="text-[9px] font-black text-indigo-400 uppercase tracking-wider block">
-                        {isDarija ? 'مجموع مصاريف الفوج هذا الشهر' : 'Dépenses Foyer ce mois'}
+                        {t('foyerSpentThisMonth', language)}
                       </span>
                       <span className="font-extrabold text-xs text-indigo-900 block mt-0.5">
                         {familyGroup ? familyGroup.name : 'Aila El Alami'}
@@ -180,7 +173,7 @@ export default function MREPage({ language }: MREPageProps) {
                   {/* Family Budget Alerts */}
                   <div className="space-y-2">
                     <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider block">
-                      {isDarija ? 'تنبيهات الميزانية العائلية' : 'Flux d\'alertes famille'}
+                      {t('familyAlertsFlow', language)}
                     </span>
 
                     {familyStats?.familyAlerts && familyStats.familyAlerts.length > 0 ? (
@@ -194,7 +187,7 @@ export default function MREPage({ language }: MREPageProps) {
                       </div>
                     ) : (
                       <p className="text-[10px] text-slate-400 font-semibold italic">
-                        {isDarija ? 'كل المؤشرات خضراء لا يوجد تنبيه' : 'Aucune alerte critique sur le budget.'}
+                        {t('noCriticalAlerts', language)}
                       </p>
                     )}
                   </div>
@@ -202,7 +195,7 @@ export default function MREPage({ language }: MREPageProps) {
                   {/* Active Jmâas */}
                   <div className="space-y-2">
                     <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider block">
-                      {isDarija ? 'حالة دارت / الجماعات النشطة' : 'Daret / Jmâas familiales'}
+                      {t('daretFamilyJmaas', language)}
                     </span>
 
                     {activeTontines.length > 0 ? (
@@ -225,7 +218,7 @@ export default function MREPage({ language }: MREPageProps) {
                       </div>
                     ) : (
                       <p className="text-[10px] text-slate-400 font-semibold italic">
-                        {isDarija ? 'لا توجد جماعة نشطة حاليا' : 'Aucune tontine active pour le moment.'}
+                        {t('noActiveTontine', language)}
                       </p>
                     )}
                   </div>

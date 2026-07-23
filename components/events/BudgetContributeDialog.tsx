@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import { MoroccanEvent } from '../../types';
 import { formatCurrency } from '../../lib/utils';
+import { useTranslation } from '../../hooks/use-translation';
 import { PiggyBank, Check, X, ShieldAlert } from 'lucide-react';
 
 interface BudgetContributeDialogProps {
   event: MoroccanEvent;
   onConfirm: (amount: number) => void;
   onCancel: () => void;
+  language?: 'fr' | 'darija';
 }
 
-export function BudgetContributeDialog({ event, onConfirm, onCancel }: BudgetContributeDialogProps) {
+export function BudgetContributeDialog({ event, onConfirm, onCancel, language: propLanguage }: BudgetContributeDialogProps) {
+  const { lang } = useTranslation();
+  const language = propLanguage || lang;
   const [amount, setAmount] = useState<string>('');
   const [error, setError] = useState('');
 
@@ -21,7 +25,7 @@ export function BudgetContributeDialog({ event, onConfirm, onCancel }: BudgetCon
 
     const val = parseFloat(amount);
     if (isNaN(val) || val <= 0) {
-      setError("Veuillez saisir un montant supérieur à 0 DH.");
+      setError(language === 'darija' ? "3afak dkhil mablagh kbegh mn 0 DH." : "Veuillez saisir un montant supérieur à 0 DH.");
       return;
     }
 
@@ -44,7 +48,7 @@ export function BudgetContributeDialog({ event, onConfirm, onCancel }: BudgetCon
         <div className="flex justify-between items-center pb-2 border-b border-slate-100">
           <h3 className="text-sm font-black text-slate-800 tracking-tight flex items-center gap-1.5">
             <PiggyBank className="w-4 h-4 text-emerald-600" />
-            <span>Alimenter la cagnotte</span>
+            <span>{language === 'darija' ? "Zid l-flouss f s-sandoq" : "Alimenter la cagnotte"}</span>
           </h3>
           <button 
             type="button" 
@@ -56,10 +60,10 @@ export function BudgetContributeDialog({ event, onConfirm, onCancel }: BudgetCon
         </div>
 
         <div className="bg-slate-50 border border-slate-100 rounded-xl p-3.5 text-xs text-slate-600 font-semibold space-y-1">
-          <p>Événement cible : <span className="text-slate-800 font-bold">{event.name}</span></p>
-          <p>Budget total : <span className="font-mono text-slate-800">{formatMAD(event.budget_allocated)}</span></p>
-          <p>Déjà dépensé : <span className="font-mono text-rose-500">{formatMAD(event.budget_spent)}</span></p>
-          <p>Épargne restante nécessaire : <span className="font-mono text-emerald-600">{formatMAD(remaining)}</span></p>
+          <p>{language === 'darija' ? "L-Monasaba : " : "Événement cible : "}<span className="text-slate-800 font-bold">{event.name}</span></p>
+          <p>{language === 'darija' ? "L-Mizaniya kamla : " : "Budget total : "}<span className="font-mono text-slate-800">{formatMAD(event.budget_allocated)}</span></p>
+          <p>{language === 'darija' ? "Lli tsref : " : "Déjà dépensé : "}<span className="font-mono text-rose-500">{formatMAD(event.budget_spent)}</span></p>
+          <p>{language === 'darija' ? "L-Khir lli ba9i khass : " : "Épargne restante nécessaire : "}<span className="font-mono text-emerald-600">{formatMAD(remaining)}</span></p>
         </div>
 
         {error && (
@@ -71,7 +75,7 @@ export function BudgetContributeDialog({ event, onConfirm, onCancel }: BudgetCon
 
         <div className="space-y-1.5">
           <label className="block text-[10px] font-black uppercase text-slate-400 tracking-wider">
-            Montant de la contribution (DH)
+            {language === 'darija' ? "Mablagh l-mousahama (DH)" : "Montant de la contribution (DH)"}
           </label>
           <input
             type="number"
@@ -89,14 +93,14 @@ export function BudgetContributeDialog({ event, onConfirm, onCancel }: BudgetCon
             onClick={onCancel}
             className="px-4 py-2 text-xs font-black text-slate-500 hover:bg-slate-100 rounded-xl transition-all"
           >
-            Annuler
+            {language === 'darija' ? "Yelghi" : "Annuler"}
           </button>
           <button
             type="submit"
             className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl py-2 px-5 text-xs font-black tracking-wide shadow-md shadow-emerald-500/10 flex items-center gap-1 transition-all"
           >
             <Check className="w-4 h-4" />
-            <span>Enregistrer la contribution</span>
+            <span>{language === 'darija' ? "Sajel l-mousahama" : "Enregistrer la contribution"}</span>
           </button>
         </div>
       </form>

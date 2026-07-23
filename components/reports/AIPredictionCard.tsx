@@ -1,5 +1,7 @@
 import React from 'react';
 import { Sparkles, TrendingUp, AlertTriangle, CheckCircle, Info } from 'lucide-react';
+import { formatCurrency } from '../../lib/utils';
+import { useTranslation } from '../../hooks/use-translation';
 
 interface AIPredictionCardProps {
   score: number;
@@ -17,6 +19,8 @@ interface AIPredictionCardProps {
 }
 
 export function AIPredictionCard({ score, projection, anomalies, suggestions, onActionClick }: AIPredictionCardProps) {
+  const { lang } = useTranslation();
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {/* 1. Score & Projections */}
@@ -24,7 +28,9 @@ export function AIPredictionCard({ score, projection, anomalies, suggestions, on
         <div>
           <div className="flex items-center gap-1.5 mb-3 text-emerald-600">
             <Sparkles className="w-4 h-4" />
-            <h4 className="text-xs font-black uppercase tracking-wider">Santé Financière IA</h4>
+            <h4 className="text-xs font-black uppercase tracking-wider">
+              {lang === 'darija' ? "Sihhat l-Maliya IA" : "Santé Financière IA"}
+            </h4>
           </div>
 
           <div className="flex items-baseline gap-2">
@@ -32,18 +38,24 @@ export function AIPredictionCard({ score, projection, anomalies, suggestions, on
             <span className="text-xs text-slate-400 font-bold">/ 100</span>
           </div>
           <p className="text-[10px] text-slate-400 font-semibold mt-1">
-            Calculé sur votre ratio d'épargne et votre rigueur budgétaire.
+            {lang === 'darija'
+              ? "Mhsoub 3la hsab chhal kat-khbi o l-mizan dyalk."
+              : "Calculé sur votre ratio d'épargne et votre rigueur budgétaire."}
           </p>
         </div>
 
         <div className="mt-6 pt-4 border-t border-slate-50">
-          <div className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Projection à 3 mois</div>
+          <div className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">
+            {lang === 'darija' ? "Tawaqo3at d 3 chhour" : "Projection à 3 mois"}
+          </div>
           <div className="text-sm font-black text-slate-800 mt-1 flex items-center gap-1">
             <TrendingUp className="w-4 h-4 text-emerald-500" />
-            <span>+ {projection.toLocaleString('fr-MA')} DH</span>
+            <span>+ {formatCurrency(projection)}</span>
           </div>
           <p className="text-[9px] text-slate-400 font-semibold mt-1 leading-relaxed">
-            Si vous maintenez ce rythme de masroufs, votre sandoq accumulera cette somme d'ici 90 jours.
+            {lang === 'darija'
+              ? "Ila bqiti f had l-ritme dyal l-masrouf, s-sandoq dyalk ghadi i-jme3 had l-flouss f 90 yom."
+              : "Si vous maintenez ce rythme de masroufs, votre sandoq accumulera cette somme d'ici 90 jours."}
           </p>
         </div>
       </div>
@@ -52,7 +64,9 @@ export function AIPredictionCard({ score, projection, anomalies, suggestions, on
       <div className="border border-slate-150 rounded-2xl p-5 bg-white shadow-xs">
         <div className="flex items-center gap-1.5 mb-3 text-amber-500">
           <AlertTriangle className="w-4 h-4" />
-          <h4 className="text-xs font-black uppercase tracking-wider">Détecteur d'Anomalies</h4>
+          <h4 className="text-xs font-black uppercase tracking-wider">
+            {lang === 'darija' ? "Kachif l-Mchakeel" : "Détecteur d'Anomalies"}
+          </h4>
         </div>
 
         <div className="space-y-2.5">
@@ -68,7 +82,9 @@ export function AIPredictionCard({ score, projection, anomalies, suggestions, on
           {anomalies.length === 0 && (
             <div className="flex items-center gap-2 p-3 bg-emerald-50/20 border border-emerald-100 rounded-xl text-emerald-800">
               <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span className="text-[10px] font-bold">Aucune anomalie budgétaire détectée ce mois-ci !</span>
+              <span className="text-[10px] font-bold">
+                {lang === 'darija' ? "Hta mchkil mali ma lqinah had l-chhar !" : "Aucune anomalie budgétaire détectée ce mois-ci !"}
+              </span>
             </div>
           )}
         </div>
@@ -79,7 +95,9 @@ export function AIPredictionCard({ score, projection, anomalies, suggestions, on
         <div>
           <div className="flex items-center gap-1.5 mb-3 text-blue-600">
             <Sparkles className="w-4 h-4" />
-            <h4 className="text-xs font-black uppercase tracking-wider">Optimisations Suggérées</h4>
+            <h4 className="text-xs font-black uppercase tracking-wider">
+              {lang === 'darija' ? "Nasayih dyal l-kheff" : "Optimisations Suggérées"}
+            </h4>
           </div>
 
           <div className="space-y-3">
@@ -109,3 +127,4 @@ export function AIPredictionCard({ score, projection, anomalies, suggestions, on
   );
 }
 export default AIPredictionCard;
+

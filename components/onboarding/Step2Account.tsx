@@ -37,19 +37,21 @@ export function Step2Account({
     setError('');
 
     if (!fullName.trim()) {
-      setError(getTranslation('fullNameLabel', language) + ' est requis.');
+      setError(getTranslation('fullNameLabel', language) + (language === 'darija' ? ' darouri.' : ' est requis.'));
       return;
     }
 
     // Phone regex
     const phoneRegex = /^(?:\+212|0)[5-7]\d{8}$/;
     if (!phoneRegex.test(phone.replace(/\s+/g, ''))) {
-      setError("Le numéro de téléphone est invalide. Il doit commencer par +212 ou 0, suivi de 9 chiffres (ex: 0612345678).");
+      setError(language === 'darija' 
+        ? "Had n-nimro d t-tilifoun machi s7i7. Khass i-bda b +212 wla 0, m-tbou3 b 9 d l-ar9am (Ex: 0612345678)."
+        : "Le numéro de téléphone est invalide. Il doit commencer par +212 ou 0, suivi de 9 chiffres (ex: 0612345678).");
       return;
     }
 
     if (!city) {
-      setError(getTranslation('cityLabel', language) + ' est requis.');
+      setError(getTranslation('cityLabel', language) + (language === 'darija' ? ' darouri.' : ' est requis.'));
       return;
     }
 
@@ -63,7 +65,7 @@ export function Step2Account({
           {language === 'darija' ? 'المعلومات الشخصية' : 'Créons votre profil'}
         </h3>
         <p className="text-xs font-semibold text-slate-400">
-          Ces détails nous aident à personnaliser votre devise (MAD) et vos alertes.
+          {language === 'darija' ? "Had l-ma3loumat ghadi i-3awnouna n-qado l-devise (MAD) o l-indarat dyalk." : "Ces détails nous aident à personnaliser votre devise (MAD) et vos alertes."}
         </p>
       </div>
 
@@ -142,13 +144,13 @@ export function Step2Account({
           className="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1 cursor-pointer"
         >
           <ArrowLeft size={14} />
-          <span>Retour</span>
+          <span>{language === 'darija' ? "Rje3" : "Retour"}</span>
         </button>
         <button
           onClick={handleNext}
           className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md shadow-emerald-600/15 transition-all hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-1 cursor-pointer"
         >
-          <span>Continuer</span>
+          <span>{language === 'darija' ? "Kamal" : "Continuer"}</span>
           <ArrowRight size={14} />
         </button>
       </div>

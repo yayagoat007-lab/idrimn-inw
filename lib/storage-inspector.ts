@@ -31,12 +31,13 @@ export function patternToRegex(pattern: string): RegExp {
   const escaped = pattern
     .replace(/\${userId}/g, '([a-zA-Z0-9_-]+)')
     .replace(/\${table}/g, '([a-zA-Z0-9_-]+)')
-    .replace(/\${tourId}/g, '([a-zA-Z0-9_-]+)');
+    .replace(/\${tourId}/g, '([a-zA-Z0-9_-]+)')
+    .replace(/\${currentYear}/g, '([0-9]+)');
   return new RegExp(`^${escaped}$`);
 }
 
 /**
- * Scans localStorage keys starting with 'floussi_' and returns an analysis
+ * Scans localStorage keys starting with 'floussi_' (and historical notifications) and returns an analysis
  * of their sizes, category, and criticality according to the registry.
  * Filters keys to those belonging to the given userId (or static global keys) if userId is specified.
  */
@@ -47,8 +48,8 @@ export function inspectAllStorage(userId?: string): InspectedKey[] {
   const keys = Object.keys(localStorage);
 
   for (const key of keys) {
-    // Only inspect Floussi keys
-    if (!key.startsWith('floussi_')) continue;
+    // Inspect Floussi keys and legacy non-prefixed keys
+    if (!key.startsWith('floussi_') && !key.startsWith('notifs_') && !key.startsWith('notif_prefs_')) continue;
 
     const value = localStorage.getItem(key) || '';
     const sizeBytes = getByteSize(value);

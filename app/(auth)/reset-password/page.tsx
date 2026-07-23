@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Lock, Eye, EyeOff, CheckCircle2, ArrowRight, RefreshCw, ShieldAlert } from 'lucide-react';
 import { getTranslation, Language } from '../../../lib/i18n';
+import { useTranslation } from '../../../hooks/use-translation';
 import AuthLayout from '../layout';
 
 interface ResetPasswordPageProps {
@@ -10,13 +11,15 @@ interface ResetPasswordPageProps {
   language?: Language;
 }
 
-export default function ResetPasswordPage({ onNavigateLogin, language = 'fr' }: ResetPasswordPageProps) {
+export default function ResetPasswordPage({ onNavigateLogin, language: propLanguage }: ResetPasswordPageProps) {
+  const { lang } = useTranslation();
+  const language = propLanguage || lang;
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [strength, setStrength] = useState(0);
-  const [strengthLabel, setStrengthLabel] = useState('Inconnu');
+  const [strengthLabel, setStrengthLabel] = useState(language === 'darija' ? 'Ma ma3roufch' : 'Inconnu');
   const [strengthColor, setStrengthColor] = useState('bg-slate-200');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -32,37 +35,37 @@ export default function ResetPasswordPage({ onNavigateLogin, language = 'fr' }: 
     setStrength(score);
 
     if (password.length === 0) {
-      setStrengthLabel('Inconnu');
+      setStrengthLabel(language === 'darija' ? 'Ma ma3roufch' : 'Inconnu');
       setStrengthColor('bg-slate-200');
     } else if (score <= 1) {
-      setStrengthLabel('Faible 🔴');
+      setStrengthLabel(language === 'darija' ? 'D3if 🔴' : 'Faible 🔴');
       setStrengthColor('bg-rose-500');
     } else if (score === 2) {
-      setStrengthLabel('Moyen 🟠');
+      setStrengthLabel(language === 'darija' ? 'Moyyen 🟠' : 'Moyen 🟠');
       setStrengthColor('bg-amber-500');
     } else if (score === 3) {
-      setStrengthLabel('Bon 🟡');
+      setStrengthLabel(language === 'darija' ? 'Mezyan 🟡' : 'Bon 🟡');
       setStrengthColor('bg-yellow-500');
     } else if (score === 4) {
-      setStrengthLabel('Excellent 🟢');
+      setStrengthLabel(language === 'darija' ? 'Wa9e3 🟢' : 'Excellent 🟢');
       setStrengthColor('bg-emerald-500');
     }
-  }, [password]);
+  }, [password, language]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
     if (password.length < 8) {
-      setError("Le mot de passe doit comporter au moins 8 caractères.");
+      setError(language === 'darija' ? "Khass l-koud fih a9al 7aja 8 d r-romouz." : "Le mot de passe doit comporter au moins 8 caractères.");
       return;
     }
     if (!/[A-Z]/.test(password) || !/[0-9]/.test(password) || !/[^A-Za-z0-9]/.test(password)) {
-      setError("Le mot de passe ne respecte pas les critères de sécurité.");
+      setError(language === 'darija' ? "L-koud ma fihch chorout s-securite." : "Le mot de passe ne respecte pas les critères de sécurité.");
       return;
     }
     if (password !== confirmPassword) {
-      setError("Les mots de passe ne correspondent pas.");
+      setError(language === 'darija' ? "L-koudat ma mchabhinche." : "Les mots de passe ne correspondent pas.");
       return;
     }
 
@@ -82,7 +85,7 @@ export default function ResetPasswordPage({ onNavigateLogin, language = 'fr' }: 
         }
       }, 2000);
     } catch (err: any) {
-      setError(err.message || "Impossible de réinitialiser le mot de passe.");
+      setError(err.message || (language === 'darija' ? "Ma 9dernach n-bedlou l-koud." : "Impossible de réinitialiser le mot de passe."));
     } finally {
       setLoading(false);
     }
@@ -110,9 +113,13 @@ export default function ResetPasswordPage({ onNavigateLogin, language = 'fr' }: 
         {success ? (
           <div className="text-center p-4 bg-emerald-50 border border-emerald-100 rounded-xl space-y-3">
             <CheckCircle2 size={36} className="text-emerald-600 mx-auto" />
-            <h3 className="font-extrabold text-sm text-emerald-950">Succès !</h3>
+            <h3 className="font-extrabold text-sm text-emerald-950">
+              {language === 'darija' ? "Nja7na !" : "Succès !"}
+            </h3>
             <p className="text-xs text-emerald-800 font-medium">
-              Votre mot de passe a été modifié. Redirection vers la page de connexion...
+              {language === 'darija' 
+                ? "Tbeddel l-koud dyalk. Ghadi n-diwek l l-dokhoul..." 
+                : "Votre mot de passe a été modifié. Redirection vers la page de connexion..."}
             </p>
           </div>
         ) : (
@@ -120,7 +127,7 @@ export default function ResetPasswordPage({ onNavigateLogin, language = 'fr' }: 
             {/* New Password */}
             <div className="space-y-1">
               <label className="block text-xs font-bold text-slate-700">
-                Nouveau mot de passe *
+                {language === 'darija' ? "Koud Jdid *" : "Nouveau mot de passe *"}
               </label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -148,8 +155,12 @@ export default function ResetPasswordPage({ onNavigateLogin, language = 'fr' }: 
               {password.length > 0 && (
                 <div className="space-y-1.5 pt-1">
                   <div className="flex justify-between items-center text-[9px] font-bold">
-                    <span className="text-slate-400">Force : {strengthLabel}</span>
-                    <span className="text-slate-400">{password.length} caractères</span>
+                    <span className="text-slate-400">
+                      {language === 'darija' ? `S7a: ${strengthLabel}` : `Force : ${strengthLabel}`}
+                    </span>
+                    <span className="text-slate-400">
+                      {password.length} {language === 'darija' ? "romouz" : "caractères"}
+                    </span>
                   </div>
                   <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
                     <div 
@@ -159,16 +170,16 @@ export default function ResetPasswordPage({ onNavigateLogin, language = 'fr' }: 
                   </div>
                   <ul className="text-[9px] text-slate-400 font-medium grid grid-cols-2 gap-1 bg-slate-50 p-1.5 rounded-lg border border-slate-100">
                     <li className={password.length >= 8 ? "text-emerald-600 flex items-center gap-1 font-bold" : "flex items-center gap-1"}>
-                      {password.length >= 8 ? "✓" : "•"} Min. 8 caractères
+                      {password.length >= 8 ? "✓" : "•"} {language === 'darija' ? "A9al mn 8 romouz" : "Min. 8 caractères"}
                     </li>
                     <li className={/[A-Z]/.test(password) ? "text-emerald-600 flex items-center gap-1 font-bold" : "flex items-center gap-1"}>
-                      {/[A-Z]/.test(password) ? "✓" : "•"} 1 Majuscule
+                      {/[A-Z]/.test(password) ? "✓" : "•"} {language === 'darija' ? "1 7arf kbir" : "1 Majuscule"}
                     </li>
                     <li className={/[0-9]/.test(password) ? "text-emerald-600 flex items-center gap-1 font-bold" : "flex items-center gap-1"}>
-                      {/[0-9]/.test(password) ? "✓" : "•"} 1 Chiffre
+                      {/[0-9]/.test(password) ? "✓" : "•"} {language === 'darija' ? "1 raqm" : "1 Chiffre"}
                     </li>
                     <li className={/[^A-Za-z0-9]/.test(password) ? "text-emerald-600 flex items-center gap-1 font-bold" : "flex items-center gap-1"}>
-                      {/[^A-Za-z0-9]/.test(password) ? "✓" : "•"} 1 Spécial
+                      {/[^A-Za-z0-9]/.test(password) ? "✓" : "•"} {language === 'darija' ? "1 ramz" : "1 Spécial"}
                     </li>
                   </ul>
                 </div>
@@ -178,7 +189,7 @@ export default function ResetPasswordPage({ onNavigateLogin, language = 'fr' }: 
             {/* Confirm Password */}
             <div className="space-y-1">
               <label className="block text-xs font-bold text-slate-700">
-                Confirmer le mot de passe *
+                {language === 'darija' ? "T7a9aq mn l-koud *" : "Confirmer le mot de passe *"}
               </label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">

@@ -11,16 +11,18 @@ import {
   Sparkles,
   Award
 } from 'lucide-react';
+import { formatCurrency } from '../../lib/utils';
+import { Language } from '../../lib/i18n';
 
 interface SavingsGroupCardProps {
   group: SavingsGroup;
   contributions: any[];
   isAdmin: boolean;
-  lang: 'fr' | 'darija';
+  language: Language;
   onContribute: (groupId: string, amount: number) => Promise<any>;
 }
 
-export function SavingsGroupCard({ group, contributions = [], isAdmin, lang, onContribute }: SavingsGroupCardProps) {
+export function SavingsGroupCard({ group, contributions = [], isAdmin, language, onContribute }: SavingsGroupCardProps) {
   const [amountInput, setAmountInput] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -30,21 +32,22 @@ export function SavingsGroupCard({ group, contributions = [], isAdmin, lang, onC
   const progressPercent = Math.min(100, Math.round((group.currentAmount / group.targetAmount) * 100));
   const completed = progressPercent >= 100;
   const daysLeft = Math.max(0, Math.ceil((new Date(group.deadline).getTime() - Date.now()) / (1000 * 3600 * 24)));
+  const isDarija = language === 'darija';
 
   const t = {
-    progress: lang === 'darija' ? 'Taqadom l-Okhra dyalna :' : 'Progression collective :',
-    targetOf: lang === 'darija' ? 'mn l-hadaf d' : 'sur un objectif de',
-    daysLeft: lang === 'darija' ? 'Iyam ba9ya' : 'jours restants',
-    contributeBtn: lang === 'darija' ? 'Saham' : 'Cotiser',
+    progress: isDarija ? 'Taqadom l-Okhra dyalna :' : 'Progression collective :',
+    targetOf: isDarija ? 'mn l-hadaf d' : 'sur un objectif de',
+    daysLeft: isDarija ? 'Iyam ba9ya' : 'jours restants',
+    contributeBtn: isDarija ? 'Saham' : 'Cotiser',
     placeholder: 'Ex: 100',
-    adminBadge: lang === 'darija' ? 'Admin l-Group' : 'Admin du Groupe',
-    memberBadge: lang === 'darija' ? 'Modawen' : 'Membre',
-    historyTitle: lang === 'darija' ? 'Sijil d l-Cotisat' : 'Historique des Cotisations',
-    contribCount: lang === 'darija' ? 'Motatabi3in' : 'contributions',
-    privacyNote: lang === 'darija' ? 'L-Cotisat anonymes l-okhrin' : 'Sécurité Floussi : Cotisations anonymisées pour préserver la vie privée.',
-    completedMsg: lang === 'darija' ? 'Mabrouk ! Hadaf t-7e9e9 ! 🥳' : 'Félicitations, cagnotte complétée ! 🥳',
-    successText: lang === 'darija' ? 'Cotis t-sajlat !' : 'Cotisation validée !',
-    inputLabel: lang === 'darija' ? '9adr l-mosharka (DH) :' : 'Montant de la cotisation (DH) :'
+    adminBadge: isDarija ? 'Admin l-Group' : 'Admin du Groupe',
+    memberBadge: isDarija ? 'Modawen' : 'Membre',
+    historyTitle: isDarija ? 'Sijil d l-Cotisat' : 'Historique des Cotisations',
+    contribCount: isDarija ? 'Motatabi3in' : 'contributions',
+    privacyNote: isDarija ? 'L-Cotisat anonymes l-okhrin' : 'Sécurité Floussi : Cotisations anonymisées pour préserver la vie privée.',
+    completedMsg: isDarija ? 'Mabrouk ! Hadaf t-7e9e9 ! 🥳' : 'Félicitations, cagnotte complétée ! 🥳',
+    successText: isDarija ? 'Cotis t-sajlat !' : 'Cotisation validée !',
+    inputLabel: isDarija ? '9adr l-mosharka (DH) :' : 'Montant de la cotisation (DH) :'
   };
 
   const handleContribSubmit = async (e: React.FormEvent) => {
@@ -54,7 +57,7 @@ export function SavingsGroupCard({ group, contributions = [], isAdmin, lang, onC
     
     const amt = parseFloat(amountInput);
     if (isNaN(amt) || amt <= 0) {
-      setErrorMsg(lang === 'darija' ? 'Montant s7i7.' : 'Veuillez saisir un montant valide supérieur à 0.');
+      setErrorMsg(isDarija ? 'Montant s7i7.' : 'Veuillez saisir un montant valide supérieur à 0.');
       return;
     }
 
@@ -116,7 +119,7 @@ export function SavingsGroupCard({ group, contributions = [], isAdmin, lang, onC
         <div className="flex justify-between text-[10px] font-black text-slate-400 uppercase tracking-wider">
           <span>{t.progress}</span>
           <span className="font-mono text-slate-700">
-            {group.currentAmount.toLocaleString()} / {group.targetAmount.toLocaleString()} DH
+            {formatCurrency(group.currentAmount)} / {formatCurrency(group.targetAmount)}
           </span>
         </div>
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Bucket } from '../../types';
 import { formatCurrency } from '../../lib/utils';
 import * as Icons from 'lucide-react';
+import { Language, t } from '../../lib/i18n';
 
 interface BucketFormProps {
   bucket?: Bucket | null;
@@ -9,6 +10,7 @@ interface BucketFormProps {
   onSubmit: (data: any) => void;
   onCancel: () => void;
   limitReached: boolean;
+  language: Language;
 }
 
 const AVAILABLE_COLORS = [
@@ -34,7 +36,8 @@ export function BucketForm({
   buckets,
   onSubmit,
   onCancel,
-  limitReached
+  limitReached,
+  language
 }: BucketFormProps) {
   const [name, setName] = useState('');
   const [allocatedAmount, setAllocatedAmount] = useState<number>(0);
@@ -60,11 +63,11 @@ export function BucketForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
-      alert("Le nom est obligatoire.");
+      alert(t('nameRequired', language));
       return;
     }
     if (allocatedAmount < 0) {
-      alert("Le montant doit être positif.");
+      alert(t('amountPositive', language));
       return;
     }
 
@@ -91,37 +94,37 @@ export function BucketForm({
       <form onSubmit={handleSubmit} className="lg:col-span-2 bg-white border border-slate-100 p-6 rounded-3xl space-y-5 shadow-xs">
         <div>
           <h3 className="font-extrabold text-sm text-slate-800 uppercase tracking-wider">
-            {bucket ? 'Modifier le Sandoq' : 'Nouveau Sandoq (Compartiment)'}
+            {bucket ? t('editSandoq', language) : t('newSandoq', language)}
           </h3>
           <p className="text-xs text-slate-400 font-semibold mt-0.5">
-            Configurez votre enveloppe de dépense
+            {t('configureSandoq', language)}
           </p>
         </div>
 
         {limitReached && !bucket && (
           <div className="bg-rose-50 border border-rose-100 p-4 rounded-2xl text-xs font-semibold text-rose-700">
-            Limite plan Free atteinte (3 max). Veuillez modifier un sandoq existant ou passer à l'abonnement Premium.
+            {t('freeLimitReached', language)}
           </div>
         )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Nom du sandoq */}
           <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase text-slate-400">Nom du Compartiment</label>
+            <label className="text-[10px] font-black uppercase text-slate-400">{t('compartmentName', language)}</label>
             <input
               type="text"
               required
               value={name}
               disabled={limitReached && !bucket}
               onChange={(e) => setName(e.target.value)}
-              placeholder="ex: Transport (Taxi & Afriquia)"
+              placeholder={t('placeholderTransport', language)}
               className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold text-slate-800 focus:outline-hidden focus:ring-1 focus:ring-emerald-500 disabled:opacity-50"
             />
           </div>
 
           {/* Allocation mensuelle cible */}
           <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase text-slate-400">Allocation Mensuelle (DH)</label>
+            <label className="text-[10px] font-black uppercase text-slate-400">{t('monthlyAllocation', language)}</label>
             <input
               type="number"
               required
@@ -138,38 +141,38 @@ export function BucketForm({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Catégorie */}
           <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase text-slate-400">Type de Dépense</label>
+            <label className="text-[10px] font-black uppercase text-slate-400">{t('expenseType', language)}</label>
             <select
               value={category}
               disabled={limitReached && !bucket}
               onChange={(e) => setCategory(e.target.value)}
               className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold text-slate-800 focus:outline-hidden focus:ring-1 focus:ring-emerald-500 disabled:opacity-50"
             >
-              <option value="alimentation">Alimentation</option>
-              <option value="logement">Logement</option>
-              <option value="transport">Transport</option>
-              <option value="telecom">Télécom</option>
-              <option value="factures">Factures</option>
-              <option value="sante">Santé</option>
-              <option value="education">Éducation</option>
-              <option value="loisirs">Loisirs & Café</option>
-              <option value="epargne">Épargne</option>
-              <option value="tontine">Tontine (Daret)</option>
-              <option value="impots">Impôts & Cotisations</option>
-              <option value="non_categorise">Autre / Divers</option>
+              <option value="alimentation">{language === 'darija' ? "Alimentation (Mawla l-Makla)" : "Alimentation"}</option>
+              <option value="logement">{language === 'darija' ? "Logement (Dar)" : "Logement"}</option>
+              <option value="transport">{language === 'darija' ? "Transport (Taxi/Tobis)" : "Transport"}</option>
+              <option value="telecom">{language === 'darija' ? "Télécom (Inwi/MarocTel)" : "Télécom"}</option>
+              <option value="factures">{language === 'darija' ? "Factures (Kahraba/Ma)" : "Factures"}</option>
+              <option value="sante">{language === 'darija' ? "Santé (Sbitar)" : "Santé"}</option>
+              <option value="education">{language === 'darija' ? "Éducation (Madrassa)" : "Éducation"}</option>
+              <option value="loisirs">{language === 'darija' ? "Loisirs & Café (Kawa)" : "Loisirs & Café"}</option>
+              <option value="epargne">{language === 'darija' ? "Épargne (Khbi l-Flouss)" : "Épargne"}</option>
+              <option value="tontine">{language === 'darija' ? "Tontine (Daret)" : "Tontine (Daret)"}</option>
+              <option value="impots">{language === 'darija' ? "Impôts & Cotisations" : "Impôts & Cotisations"}</option>
+              <option value="non_categorise">{language === 'darija' ? "Autre (Hwayej khrin)" : "Autre / Divers"}</option>
             </select>
           </div>
 
           {/* Parent Bucket (for hierarchy) */}
           <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase text-slate-400">Sandoq Parent (Sous-compartiment)</label>
+            <label className="text-[10px] font-black uppercase text-slate-400">{t('parentSandoq', language)}</label>
             <select
               value={parentId || ''}
               disabled={limitReached && !bucket}
               onChange={(e) => setParentId(e.target.value ? e.target.value : null)}
               className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold text-slate-800 focus:outline-hidden focus:ring-1 focus:ring-emerald-500 disabled:opacity-50"
             >
-              <option value="">Aucun (Sandoq Principal)</option>
+              <option value="">{t('nonePrincipalSandoq', language)}</option>
               {buckets
                 .filter(b => b.id !== bucket?.id && !b.parent_id) // only allow root buckets as parents
                 .map(b => (
@@ -182,8 +185,8 @@ export function BucketForm({
         {/* Essential Toggle */}
         <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100/50">
           <div className="space-y-0.5">
-            <p className="text-xs font-black text-slate-800">Compartiment Indispensable (Daroni)</p>
-            <p className="text-[10px] text-slate-400 font-bold">Activer pour le prioriser lors de la répartition de salaire</p>
+            <p className="text-xs font-black text-slate-800">{t('essentialSandoq', language)}</p>
+            <p className="text-[10px] text-slate-400 font-bold">{t('essentialSandoqDesc', language)}</p>
           </div>
           <button
             type="button"
@@ -197,7 +200,7 @@ export function BucketForm({
 
         {/* Color selection */}
         <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase text-slate-400">Couleur Visuelle</label>
+          <label className="text-[10px] font-black uppercase text-slate-400">{t('visualColor', language)}</label>
           <div className="flex flex-wrap gap-2.5">
             {AVAILABLE_COLORS.map(c => (
               <button
@@ -213,7 +216,7 @@ export function BucketForm({
 
         {/* Icon picker selection */}
         <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase text-slate-400">Icône Illustrative</label>
+          <label className="text-[10px] font-black uppercase text-slate-400">{t('illustrativeIcon', language)}</label>
           <div className="flex flex-wrap gap-2">
             {AVAILABLE_ICONS.map(i => {
               const CurIcon = (Icons as any)[i] || Icons.HelpCircle;
@@ -239,14 +242,14 @@ export function BucketForm({
             onClick={onCancel}
             className="px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-extrabold text-xs uppercase tracking-wider rounded-2xl transition-colors cursor-pointer"
           >
-            Annuler
+            {t('cancel', language)}
           </button>
           <button
             type="submit"
             disabled={limitReached && !bucket}
             className="px-5.5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs uppercase tracking-wider rounded-2xl transition-all shadow-md disabled:opacity-50 cursor-pointer"
           >
-            {bucket ? 'Sauvegarder' : 'Créer Sandoq'}
+            {bucket ? t('save', language) : t('createSandoq', language)}
           </button>
         </div>
 
@@ -255,8 +258,8 @@ export function BucketForm({
       {/* Live Preview Column */}
       <div className="space-y-4">
         <div>
-          <h4 className="font-extrabold text-xs text-slate-800 uppercase tracking-wider">Aperçu en temps réel</h4>
-          <p className="text-[10px] text-slate-400 font-bold">Voici à quoi ressemblera votre sandoq</p>
+          <h4 className="font-extrabold text-xs text-slate-800 uppercase tracking-wider">{t('livePreview', language)}</h4>
+          <p className="text-[10px] text-slate-400 font-bold">{t('livePreviewDesc', language)}</p>
         </div>
 
         <div 
@@ -275,7 +278,7 @@ export function BucketForm({
               </div>
               <div>
                 <h4 className="font-extrabold text-xs text-slate-800 leading-snug line-clamp-1">
-                  {name || "Nouveau Compartiment"}
+                  {name || t('newCompartment', language)}
                 </h4>
                 <div className="flex items-center gap-1.5 mt-0.5">
                   <span className="text-[10px] font-black uppercase text-slate-400">
@@ -297,8 +300,8 @@ export function BucketForm({
 
           <div className="space-y-2">
             <div className="flex justify-between items-baseline text-[10px] font-bold text-slate-400">
-              <span>Dépensé : {formatCurrency(0)}</span>
-              <span>Alloué : {formatCurrency(allocatedAmount)}</span>
+              <span>{t('spentLabel', language)}{formatCurrency(0)}</span>
+              <span>{t('allocatedLabel', language)}{formatCurrency(allocatedAmount)}</span>
             </div>
             <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
               <div 

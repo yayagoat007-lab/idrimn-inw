@@ -1,4 +1,8 @@
 import { Transaction, Bucket, MoroccanEvent, Tontine } from '../types';
+import { getSavedChallenges } from './optimization-challenges';
+import { getSavedWeeklyReports } from './weekly-coaching-report';
+import { getWalletBalance, getBillPayments } from './wallet-mock';
+import { getSubscriptionBadgeVisual } from './subscription-badge-display';
 
 export interface ProactiveMessage {
   id: string;
@@ -18,6 +22,8 @@ export interface ProactiveEvaluationContext {
   events: MoroccanEvent[];
   tontines: Tontine[];
   streakDays?: number;
+  floussiScoreTier?: string;
+  subscriptionTier?: string;
 }
 
 /**
@@ -137,6 +143,130 @@ export function evaluateProactiveTriggers(context: ProactiveEvaluationContext): 
       );
     }
   });
+
+  // --- Rule 6: Monthly Bilan Ready (1st of each month for Analyse+/Elite tiers) ---
+  if (now.getDate() === 1) {
+    let subscriptionTier = 'free';
+    let lang = 'fr';
+    try {
+      const rawProfile = localStorage.getItem('user_profile') || localStorage.getItem('floussi_table_profiles');
+      if (rawProfile) {
+        const profile = JSON.parse(rawProfile);
+        subscriptionTier = profile.subscription_tier || 'free';
+        lang = profile.preferred_language || 'fr';
+      }
+    } catch (_) {}
+
+    if (subscriptionTier === 'analyse' || subscriptionTier === 'elite') {
+      const prevMonthNamesFr = ['Décembre', 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre'];
+      const prevMonthNamesAr = ['دجنبر', 'يناير', 'فبراير', 'مارس', 'أبريل', 'ماي', 'يونيو', 'يوليوز', 'غشت', 'شتنبر', 'أكتوبر', 'نونبر'];
+      const prevMonthIndex = now.getMonth() === 0 ? 11 : now.getMonth() - 1;
+      
+      const prevMonthName = lang === 'darija' ? prevMonthNamesAr[prevMonthIndex] : prevMonthNamesFr[prevMonthIndex];
+      const title = lang === 'darija' ? "Bilaan dyal Chhar Waajed ! 📊" : "Bilan Mensuel Prêt ! 📊";
+      const message = lang === 'darija'
+        ? `Ton bilan de ${prevMonthName} est prêt, tu veux qu'on le regarde ensemble ? Sidi Floussi a hâte de faire le point avec toi !`
+        : `Ton bilan de ${prevMonthName} est prêt, tu veux qu'on le regarde ensemble ? Sidi Floussi a hâte de faire le point avec toi !`;
+
+      addMessage(
+        "monthly_bilan_ready",
+        title,
+        message,
+        "success",
+        { actionLabel: lang === 'darija' ? "N-choufo" : "Regarder", actionPayload: { action: "navigate_coaching_monthly" } }
+      );
+    }
+  }
+
+  // --- Rule 7: Floussi Score Tier Changed ---
+  if (context.floussiScoreTier) {
+    const prevTier = history['last_seen_score_tier'];
+    if (prevTier && prevTier !== context.floussiScoreTier) {
+      addMessage(
+        "score_tier_changed",
+        "Nouveau palier Score Floussi ! 🎉",
+        `Félicitations ! Tu es passé du palier ${prevTier} au palier **${context.floussiScoreTier}**. Sidi Floussi est fier de ta discipline financière. Continue comme ça ! 🚀`,
+        "success",
+        { actionLabel: "Voir mon score", actionPayload: { action: "navigate", url: "/insights" } }
+      );
+    }
+    history['last_seen_score_tier'] = context.floussiScoreTier;
+  }
+
+  // --- Rule 8: Unviewed Weekly Report Reminder ---
+  const savedReports = getSavedWeeklyReports(userId);
+  if (savedReports.length > 0) {
+    const latestReport = savedReports[0];
+    const viewedKey = `floussi_weekly_report_viewed_${latestReport.id}`;
+    const isViewed = localStorage.getItem(viewedKey) === 'true';
+    if (!isViewed) {
+      const genKey = `floussi_weekly_report_detected_${latestReport.id}`;
+      let detectedAtStr = localStorage.getItem(genKey);
+      if (!detectedAtStr) {
+        detectedAtStr = now.toISOString();
+        localStorage.setItem(genKey, detectedAtStr);
+      }
+      const detectedAt = new Date(detectedAtStr);
+      const diffMs = now.getTime() - detectedAt.getTime();
+      const diffDays = diffMs / (1000 * 60 * 60 * 24);
+      if (diffDays >= 2) {
+        addMessage(
+          "weekly_report_unviewed_reminder",
+          "Rapport Hebdo en attente ! 📈",
+          "Ton rapport de coaching de la semaine est disponible depuis 2 jours et t'attend. Aji, prenons 2 minutes pour faire le point sur ton sandoq et tes réussites !",
+          "info",
+          { actionLabel: "Consulter mon rapport", actionPayload: { action: "navigate", url: "/coaching" } }
+        );
+      }
+    }
+  }
+
+  // --- Rule 9: Active Optimization Challenge Ending Soon ---
+  const savedChallenges = getSavedChallenges(userId);
+  const activeChals = savedChallenges.filter(c => c.status === 'active');
+  activeChals.forEach(c => {
+    const end = new Date(c.endDate);
+    const diffTime = end.getTime() - now.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    if (diffDays > 0 && diffDays <= 2 && c.onTrack) {
+      addMessage(
+        `challenge_ending_soon_${c.id}`,
+        "Dernière ligne droite ! 🏁",
+        `Ton défi "${c.title}" se termine dans moins de 2 jours ! Tu es parfaitement sur la bonne voie (${c.currentValue} DH dépensés sur un budget de ${c.targetValue} DH). Continue ainsi, tu vas réussir ! 💪`,
+        "success",
+        { actionLabel: "Voir mon défi", actionPayload: { action: "navigate", url: "/coaching" } }
+      );
+    }
+  });
+
+  // --- Rule 10: Low Wallet Balance with Recurring Bills ---
+  const walletBal = getWalletBalance(userId);
+  const bills = getBillPayments(userId);
+  if (walletBal && walletBal.balance < 50 && bills && bills.length > 0) {
+    addMessage(
+      "wallet_balance_low_with_bills",
+      "Alerte solde Wallet bas ! ⚠️",
+      `Attention ! Ton solde de portefeuille virtuel est de seulement ${walletBal.balance} DH alors que tu as des factures enregistrées. Recharge ton sandoq Wallet pour éviter les interruptions !`,
+      "warning",
+      { actionLabel: "Recharger mon Wallet", actionPayload: { action: "navigate", url: "/net-worth" } }
+    );
+  }
+
+  // --- Rule 11: Subscription Tier Changed ---
+  if (context.subscriptionTier) {
+    const prevSubTier = history['last_seen_subscription_tier'];
+    if (prevSubTier && prevSubTier !== context.subscriptionTier) {
+      const badgeInfo = getSubscriptionBadgeVisual(context.subscriptionTier);
+      addMessage(
+        `subscription_tier_changed_${context.subscriptionTier}`,
+        `Bienvenue au palier ${badgeInfo.nameFr} ! ${badgeInfo.emoji}`,
+        `Sidi Floussi te souhaite la bienvenue dans ton nouveau palier **${badgeInfo.nameFr}** (${badgeInfo.nameDarija}) ! Profite dès maintenant de tous tes avantages et de l'accompagnement exclusif. ✨`,
+        "success",
+        { actionLabel: "Voir mes avantages", actionPayload: { action: "navigate", url: "/settings" } }
+      );
+    }
+    history['last_seen_subscription_tier'] = context.subscriptionTier;
+  }
 
   // Save updated history back to localStorage if any messages were generated
   if (generatedMessages.length > 0) {

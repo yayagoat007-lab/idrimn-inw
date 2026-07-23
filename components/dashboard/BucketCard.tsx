@@ -2,7 +2,7 @@ import React from 'react';
 import * as Icons from 'lucide-react';
 import { Bucket } from '../../types';
 import { formatCurrency } from '../../lib/utils';
-import { Language, getTranslation } from '../../lib/i18n';
+import { Language, t } from '../../lib/i18n';
 
 interface BucketCardProps {
   bucket: Bucket;
@@ -26,10 +26,6 @@ export function BucketCard({
   const percent = Math.min(100, Math.round(rawPercent));
 
   // Alert thresholds
-  // 🟢 > 0% : normal
-  // 🟡 > 70% : attention
-  // 🔴 > 90% : danger (pulse animation)
-  // ⚫ > 100% : dépassé (grisé + badge)
   const isOverBudget = bucket.spent_amount > bucket.allocated_amount;
   const isDanger = percent > 90;
   const isWarning = percent > 70 && percent <= 90;
@@ -43,7 +39,7 @@ export function BucketCard({
     progressColor = 'bg-slate-700';
     alertBadge = (
       <span className="px-2 py-0.5 bg-slate-800 text-white rounded-full text-[9px] font-bold uppercase tracking-wider">
-        Dépassement
+        {t('depassement', language)}
       </span>
     );
   } else if (isDanger) {
@@ -51,7 +47,7 @@ export function BucketCard({
     progressColor = 'bg-rose-500';
     alertBadge = (
       <span className="px-2 py-0.5 bg-rose-600 text-white rounded-full text-[9px] font-bold uppercase tracking-wider">
-        Danger
+        {t('danger', language)}
       </span>
     );
   } else if (isWarning) {
@@ -59,13 +55,13 @@ export function BucketCard({
     progressColor = 'bg-amber-500';
     alertBadge = (
       <span className="px-2 py-0.5 bg-amber-500 text-white rounded-full text-[9px] font-bold uppercase tracking-wider">
-        Attention
+        {t('attention', language)}
       </span>
     );
   } else {
     alertBadge = (
       <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-[9px] font-bold uppercase tracking-wider">
-        Ok
+        {t('ok', language)}
       </span>
     );
   }
@@ -99,9 +95,9 @@ export function BucketCard({
         {/* Progress bar */}
         <div className="space-y-1.5">
           <div className="flex justify-between text-[11px] font-bold text-slate-600">
-            <span>{percent}% utilisé</span>
+            <span>{percent}% {t('used', language)}</span>
             <span className={isOverBudget ? 'text-rose-600 font-black' : 'text-slate-800'}>
-              {formatCurrency(remaining)} restants
+              {formatCurrency(remaining)} {t('remaining', language)}
             </span>
           </div>
           <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
@@ -141,7 +137,7 @@ export function BucketCard({
           {alertBadge}
           {bucket.is_essential && (
             <span className="px-2 py-0.5 bg-indigo-50 border border-indigo-100 text-indigo-700 rounded-full text-[8px] font-bold uppercase tracking-wider">
-              Obligatoire
+              {t('obligatory', language)}
             </span>
           )}
         </div>
@@ -149,17 +145,17 @@ export function BucketCard({
 
       <div className="grid grid-cols-3 gap-2 py-3 border-y border-slate-50 text-center">
         <div>
-          <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Alloué</p>
+          <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">{t('allocated', language)}</p>
           <p className="font-black text-xs text-slate-800">{formatCurrency(bucket.allocated_amount)}</p>
         </div>
         <div>
-          <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Dépensé</p>
+          <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">{t('spent', language)}</p>
           <p className={`font-black text-xs ${isOverBudget ? 'text-rose-600' : 'text-slate-800'}`}>
             {formatCurrency(bucket.spent_amount)}
           </p>
         </div>
         <div>
-          <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Solde</p>
+          <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">{t('balance', language)}</p>
           <p className={`font-black text-xs ${remaining < 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
             {formatCurrency(remaining)}
           </p>
@@ -169,10 +165,10 @@ export function BucketCard({
       {/* Details progression bar */}
       <div className="space-y-2">
         <div className="flex justify-between text-xs font-bold text-slate-600">
-          <span>{percent}% du budget consommé</span>
+          <span>{percent}% {t('budgetConsumed', language)}</span>
           {bucket.auto_allocate_percent > 0 && (
             <span className="text-slate-400 text-[10px]">
-              Alloc. auto: {bucket.auto_allocate_percent}%
+              {t('autoAlloc', language)}: {bucket.auto_allocate_percent}%
             </span>
           )}
         </div>

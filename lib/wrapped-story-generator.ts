@@ -477,26 +477,34 @@ export function generateWrappedStoryImages(
               // Draw level info
               ctx.fillStyle = '#FFFFFF';
               ctx.beginPath();
-              ctx.roundRect(160, 1150, 760, 240, 28);
+              ctx.roundRect(160, 1150, 760, 260, 28);
               ctx.fill();
               ctx.strokeStyle = `${activeTheme.primary}1A`;
               ctx.stroke();
 
               ctx.fillStyle = activeTheme.primary;
-              ctx.font = 'black 36px sans-serif';
-              const lvlTitleText = language === 'fr' ? 'STATUT GAMIFICATION ATTEINT' : 'MOUSTAWA D L-LA3B';
-              ctx.fillText(lvlTitleText, 1080 / 2, 1210);
+              ctx.font = 'black 32px sans-serif';
+              const scoreTitleText = language === 'fr' ? 'SCORE FLOUSSI GLOBAL' : 'S-SKOUR FLOUSSI L-KLI';
+              ctx.fillText(scoreTitleText, 1080 / 2, 1205);
 
+              // Large Score Number
               ctx.fillStyle = '#0F172A';
-              ctx.font = 'black 64px sans-serif';
-              const lvlName = language === 'fr' ? 'SAGE FINANCIER' : '7AKIM D L-FLOUSS';
-              ctx.fillText(lvlName, 1080 / 2, 1310);
+              ctx.font = 'black 72px sans-serif';
+              const finalScore = stats.floussiScore || 350;
+              const finalTier = stats.floussiTier || 'Discipliné';
+              ctx.fillText(`${finalScore} PTS`, 1080 / 2, 1290);
+
+              // Tier designation
+              ctx.fillStyle = '#F59E0B'; // Gold color
+              ctx.font = 'black 38px sans-serif';
+              const tierText = language === 'fr' ? `Palier : ${finalTier}` : `R-Rutba : ${finalTier}`;
+              ctx.fillText(tierText.toUpperCase(), 1080 / 2, 1365);
 
               ctx.fillStyle = '#64748B';
               ctx.font = 'bold 30px sans-serif';
               const activeAdv = language === 'fr' 
-                ? 'Une année remplie d\'apprentissages judicieux.'
-                : '3am t3allamti fih bzaf d l-indibat.';
+                ? `Une année au rang de ${finalTier} Floussi !`
+                : `3am d l-mouwa9aba f r-rutba d ${finalTier} !`;
               ctx.fillText(activeAdv, 1080 / 2, 1480);
               break;
 

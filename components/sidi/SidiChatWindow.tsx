@@ -4,6 +4,7 @@ import { useSidiChat } from '../../hooks/use-sidi-chat';
 import { SidiMessageBubble } from './SidiMessageBubble';
 import { SidiQuickChips } from './SidiQuickChips';
 import { useAuth } from '../../hooks/use-auth';
+import { useTranslation } from '../../hooks/use-translation';
 
 interface SidiChatWindowProps {
   onClose: () => void;
@@ -11,9 +12,12 @@ interface SidiChatWindowProps {
 
 export function SidiChatWindow({ onClose }: SidiChatWindowProps) {
   const { profile } = useAuth();
+  const { lang } = useTranslation();
   const { messages, isTyping, sendMessage, clearHistory, handleCorrection } = useSidiChat();
   const [inputText, setInputText] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const isDarija = lang === 'darija';
 
   // Auto-scroll to bottom of conversation
   useEffect(() => {
@@ -62,6 +66,28 @@ export function SidiChatWindow({ onClose }: SidiChatWindowProps) {
       sendMessage("Comment économiser sur le café ? ☕");
     } else if (action === "tip_avoid_loans") {
       sendMessage("Pourquoi éviter les petits crédits ? 🚫");
+    } else if (action === "copy_referral_code") {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(payload.code || "");
+      }
+      sendMessage(lang === 'darija' ? "Koupit l-code parrainage dyali ! 📋" : "J'ai copié mon code de parrainage ! 📋");
+    } else if (action === "start_lesson") {
+      sendMessage(lang === 'darija' ? `Bghit nbda d-dars ! 📖` : `Je souhaite commencer la leçon ! 📖`);
+    } else if (action === "propose_share") {
+      sendMessage(lang === 'darija' ? `Bghit n-partager: "${payload.text}"` : `Je souhaite partager : "${payload.text}"`);
+    } else if (action === "publish_confirmed") {
+      sendMessage(lang === 'darija' ? `Affichih f l-community: "${payload.content}"` : `Oui, publie sur la communauté : "${payload.content}"`);
+    } else if (action === "dismiss_share") {
+      sendMessage(lang === 'darija' ? "La, blach d l-partage" : "Non, ne partage pas.");
+    } else if (action === "open_monthly_review") {
+      window.location.href = '/coaching';
+      sendMessage(lang === 'darija' ? "Bghit n-bda l-bilan mensuel !" : "Je souhaite démarrer le bilan mensuel !");
+    } else if (action === "confirm_transfer") {
+      sendMessage(lang === 'darija' ? `Ah, confirm l-transfert l "${payload.recipient}" b "${payload.amount}" DH` : `Oui, confirme le transfert de "${payload.amount}" DH à "${payload.recipient}"`);
+    } else if (action === "accept_optimization_challenge") {
+      sendMessage(lang === 'darija' ? `Bghit n-qbel t-tahadi: "${payload.suggestionId}"` : `Je souhaite accepter le défi : "${payload.suggestionId}"`);
+    } else if (action === "navigate") {
+      window.location.href = payload.url;
     } else if (action === "correct_category") {
       if (handleCorrection) {
         handleCorrection(payload.transactionId, payload.category);
@@ -91,7 +117,7 @@ export function SidiChatWindow({ onClose }: SidiChatWindowProps) {
             <div>
               <h3 className="text-sm font-black text-slate-800 leading-none">Sidi Floussi</h3>
               <span className="text-[10px] text-emerald-600 font-bold tracking-wide uppercase mt-0.5 block">
-                ● Conseiller Virtuel Serein
+                {isDarija ? '● Al-Mouchar l-Iftiradi d l-Aman' : '● Conseiller Virtuel Serein'}
               </span>
             </div>
           </div>
@@ -101,7 +127,7 @@ export function SidiChatWindow({ onClose }: SidiChatWindowProps) {
             <button
               id="clear-chat-history"
               onClick={clearHistory}
-              title="Effacer la conversation"
+              title={isDarija ? "Mseh l-hiwar" : "Effacer la conversation"}
               className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-150 hover:text-rose-600 transition-colors"
             >
               <Trash2 size={16} />
@@ -110,7 +136,7 @@ export function SidiChatWindow({ onClose }: SidiChatWindowProps) {
             <button
               id="close-sidi-chat"
               onClick={onClose}
-              title="Fermer"
+              title={isDarija ? "Sedd" : "Fermer"}
               className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-150 hover:text-slate-800 transition-colors"
             >
               <X size={18} />
@@ -129,6 +155,7 @@ export function SidiChatWindow({ onClose }: SidiChatWindowProps) {
               key={msg.id}
               message={msg}
               onActionButtonClick={handleActionButtonClick}
+              language={lang}
             />
           ))}
 
@@ -139,7 +166,7 @@ export function SidiChatWindow({ onClose }: SidiChatWindowProps) {
                 🇲🇦
               </div>
               <div className="rounded-2xl rounded-tl-none px-4 py-3 bg-white border border-slate-100 text-slate-400 text-xs font-semibold">
-                Sidi est en train d'écrire
+                {isDarija ? "Sidi kay-kteb..." : "Sidi est en train d'écrire..."}
                 <span className="inline-flex gap-0.5 ml-1">
                   <span className="w-1 h-1 bg-slate-400 rounded-full animate-bounce delay-100" />
                   <span className="w-1 h-1 bg-slate-400 rounded-full animate-bounce delay-200" />
@@ -163,7 +190,7 @@ export function SidiChatWindow({ onClose }: SidiChatWindowProps) {
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Écris un message ou dis : sraft 50 DH..."
+            placeholder={isDarija ? "Kteb risala aw gol: sraft 50 DH..." : "Écris un message ou dis : sraft 50 DH..."}
             className="flex-1 px-4 py-2 text-xs font-semibold border border-slate-200 focus:outline-none focus:border-emerald-500 rounded-full transition-colors bg-slate-50/50"
           />
           <button

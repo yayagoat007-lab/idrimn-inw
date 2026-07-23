@@ -3,10 +3,14 @@ import { useSidiProactive } from '../../hooks/use-sidi-proactive';
 import { SidiAvatar } from './SidiAvatar';
 import { SidiChatWindow } from './SidiChatWindow';
 import { X, Sparkles } from 'lucide-react';
+import { useTranslation } from '../../hooks/use-translation';
 
 export function SidiFAB() {
   const [isOpen, setIsOpen] = useState(false);
+  const { lang } = useTranslation();
   const { pendingProactiveMessages, dismissProactiveMessage } = useSidiProactive();
+
+  const isDarija = lang === 'darija';
 
   useEffect(() => {
     const handleOpen = () => {
@@ -71,7 +75,7 @@ export function SidiFAB() {
                 <button
                   id={`dismiss-toast-${msg.id}`}
                   onClick={() => dismissProactiveMessage(msg.id)}
-                  title="Fermer"
+                  title={isDarija ? "Sedd" : "Fermer"}
                   className="p-1 rounded-md text-slate-300 hover:text-slate-600 hover:bg-slate-50 transition-colors shrink-0"
                 >
                   <X size={12} />

@@ -14,7 +14,7 @@ import { QuickAddExpense } from '../../../components/buckets/QuickAddExpense';
 import { PlanLimitBanner } from '../../../components/shared/PlanLimitBanner';
 import { SkeletonCard } from '../../../components/shared/SkeletonCard';
 import { formatCurrency } from '../../../lib/utils';
-import { Language, getTranslation } from '../../../lib/i18n';
+import { Language, getTranslation, t } from '../../../lib/i18n';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface BucketsPageProps {
@@ -124,11 +124,11 @@ export default function BucketsPage({
           <h2 className="text-xl font-black text-slate-800 tracking-tight flex items-center gap-2">
             <span>{getTranslation('buckets', language)}</span>
             <span className="px-2 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-100 text-[10px] font-black uppercase rounded-full">
-              Enveloppes Actives ({activeBuckets.length})
+              {t('enveloppesActives', language)} ({activeBuckets.length})
             </span>
           </h2>
           <p className="text-xs text-slate-400 font-semibold">
-            Divisez virtuellement votre argent (méthode des enveloppes d'épargne)
+            {t('enveloppesDesc', language)}
           </p>
         </div>
 
@@ -139,7 +139,7 @@ export default function BucketsPage({
             className="p-3 bg-white hover:bg-slate-50 text-slate-500 rounded-2xl border border-slate-100 transition-colors cursor-pointer flex items-center justify-center gap-1.5 text-xs font-bold"
           >
             <Settings size={14} />
-            <span>Règles de Répartition</span>
+            <span>{t('repartitionRules', language)}</span>
           </button>
         </div>
       </div>
@@ -148,7 +148,7 @@ export default function BucketsPage({
       {isFreeTier && (
         <PlanLimitBanner 
           currentTier="free" 
-          limitMessage="Vous avez atteint la limite de 3 compartiments de budget."
+          limitMessage={t('limitSandoqMessage', language)}
           onUpgrade={() => onNavigate && onNavigate('settings')}
         />
       )}
@@ -160,7 +160,7 @@ export default function BucketsPage({
             <ChevronDown size={18} className="transform rotate-180" />
           </div>
           <div>
-            <span className="text-[10px] font-black uppercase text-slate-400">Total Alloué</span>
+            <span className="text-[10px] font-black uppercase text-slate-400">{t('totalAllocatedLabel', language)}</span>
             <p className="text-base font-black text-slate-800">{formatCurrency(totalAllocated)}</p>
           </div>
         </div>
@@ -170,7 +170,7 @@ export default function BucketsPage({
             <ChevronDown size={18} />
           </div>
           <div>
-            <span className="text-[10px] font-black uppercase text-slate-400">Total Consommé</span>
+            <span className="text-[10px] font-black uppercase text-slate-400">{t('totalSpentLabel', language)}</span>
             <p className="text-base font-black text-slate-800">{formatCurrency(totalSpent)}</p>
           </div>
         </div>
@@ -180,7 +180,7 @@ export default function BucketsPage({
             <ChevronDown size={18} className="transform -rotate-90" />
           </div>
           <div>
-            <span className="text-[10px] font-black uppercase text-slate-400">Reste Disponible</span>
+            <span className="text-[10px] font-black uppercase text-slate-400">{t('totalRemainingLabel', language)}</span>
             <p className="text-base font-black text-emerald-700">{formatCurrency(totalRemaining)}</p>
           </div>
         </div>
@@ -193,20 +193,20 @@ export default function BucketsPage({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center relative z-10">
           <div className="md:col-span-2 space-y-2">
             <span className="inline-block px-2.5 py-0.5 bg-emerald-500/20 border border-emerald-500/30 rounded-full text-[10px] font-black tracking-wider uppercase text-emerald-400">
-              SIMULATEUR DE PAYE (RÉPARTITION AUTOMATIQUE)
+              {t('paydaySimulator', language)}
             </span>
             <h3 className="text-base font-black tracking-tight uppercase">
-              Répartir automatiquement mon salaire du mois
+              {t('allocateSalaryTitle', language)}
             </h3>
             <p className="text-xs text-slate-300 max-w-xl font-medium leading-relaxed">
-              Chaque enveloppe détient un pourcentage d'auto-allocation (ex: 30% Alimentation, 50% Logement). Entrez votre salaire reçu pour distribuer les fonds instantanément selon vos pourcentages paramétrés.
+              {t('allocateSalaryDesc', language)}
             </p>
           </div>
 
           <form onSubmit={handleAllocateSimulation} className="bg-white/10 p-4 rounded-2xl border border-white/10 space-y-3">
             <div>
               <label className="block text-[9px] font-black uppercase tracking-wider text-slate-300 mb-1.5">
-                Salaire à répartir (DH)
+                {t('salaryToAllocate', language)}
               </label>
               <input
                 type="number"
@@ -222,7 +222,7 @@ export default function BucketsPage({
               className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
             >
               <RefreshCw size={12} />
-              Répartir les fonds
+              {t('allocateFunds', language)}
             </button>
           </form>
         </div>
@@ -230,7 +230,7 @@ export default function BucketsPage({
         {showAllocateNotice && (
           <div className="mt-4 bg-emerald-500/20 border border-emerald-500/30 p-3 rounded-xl text-xs text-emerald-100 flex items-center gap-2 font-bold animate-pulse">
             <Sparkles size={14} className="text-amber-400" />
-            <span>Fonds distribués avec succès sur tous vos Sandoq marocains !</span>
+            <span>{t('fundsDistributedSuccess', language)}</span>
           </div>
         )}
       </div>
@@ -242,7 +242,7 @@ export default function BucketsPage({
           <Search size={14} className="absolute left-3.5 top-3.5 text-slate-400" />
           <input
             type="text"
-            placeholder="Rechercher un sandoq..."
+            placeholder={t('searchSandoq', language)}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-9.5 pr-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold text-slate-800 placeholder-slate-400 focus:outline-hidden focus:ring-1 focus:ring-emerald-500"
@@ -256,19 +256,19 @@ export default function BucketsPage({
             onChange={(e) => setCategoryFilter(e.target.value)}
             className="px-3 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold text-slate-700 focus:outline-hidden"
           >
-            <option value="all">Toutes catégories</option>
-            <option value="alimentation">Alimentation</option>
-            <option value="logement">Logement</option>
-            <option value="transport">Transport</option>
-            <option value="telecom">Télécom</option>
-            <option value="factures">Factures</option>
-            <option value="sante">Santé</option>
-            <option value="education">Éducation</option>
-            <option value="loisirs">Loisirs & Café</option>
-            <option value="epargne">Épargne</option>
-            <option value="tontine">Tontine (Daret)</option>
+            <option value="all">{t('allCategoriesSandoq', language)}</option>
+            <option value="alimentation">{language === 'darija' ? "Alimentation (Makla)" : "Alimentation"}</option>
+            <option value="logement">{language === 'darija' ? "Logement (Dar)" : "Logement"}</option>
+            <option value="transport">{language === 'darija' ? "Transport (Taxi/Tobis)" : "Transport"}</option>
+            <option value="telecom">{language === 'darija' ? "Télécom (Inwi/MarocTel)" : "Télécom"}</option>
+            <option value="factures">{language === 'darija' ? "Factures (Kahraba/Ma)" : "Factures"}</option>
+            <option value="sante">{language === 'darija' ? "Santé (Sbitar)" : "Santé"}</option>
+            <option value="education">{language === 'darija' ? "Éducation (Madrassa)" : "Éducation"}</option>
+            <option value="loisirs">{language === 'darija' ? "Loisirs & Café (Kawa)" : "Loisirs & Café"}</option>
+            <option value="epargne">{language === 'darija' ? "Épargne (Khbi l-Flouss)" : "Épargne"}</option>
+            <option value="tontine">{language === 'darija' ? "Tontine (Daret)" : "Tontine (Daret)"}</option>
             <option value="impots">Impôts & Cotisations</option>
-            <option value="non_categorise">Autre / Divers</option>
+            <option value="non_categorise">{language === 'darija' ? "Autre (Hwayej khrin)" : "Autre / Divers"}</option>
           </select>
 
           <select
@@ -276,9 +276,9 @@ export default function BucketsPage({
             onChange={(e) => setPriorityFilter(e.target.value)}
             className="px-3 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold text-slate-700 focus:outline-hidden"
           >
-            <option value="all">Toutes priorités</option>
-            <option value="essential">Essentiel (Daroni)</option>
-            <option value="optional">Optionnel</option>
+            <option value="all">{t('allPriorities', language)}</option>
+            <option value="essential">{t('essentialPriority', language)}</option>
+            <option value="optional">{t('optionalPriority', language)}</option>
           </select>
         </div>
       </div>
@@ -293,9 +293,9 @@ export default function BucketsPage({
       ) : rootBuckets.length === 0 ? (
         <div className="p-8 bg-white border border-slate-100 rounded-3xl text-center space-y-2">
           <AlertCircle size={28} className="text-slate-300 mx-auto" />
-          <h4 className="font-extrabold text-xs text-slate-800 uppercase tracking-wide">Aucun sandoq trouvé</h4>
+          <h4 className="font-extrabold text-xs text-slate-800 uppercase tracking-wide">{t('noSandoqFound', language)}</h4>
           <p className="text-[10px] text-slate-400 font-semibold max-w-sm mx-auto">
-            Nous n'avons trouvé aucun compartiment correspondant à vos critères de recherche.
+            {t('noSandoqFoundDesc', language)}
           </p>
         </div>
       ) : (
@@ -308,7 +308,7 @@ export default function BucketsPage({
               <div key={bucket.id} className="space-y-4">
                 {/* Reordering Controls Wrapper */}
                 <div className="flex items-center justify-between px-2 text-[10px] font-black uppercase text-slate-400">
-                  <span>Sandoq Principal {index + 1}</span>
+                  <span>{t('sandoqPrincipal', language)} {index + 1}</span>
                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button 
                       onClick={() => moveBucket(index, 'up')}
@@ -405,6 +405,7 @@ export default function BucketsPage({
         onClose={() => setActiveTransferBucket(null)}
         buckets={activeBuckets}
         sourceBucket={activeTransferBucket}
+        language={language}
         onTransfer={async (fromId, toId, amount, note) => {
           await transferBetweenBuckets(fromId, toId, amount, note);
           setActiveTransferBucket(null);

@@ -20,6 +20,7 @@ import TransactionsPage from '../app/(dashboard)/transactions/page';
 import ImportPage from '../app/(dashboard)/transactions/import/page';
 import BucketsPage from '../app/(dashboard)/buckets/page';
 import InsightsPage from '../app/(dashboard)/insights/page';
+import CoachingPage from '../app/(dashboard)/coaching/page';
 import GoalsPage from '../app/(dashboard)/goals/page';
 import TontinePage from '../app/(dashboard)/tontine/page';
 import FamilyPage from '../app/(dashboard)/family/page';
@@ -69,6 +70,8 @@ import { compressImage } from '../lib/image-compression';
 
 // Schema migration system
 import { runPendingMigrations } from '../lib/schema-migrations';
+import { BadgeUnlockModal } from '../components/gamification/BadgeUnlockModal';
+import confetti from 'canvas-confetti';
 
 export default function App() {
   const { user, profile, loading, updateProfile, setLanguage, upgradeSubscription, logout, login, register } = useAuth();
@@ -171,6 +174,30 @@ export default function App() {
     return () => {
       window.removeEventListener('open-transaction-modal', handleOpenTx);
       window.removeEventListener('open-bucket-modal', handleOpenBucket);
+    };
+  }, []);
+
+  // State for unlocked gamification badge
+  const [unlockedBadge, setUnlockedBadge] = useState<any | null>(null);
+
+  // Global listener for gamification badge unlocks
+  useEffect(() => {
+    const handleBadgeUnlocked = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      const { badge } = customEvent.detail;
+      setUnlockedBadge(badge);
+
+      // Trigger beautiful confetti explosion
+      confetti({
+        particleCount: 150,
+        spread: 80,
+        origin: { y: 0.6 }
+      });
+    };
+
+    window.addEventListener('floussi_badge_unlocked', handleBadgeUnlocked);
+    return () => {
+      window.removeEventListener('floussi_badge_unlocked', handleBadgeUnlocked);
     };
   }, []);
 
@@ -326,16 +353,18 @@ export default function App() {
             language={language}
           />
         );
+      case 'coaching':
+        return <CoachingPage />;
       case 'goals':
         return <GoalsPage language={language} />;
       case 'tontine':
         return <TontinePage language={language} />;
       case 'wallet':
-        return <WalletPage lang={language} />;
+        return <WalletPage language={language} />;
       case 'community':
         return (
           <React.Suspense fallback={<div className="grid grid-cols-1 md:grid-cols-3 gap-6"><SkeletonCard /><SkeletonCard /><SkeletonCard /></div>}>
-            <CommunityPage lang={language} />
+            <CommunityPage language={language} />
           </React.Suspense>
         );
       case 'calculators':
@@ -589,6 +618,7 @@ export default function App() {
           <div className="bg-white rounded-3xl p-6 max-w-4xl w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <BucketForm
               buckets={buckets}
+              language={language}
               onSubmit={(data) => {
                 createBucket(data);
                 setShowBucketModal(false);
@@ -832,6 +862,15 @@ export default function App() {
           language={language as 'fr' | 'darija'}
           onClose={markAnniversaryAsShown}
           onNavigate={handleNavigate}
+        />
+      )}
+
+      {/* Badge Unlock Celebration Modal overlay */}
+      {unlockedBadge && (
+        <BadgeUnlockModal
+          badge={unlockedBadge}
+          language={language as 'fr' | 'darija'}
+          onClose={() => setUnlockedBadge(null)}
         />
       )}
 

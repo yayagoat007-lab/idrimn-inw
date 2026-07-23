@@ -1,5 +1,6 @@
 import React from 'react';
 import { Flame, CheckCircle, AlertTriangle } from 'lucide-react';
+import { useTranslation } from '../../hooks/use-translation';
 
 interface StreakCalendarProps {
   streak: number;
@@ -7,6 +8,8 @@ interface StreakCalendarProps {
 }
 
 export function StreakCalendar({ streak, history }: StreakCalendarProps) {
+  const { lang } = useTranslation();
+
   // Generate mock month dates (e.g., July 2026)
   // Let's assume July 2026 starts on Wednesday, 31 days
   const startDayOffset = 2; // Wed
@@ -14,9 +17,11 @@ export function StreakCalendar({ streak, history }: StreakCalendarProps) {
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
   const todayStr = new Date().toISOString().split('T')[0];
-  const yesterdayStr = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-
   const hasLoggedToday = history.includes(todayStr);
+
+  const daysOfWeek = lang === 'darija'
+    ? ['Tne', 'Tla', 'Rbe', 'Khm', 'Jme', 'Seb', 'Hkh']
+    : ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 
   return (
     <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-xs space-y-6">
@@ -26,8 +31,14 @@ export function StreakCalendar({ streak, history }: StreakCalendarProps) {
             <Flame size={24} fill="currentColor" />
           </div>
           <div>
-            <h3 className="font-extrabold text-sm text-slate-900 leading-none">Streak Actif : {streak} Jours</h3>
-            <p className="text-[10px] text-slate-400 font-bold uppercase mt-1">Saisissez vos dépenses chaque jour pour garder la flamme</p>
+            <h3 className="font-extrabold text-sm text-slate-900 leading-none">
+              {lang === 'darija' ? `Silsila d l-Yom : ${streak} d l-Iyam` : `Streak Actif : ${streak} Jours`}
+            </h3>
+            <p className="text-[10px] text-slate-400 font-bold uppercase mt-1">
+              {lang === 'darija'
+                ? "Sajjel masrouf dyalk koul nhar bch t-khlli l-aafia chaala !"
+                : "Saisissez vos dépenses chaque jour pour garder la flamme"}
+            </p>
           </div>
         </div>
       </div>
@@ -35,14 +46,16 @@ export function StreakCalendar({ streak, history }: StreakCalendarProps) {
       {/* Grid calendar */}
       <div className="space-y-3">
         <div className="flex justify-between items-center text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-          <span>Juillet 2026</span>
+          <span>{lang === 'darija' ? "Yulyuz 2026" : "Juillet 2026"}</span>
           <span className={hasLoggedToday ? 'text-emerald-600' : 'text-amber-500'}>
-            {hasLoggedToday ? '✓ Saisie validée aujourd\'hui' : '⚠️ Saisie manquante aujourd\'hui'}
+            {hasLoggedToday
+              ? (lang === 'darija' ? '✓ Tsajjel l-yom mzyan' : "✓ Saisie validée aujourd'hui")
+              : (lang === 'darija' ? '⚠️ Mazal ma tsajjel l-yom' : "⚠️ Saisie manquante aujourd'hui")}
           </span>
         </div>
 
         <div className="grid grid-cols-7 gap-1 text-center font-bold text-[10px]">
-          {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((d) => (
+          {daysOfWeek.map((d) => (
             <span key={d} className="text-slate-400 uppercase">{d}</span>
           ))}
 
@@ -81,8 +94,14 @@ export function StreakCalendar({ streak, history }: StreakCalendarProps) {
         <div className="bg-amber-50 border border-amber-100 text-amber-900 rounded-2xl p-4 text-[11px] font-semibold flex gap-2.5 items-start">
           <AlertTriangle size={16} className="text-amber-600 shrink-0 mt-0.5" />
           <div>
-            <p className="font-extrabold">Gardez votre streak !</p>
-            <p className="text-amber-700 font-medium mt-1">Vous n'avez pas encore saisi de dépense ou de revenu aujourd'hui. Ajoutez une opération ou scannez un reçu pour obtenir vos bonus d'XP !</p>
+            <p className="font-extrabold">
+              {lang === 'darija' ? "Khlli l-aafia chaala !" : "Gardez votre streak !"}
+            </p>
+            <p className="text-amber-700 font-medium mt-1">
+              {lang === 'darija'
+                ? "Mazal ma tsajjel hta masrouf wella flouss l-yom. Sajjel operation wella scanne ticket bch t-ched l-bonus dyal l-XP!"
+                : "Vous n'avez pas encore saisi de dépense ou de revenu aujourd'hui. Ajoutez une opération ou scannez un reçu pour obtenir vos bonus d'XP !"}
+            </p>
           </div>
         </div>
       )}
@@ -90,3 +109,4 @@ export function StreakCalendar({ streak, history }: StreakCalendarProps) {
   );
 }
 export default StreakCalendar;
+

@@ -6,6 +6,7 @@ import { MortgageCalculator } from '../../../components/calculators/MortgageCalc
 import { AutoLoanCalculator } from '../../../components/calculators/AutoLoanCalculator';
 import { SavingsCalculator } from '../../../components/calculators/SavingsCalculator';
 import { TransportComparator } from '../../../components/calculators/TransportComparator';
+import { useTranslation } from '../../../hooks/use-translation';
 import { 
   Calculator, 
   ArrowLeft, 
@@ -19,12 +20,14 @@ import {
 } from 'lucide-react';
 
 interface CalculatorsPageProps {
-  language: 'fr' | 'darija';
+  language?: 'fr' | 'darija';
 }
 
 type ActiveCalculator = 'grid' | 'zakat' | 'tax' | 'mortgage' | 'autoloan' | 'savings' | 'transport';
 
-export default function CalculatorsPage({ language }: CalculatorsPageProps) {
+export default function CalculatorsPage({ language: propLanguage }: CalculatorsPageProps) {
+  const { lang } = useTranslation();
+  const language = propLanguage || lang;
   const [activeCalc, setActiveCalc] = useState<ActiveCalculator>('grid');
 
   const t = {
@@ -107,7 +110,9 @@ export default function CalculatorsPage({ language }: CalculatorsPageProps) {
           
           <div className="bg-emerald-50 text-emerald-800 border border-emerald-100 px-3 py-2.5 rounded-2xl flex items-center gap-2 max-w-xs shrink-0">
             <Sparkles size={16} className="text-emerald-600 animate-pulse" />
-            <span className="text-[10px] uppercase font-black leading-snug">Calculs 100% locaux basés sur les barèmes marocains</span>
+            <span className="text-[10px] uppercase font-black leading-snug">
+              {language === 'darija' ? "7isabat 100% m7alliya 3la 7sab l-qawanin d l-maghrib" : "Calculs 100% locaux basés sur les barèmes marocains"}
+            </span>
           </div>
         </div>
 

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Search, RotateCcw, X, Filter, ChevronDown, ChevronUp } from 'lucide-react';
-import { MOROCCAN_CATEGORIES } from '../../lib/categories';
+import { MOROCCAN_CATEGORIES, getCategoryName } from '../../lib/categories';
 import { Bucket } from '../../types';
+import { Language, t } from '../../lib/i18n';
 
 interface TransactionFiltersProps {
   buckets: Bucket[];
+  language: Language;
   activeFilters: {
     search: string;
     type: string;
@@ -19,6 +21,7 @@ interface TransactionFiltersProps {
 
 export function TransactionFilters({
   buckets,
+  language,
   activeFilters,
   onFilterChange,
   onReset
@@ -47,7 +50,7 @@ export function TransactionFilters({
             value={activeFilters.search}
             onChange={(e) => handleFieldChange('search', e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold text-slate-800 placeholder-slate-400 focus:outline-hidden focus:ring-1 focus:ring-emerald-500"
-            placeholder="Rechercher par bénéficiaire, mémo, tags..."
+            placeholder={t('searchPlaceholder', language)}
           />
         </div>
 
@@ -58,10 +61,10 @@ export function TransactionFilters({
             onChange={(e) => handleFieldChange('type', e.target.value)}
             className="px-4 py-2 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold text-slate-700 focus:outline-hidden focus:ring-1 focus:ring-emerald-500"
           >
-            <option value="">Tous les types</option>
-            <option value="expense">Dépenses</option>
-            <option value="income">Revenus</option>
-            <option value="transfer">Transferts</option>
+            <option value="">{t('allTypes', language)}</option>
+            <option value="expense">{t('expenses', language)}</option>
+            <option value="income">{t('incomes', language)}</option>
+            <option value="transfer">{t('transfers', language)}</option>
           </select>
 
           {/* Quick account filter */}
@@ -70,10 +73,10 @@ export function TransactionFilters({
             onChange={(e) => handleFieldChange('accountId', e.target.value)}
             className="px-4 py-2 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold text-slate-700 focus:outline-hidden focus:ring-1 focus:ring-emerald-500"
           >
-            <option value="">Tous les comptes</option>
-            <option value="acc-cash">Cash (Darija Cash)</option>
-            <option value="acc-checking">Compte Courant (CIH/BMCE)</option>
-            <option value="acc-savings">Compte Épargne</option>
+            <option value="">{t('allAccounts', language)}</option>
+            <option value="acc-cash">{t('cashDarija', language)}</option>
+            <option value="acc-checking">{t('checkingCIH', language)} ({t('courant', language)})</option>
+            <option value="acc-savings">{t('savingsAccount', language)} ({t('epargne', language)})</option>
           </select>
 
           <button
@@ -81,7 +84,7 @@ export function TransactionFilters({
             className="px-4 py-2 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition-colors flex items-center gap-1.5 cursor-pointer"
           >
             <Filter size={14} />
-            <span>Filtres</span>
+            <span>{t('filters', language)}</span>
             {showAdvanced ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
           </button>
 
@@ -102,28 +105,28 @@ export function TransactionFilters({
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-3 border-t border-slate-50 animate-fadeIn">
           {/* Category filter */}
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black uppercase tracking-wider text-slate-400">Catégorie</label>
+            <label className="text-[10px] font-black uppercase tracking-wider text-slate-400">{t('category', language)}</label>
             <select
               value={activeFilters.category}
               onChange={(e) => handleFieldChange('category', e.target.value)}
               className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold text-slate-700 focus:outline-hidden focus:ring-1 focus:ring-emerald-500"
             >
-              <option value="">Toutes les catégories</option>
+              <option value="">{t('allCategories', language)}</option>
               {MOROCCAN_CATEGORIES.map(cat => (
-                <option key={cat.id} value={cat.id}>{cat.name_fr}</option>
+                <option key={cat.id} value={cat.id}>{getCategoryName(cat, language)}</option>
               ))}
             </select>
           </div>
 
           {/* Bucket filter */}
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black uppercase tracking-wider text-slate-400">Compartiment (Sanadouq)</label>
+            <label className="text-[10px] font-black uppercase tracking-wider text-slate-400">{t('compartimentLabel', language)}</label>
             <select
               value={activeFilters.bucketId}
               onChange={(e) => handleFieldChange('bucketId', e.target.value)}
               className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold text-slate-700 focus:outline-hidden focus:ring-1 focus:ring-emerald-500"
             >
-              <option value="">Tous les compartiments</option>
+              <option value="">{t('allCompartments', language)}</option>
               {buckets.map(b => (
                 <option key={b.id} value={b.id}>{b.name}</option>
               ))}
@@ -132,16 +135,16 @@ export function TransactionFilters({
 
           {/* Status filter */}
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black uppercase tracking-wider text-slate-400">Statut de sync / Type</label>
+            <label className="text-[10px] font-black uppercase tracking-wider text-slate-400">{t('syncStatusLabel', language)}</label>
             <select
               value={activeFilters.status}
               onChange={(e) => handleFieldChange('status', e.target.value)}
               className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold text-slate-700 focus:outline-hidden focus:ring-1 focus:ring-emerald-500"
             >
-              <option value="">Tous les statuts</option>
-              <option value="synced">Synchronisé (Online)</option>
-              <option value="pending">En attente (Offline)</option>
-              <option value="recurring">Récurrent</option>
+              <option value="">{t('allStatuses', language)}</option>
+              <option value="synced">{t('syncedOnline', language)}</option>
+              <option value="pending">{t('pendingOffline', language)}</option>
+              <option value="recurring">{t('recurrent', language)}</option>
             </select>
           </div>
         </div>

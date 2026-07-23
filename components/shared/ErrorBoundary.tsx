@@ -31,6 +31,11 @@ export class ErrorBoundary extends React.Component<Props, State> {
 
   public render() {
     if (this.state.hasError) {
+      let lang = 'fr';
+      if (typeof window !== 'undefined') {
+        lang = window.localStorage.getItem('floussi_lang') || 'fr';
+      }
+
       return (
         <div className="min-h-screen bg-slate-50 flex flex-col justify-center items-center p-6 text-center">
           <div className="bg-white border border-slate-150 rounded-3xl p-8 max-w-md shadow-xs space-y-5">
@@ -39,9 +44,13 @@ export class ErrorBoundary extends React.Component<Props, State> {
             </div>
 
             <div className="space-y-1">
-              <h3 className="font-extrabold text-sm text-slate-900 uppercase tracking-tight">Oups ! Une erreur est survenue</h3>
+              <h3 className="font-extrabold text-sm text-slate-900 uppercase tracking-tight">
+                {lang === 'darija' ? "Oups ! Mchkil sghir sra" : "Oups ! Une erreur est survenue"}
+              </h3>
               <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
-                L'application a rencontré un dysfonctionnement inattendu. Vos données enregistrées localement restent protégées.
+                {lang === 'darija'
+                  ? "L-App sra fiha mchkil sghir. M3loumat dyalk f had l-blast dima f l-aman."
+                  : "L'application a rencontré un dysfonctionnement inattendu. Vos données enregistrées localement restent protégées."}
               </p>
             </div>
 
@@ -56,12 +65,13 @@ export class ErrorBoundary extends React.Component<Props, State> {
               className="w-full py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-black text-xs uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <RotateCcw size={12} />
-              <span>Recharger Floussi</span>
+              <span>{lang === 'darija' ? "Awwed khelli Floussi" : "Recharger Floussi"}</span>
             </button>
           </div>
         </div>
       );
     }
+
 
     return this.props.children;
   }

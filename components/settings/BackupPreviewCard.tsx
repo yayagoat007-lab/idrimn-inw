@@ -1,6 +1,7 @@
 import React from 'react';
 import { BackupPreview } from '../../lib/full-backup';
 import { ShieldCheck, Calendar, Receipt, Target, Award, Wallet, Layers } from 'lucide-react';
+import { formatCurrency } from '../../lib/utils';
 
 interface BackupPreviewCardProps {
   preview: BackupPreview;
@@ -56,8 +57,8 @@ export default function BackupPreviewCard({ preview, language }: BackupPreviewCa
               <Wallet size={15} />
             </div>
             <div>
-              <p className="text-[9px] text-slate-400 font-black uppercase tracking-wider leading-none">{t.wallet}</p>
-              <p className="text-xs font-black text-slate-900 mt-1 font-mono">{preview.walletBalance.toLocaleString('fr-FR')} DH</p>
+               <p className="text-[9px] text-slate-400 font-black uppercase tracking-wider leading-none">{t.wallet}</p>
+               <p className="text-xs font-black text-slate-900 mt-1 font-mono">{formatCurrency(preview.walletBalance)}</p>
             </div>
           </div>
 
@@ -68,7 +69,7 @@ export default function BackupPreviewCard({ preview, language }: BackupPreviewCa
             </div>
             <div>
               <p className="text-[9px] text-slate-400 font-black uppercase tracking-wider leading-none">{t.level}</p>
-              <p className="text-xs font-black text-slate-900 mt-1">Niveau {preview.currentLevel}</p>
+              <p className="text-xs font-black text-slate-900 mt-1">{language === 'darija' ? "Moustawa" : "Niveau"} {preview.currentLevel}</p>
             </div>
           </div>
 
@@ -101,7 +102,9 @@ export default function BackupPreviewCard({ preview, language }: BackupPreviewCa
             </div>
             <div>
               <p className="text-[9px] text-slate-400 font-black uppercase tracking-wider leading-none">{t.goals}</p>
-              <p className="text-xs font-black text-slate-900 mt-1 font-mono">{preview.goalsCount} objectifs d'épargne planifiés</p>
+              <p className="text-xs font-black text-slate-900 mt-1 font-mono">
+                {language === 'darija' ? `${preview.goalsCount} ahdaf d-iddikhar m9addin` : `${preview.goalsCount} objectifs d'épargne planifiés`}
+              </p>
             </div>
           </div>
         </div>

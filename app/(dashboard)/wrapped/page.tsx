@@ -9,11 +9,14 @@ import {
   Sparkles, Calendar, TrendingUp, TrendingDown, 
   Flame, Award, Target, ShoppingBag, ArrowUpRight, Check, Play 
 } from 'lucide-react';
+import { formatCurrency } from '../../../lib/utils';
+import { useTranslation } from '../../../hooks/use-translation';
 
 export default function WrappedPage() {
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
   const userId = user?.id || '';
-  const language = profile?.preferred_language || 'fr';
+  const { lang } = useTranslation();
+  const isDarija = lang === 'darija';
   const [themeId, setThemeId] = useState('default');
 
   useEffect(() => {
@@ -42,7 +45,7 @@ export default function WrappedPage() {
     setGenerating(true);
     setIsViewerOpen(true);
     try {
-      const generatedSlides = await generateImages(themeId, language as 'fr' | 'darija');
+      const generatedSlides = await generateImages(themeId, lang as 'fr' | 'darija');
       setSlides(generatedSlides);
     } catch (err) {
       console.error('[Wrapped] Failed to generate slides:', err);
@@ -52,27 +55,46 @@ export default function WrappedPage() {
   };
 
   const t = {
-    title: language === 'fr' ? 'Mon Floussi Wrapped' : 'Floussi Wrapped dyali',
-    subtitle: language === 'fr' 
-      ? 'La rétrospective personnalisée de vos habitudes financières.' 
-      : 'Khlassa kamla d l-mou3amalat o l-iddikhar dyalek.',
-    yearSelector: language === 'fr' ? 'Sélectionner l\'année' : 'Khtar l-3am',
-    launchCta: language === 'fr' ? 'Lancer la Story interactive' : 'Khdem s-story d l-bilan',
-    statsOverview: language === 'fr' ? 'Aperçu de mes chiffres' : 'Khlassa d l-ar9am dyali',
-    saved: language === 'fr' ? 'Épargne nette' : 'Tawfir Safi',
-    spent: language === 'fr' ? 'Dépenses totales' : 'Masarif kamla',
-    income: language === 'fr' ? 'Revenus totaux' : 'Madkhoul kamel',
-    bestMonth: language === 'fr' ? 'Meilleur mois' : '7sen chhar',
-    worstMonth: language === 'fr' ? 'Mois de dérapage' : 'Chhar d s-srf bzaf',
-    streak: language === 'fr' ? 'Discipline (Streak)' : 'L-indibat (Streak)',
-    ocrScans: language === 'fr' ? 'Tickets scannés' : 'Tickets mseyline',
-    tontines: language === 'fr' ? 'Tontines complétées' : 'Daret mkmela',
-    goals: language === 'fr' ? 'Projets accomplis' : 'Ahdaf mkmela',
-    topCategory: language === 'fr' ? 'Catégorie principale' : 'L-masrouf l-awwal',
-    ofTotal: language === 'fr' ? 'du budget dépensé' : 'mn l-budget d l-masarif',
-    badge: language === 'fr' ? 'Titre de l\'année' : 'Xara d l-3am',
-    viewDetails: language === 'fr' ? 'Voir ma story' : 'Chouf s-story dyali',
-    generatingText: language === 'fr' ? 'Sidi Floussi prépare vos slides...' : 'Sidi Floussi kay-7seb l-bilan...'
+    title: isDarija ? 'Floussi Wrapped dyali' : 'Mon Floussi Wrapped',
+    subtitle: isDarija 
+      ? 'Khlassa kamla d l-mou3amalat o l-iddikhar dyalek.'
+      : 'La rétrospective personnalisée de vos habitudes financières.',
+    yearSelector: isDarija ? 'Khtar l-3am' : 'Sélectionner l\'année',
+    launchCta: isDarija ? 'Khdem s-story d l-bilan' : 'Lancer la Story interactive',
+    statsOverview: isDarija ? 'Khlassa d l-ar9am dyali' : 'Aperçu de mes chiffres',
+    saved: isDarija ? 'Tawfir Safi' : 'Épargne nette',
+    spent: isDarija ? 'Masarif kamla' : 'Dépenses totales',
+    income: isDarija ? 'Madkhoul kamel' : 'Revenus totaux',
+    bestMonth: isDarija ? '7sen chhar' : 'Meilleur mois',
+    worstMonth: isDarija ? 'Chhar d s-srf bzaf' : 'Mois de dérapage',
+    streak: isDarija ? 'L-indibat (Streak)' : 'Discipline (Streak)',
+    ocrScans: isDarija ? 'Tickets mseyline' : 'Tickets scannés',
+    tontines: isDarija ? 'Daret mkmela' : 'Tontines complétées',
+    goals: isDarija ? 'Ahdaf mkmela' : 'Projets accomplis',
+    topCategory: isDarija ? 'L-masrouf l-awwal' : 'Catégorie principale',
+    ofTotal: isDarija ? 'mn l-budget d l-masarif' : 'du budget dépensé',
+    badge: isDarija ? 'Xara d l-3am' : 'Titre de l\'année',
+    viewDetails: isDarija ? 'Chouf s-story dyali' : 'Voir ma story',
+    generatingText: isDarija ? 'Sidi Floussi kay-7seb l-bilan...' : 'Sidi Floussi prépare vos slides...',
+    last12Months: isDarija ? 'Akhir 12 chhar (Glissant)' : 'Derniers 12 mois (Glissant)',
+    yearPrefix: isDarija ? '3am' : 'Année',
+    months12: isDarija ? '12 chhar glissants' : '12 mois glissants',
+    bilan: isDarija ? 'Bilan' : 'Bilan',
+    storyTitle: isDarija ? 'Story Interactive d l-Bilan dyalek' : 'Votre Story Interactive Floussi',
+    storyDesc: isDarija 
+      ? 'Chouf tawfir w l-indibat d l-flouss dyalek b tariqa moutslyil d Instagram o charekha m3a s7abek.'
+      : 'Plongez dans une expérience immersive digne de Spotify Wrapped, découvrez vos statistiques insolites et partagez votre réussite sur vos réseaux.',
+    statementHeader: isDarija ? '7isab n-nata\'ij' : 'Compte de Résultat',
+    savingRate: isDarija ? 'Taux d\'épargne :' : 'Taux d\'épargne :',
+    personalityDesc: isDarija 
+      ? 'M7sed b l-indibat d l-kitaba d s-srf dyalek w t-tawfir dialek.'
+      : 'Déterminé selon votre régularité de saisie, vos ratios de dépenses du weekend et votre taux de mise de côté.',
+    transactionsLogged: isDarija ? 'mou3amalat d-tsajlat.' : 'transactions saisies.',
+    days: isDarija ? 'Iyam' : 'Jours',
+    scansOcr: isDarija ? 'Scans OCR' : 'Scans OCR',
+    tontinesCol: isDarija ? 'Tontines' : 'Tontines',
+    objectivesCol: isDarija ? 'Objectifs' : 'Objectifs',
+    yearCol: isDarija ? 'Année' : 'Année'
   };
 
   return (
@@ -100,10 +122,10 @@ export default function WrappedPage() {
             onChange={(e) => setSelectedYear(e.target.value === 'glissant' ? 'glissant' : parseInt(e.target.value, 10))}
             className="px-3 py-2 bg-white border border-slate-200 rounded-xl font-bold text-xs shadow-xs focus:outline-hidden focus:ring-2 focus:ring-emerald-500/20"
           >
-            <option value="glissant">Last 12 Months (Glissant)</option>
+            <option value="glissant">{t.last12Months}</option>
             {availableYears.map(yr => (
               <option key={yr} value={yr}>
-                Année {yr}
+                {t.yearPrefix} {yr}
               </option>
             ))}
           </select>
@@ -120,15 +142,13 @@ export default function WrappedPage() {
             <div className="space-y-3 max-w-lg">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 text-[10px] font-black text-emerald-400 border border-slate-700/50 uppercase tracking-widest">
                 <Calendar size={11} />
-                {selectedYear === 'glissant' ? '12 mois glissants' : `Bilan ${selectedYear}`}
+                {selectedYear === 'glissant' ? t.months12 : `${t.bilan} ${selectedYear}`}
               </span>
               <h2 className="text-2xl md:text-3xl font-black tracking-tight leading-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
-                {language === 'fr' ? 'Votre Story Interactive Floussi' : 'Story Interactive d l-Bilan dyalek'}
+                {t.storyTitle}
               </h2>
               <p className="text-xs font-semibold text-slate-400 leading-relaxed">
-                {language === 'fr' 
-                  ? 'Plongez dans une expérience immersive digne de Spotify Wrapped, découvrez vos statistiques insolites et partagez votre réussite sur vos réseaux.' 
-                  : 'Chouf tawfir w l-indibat d l-flouss dyalek b tariqa moutslyil d Instagram o charekha m3a s7abek.'}
+                {t.storyDesc}
               </p>
             </div>
 
@@ -156,7 +176,7 @@ export default function WrappedPage() {
             {/* Bento Card 1: Main Financial Balances */}
             <div className="bg-white p-6 rounded-3xl border border-slate-150/80 shadow-xs md:col-span-2 flex flex-col justify-between space-y-6">
               <div className="flex justify-between items-center">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Compte de Résultat</span>
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">{t.statementHeader}</span>
                 <span className="p-2 bg-emerald-50 text-emerald-600 rounded-xl"><TrendingUp size={16} /></span>
               </div>
 
@@ -164,24 +184,24 @@ export default function WrappedPage() {
                 <div>
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">{t.saved}</span>
                   <p className="text-3xl font-black text-emerald-600 leading-none">
-                    {stats.totalSaved.toLocaleString('fr-FR')} <span className="text-xs font-bold text-slate-400">DH</span>
+                    {formatCurrency(stats.totalSaved)}
                   </p>
                   <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block mt-1">
-                    Taux d'épargne : {stats.totalIncome > 0 ? Math.round((stats.totalSaved / stats.totalIncome) * 100) : 0}%
+                    {t.savingRate} {stats.totalIncome > 0 ? Math.round((stats.totalSaved / stats.totalIncome) * 100) : 0}%
                   </span>
                 </div>
 
                 <div>
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">{t.spent}</span>
                   <p className="text-2xl font-extrabold text-slate-800 leading-none">
-                    {stats.totalSpent.toLocaleString('fr-FR')} <span className="text-xs font-bold text-slate-400">DH</span>
+                    {formatCurrency(stats.totalSpent)}
                   </p>
                 </div>
 
                 <div>
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">{t.income}</span>
                   <p className="text-2xl font-extrabold text-slate-800 leading-none">
-                    {stats.totalIncome.toLocaleString('fr-FR')} <span className="text-xs font-bold text-slate-400">DH</span>
+                    {formatCurrency(stats.totalIncome)}
                   </p>
                 </div>
               </div>
@@ -196,12 +216,10 @@ export default function WrappedPage() {
 
               <div className="space-y-1 py-4">
                 <h4 className="text-xl font-black tracking-tight leading-tight">
-                  {language === 'fr' ? stats.personalityBadgeFr : stats.personalityBadgeDarija}
+                  {isDarija ? stats.personalityBadgeDarija : stats.personalityBadgeFr}
                 </h4>
                 <p className="text-[10px] text-emerald-200 font-bold leading-normal">
-                  {language === 'fr' 
-                    ? 'Déterminé selon votre régularité de saisie, vos ratios de dépenses du weekend et votre taux de mise de côté.'
-                    : 'M7sed b l-indibat d l-kitaba d s-srf dyalek w t-tawfir dialek.'}
+                  {t.personalityDesc}
                 </p>
               </div>
             </div>
@@ -211,7 +229,7 @@ export default function WrappedPage() {
               <div className="border-r border-slate-100 pr-2 space-y-1">
                 <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">{t.bestMonth}</span>
                 <h5 className="text-lg font-black text-slate-900">{stats.bestMonth.month}</h5>
-                <p className="text-xs font-extrabold text-emerald-600">+{stats.bestMonth.savedAmount.toLocaleString('fr-FR')} DH</p>
+                <p className="text-xs font-extrabold text-emerald-600">+{formatCurrency(stats.bestMonth.savedAmount)}</p>
               </div>
 
               <div className="pl-2 space-y-1">
@@ -241,9 +259,9 @@ export default function WrappedPage() {
             <div className="bg-white p-6 rounded-3xl border border-slate-150/80 shadow-xs flex items-center justify-between gap-4">
               <div className="space-y-2">
                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">{t.streak}</span>
-                <h4 className="text-2xl font-black text-slate-950 leading-none">{stats.longestStreak} Jours</h4>
+                <h4 className="text-2xl font-black text-slate-950 leading-none">{stats.longestStreak} {t.days}</h4>
                 <p className="text-xs font-semibold text-slate-500 leading-normal">
-                  {stats.totalTransactionsLogged} transactions saisies.
+                  {stats.totalTransactionsLogged} {t.transactionsLogged}
                 </p>
               </div>
               <div className="p-3 bg-orange-50 text-orange-600 rounded-2xl flex-shrink-0">
@@ -254,19 +272,19 @@ export default function WrappedPage() {
             {/* Bento Card 6: Gamification milestones */}
             <div className="bg-white p-6 rounded-3xl border border-slate-150/80 shadow-xs md:col-span-3 grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
               <div>
-                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Scans OCR</span>
+                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block mb-1">{t.scansOcr}</span>
                 <p className="text-xl font-extrabold text-slate-800">{stats.ocrReceiptsScanned}</p>
               </div>
               <div>
-                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Tontines</span>
+                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block mb-1">{t.tontinesCol}</span>
                 <p className="text-xl font-extrabold text-slate-800">{stats.tontinesCompleted}</p>
               </div>
               <div>
-                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Objectifs</span>
+                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block mb-1">{t.objectivesCol}</span>
                 <p className="text-xl font-extrabold text-slate-800">{stats.goalsCompleted.length}</p>
               </div>
               <div>
-                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Année</span>
+                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block mb-1">{t.yearCol}</span>
                 <p className="text-xl font-extrabold text-slate-800">{stats.year}</p>
               </div>
             </div>
@@ -281,7 +299,7 @@ export default function WrappedPage() {
         slides={slides}
         onClose={() => setIsViewerOpen(false)}
         loading={generating}
-        language={language as 'fr' | 'darija'}
+        language={lang as 'fr' | 'darija'}
       />
 
     </div>

@@ -94,8 +94,8 @@ export function TransactionForm({ onClose, onSave, language, buckets }: Transact
           <div className="flex items-center gap-2.5 text-xs text-emerald-800">
             <Camera size={18} className="text-emerald-600 animate-pulse" />
             <div>
-              <p className="font-bold">Scanner un Ticket de caisse</p>
-              <p className="text-[10px] text-emerald-600">Alimentation, Marjane, BIM, Decathlon...</p>
+              <p className="font-bold">{getTranslation('scanTicketLabel', language)}</p>
+              <p className="text-[10px] text-emerald-600">{getTranslation('scanTicketDesc', language)}</p>
             </div>
           </div>
           
@@ -116,7 +116,7 @@ export function TransactionForm({ onClose, onSave, language, buckets }: Transact
               {scanning ? (
                 <>
                   <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>Skan ({progress}%)</span>
+                  <span>{language === 'darija' ? 'Khddam...' : 'Scan...'} ({progress}%)</span>
                 </>
               ) : (
                 <>
@@ -195,7 +195,7 @@ export function TransactionForm({ onClose, onSave, language, buckets }: Transact
               required
               value={description}
               onChange={e => setDescription(e.target.value)}
-              placeholder="Ex: Courses hebdomadaires au souq"
+              placeholder={getTranslation('descPlaceholder', language)}
               className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold focus:outline-hidden focus:border-emerald-500 transition-colors"
             />
           </div>
@@ -204,7 +204,7 @@ export function TransactionForm({ onClose, onSave, language, buckets }: Transact
             {/* Account / Bank */}
             <div>
               <label className="block text-xs font-bold text-gray-700 mb-1">
-                Moyen de paiement
+                {getTranslation('paymentMethodLabel', language)}
               </label>
               <select
                 value={accountId}
@@ -213,7 +213,7 @@ export function TransactionForm({ onClose, onSave, language, buckets }: Transact
               >
                 {MOROCCAN_BANKS.map(bank => (
                   <option key={bank.id} value={bank.id}>
-                    {bank.name}
+                    {bank.id === 'cash' ? (language === 'darija' ? "Cash (Flouss l'jib)" : "Espèces (Cash)") : bank.name}
                   </option>
                 ))}
               </select>
@@ -242,14 +242,14 @@ export function TransactionForm({ onClose, onSave, language, buckets }: Transact
             {/* Bucket / Compartment allocation */}
             <div>
               <label className="block text-xs font-bold text-gray-700 mb-1">
-                Lier à un sandoq (Bucket)
+                {getTranslation('linkToSandoqLabel', language)}
               </label>
               <select
                 value={bucketId}
                 onChange={e => setBucketId(e.target.value)}
                 className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-hidden focus:border-emerald-500 transition-colors"
               >
-                <option value="">Aucun compartiment</option>
+                <option value="">{getTranslation('noCompartmentOption', language)}</option>
                 {buckets.map(b => (
                   <option key={b.id} value={b.id}>
                     {b.name}
@@ -261,13 +261,13 @@ export function TransactionForm({ onClose, onSave, language, buckets }: Transact
             {/* Tags */}
             <div>
               <label className="block text-xs font-bold text-gray-700 mb-1">
-                Tags (séparés par virgules)
+                {getTranslation('tagsLabel', language)}
               </label>
               <input
                 type="text"
                 value={tags}
                 onChange={e => setTags(e.target.value)}
-                placeholder="Ex: cash, souq, ramadan"
+                placeholder={getTranslation('tagsPlaceholder', language)}
                 className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold focus:outline-hidden focus:border-emerald-500 transition-colors"
               />
             </div>
@@ -282,7 +282,7 @@ export function TransactionForm({ onClose, onSave, language, buckets }: Transact
               type="text"
               value={merchant}
               onChange={e => setMerchant(e.target.value)}
-              placeholder="Ex: BIM, Moul Hanout"
+              placeholder={getTranslation('merchantPlaceholder', language)}
               className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold focus:outline-hidden focus:border-emerald-500 transition-colors"
             />
           </div>

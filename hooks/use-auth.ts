@@ -15,7 +15,7 @@ export function useAuth() {
   const upgradeSubscription = useCallback((tier: SubscriptionTier) => {
     context.updateProfile({
       subscription_tier: tier,
-      subscription_expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+      subscription_expires_at: tier === 'free' ? null : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
     });
   }, [context]);
 

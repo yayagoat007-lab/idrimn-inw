@@ -1,6 +1,8 @@
 import React from 'react';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { ShieldAlert, TrendingUp, Wallet, Users } from 'lucide-react';
+import { formatCurrency } from '../../lib/utils';
+import { t, Language } from '../../lib/i18n';
 
 interface FamilyDashboardProps {
   stats: {
@@ -10,18 +12,19 @@ interface FamilyDashboardProps {
     categoryDistribution: { name: string; value: number }[];
     familyAlerts: string[];
   };
+  language: Language;
 }
 
 const COLORS = ['#10B981', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6'];
 
-export function FamilyDashboard({ stats }: FamilyDashboardProps) {
+export function FamilyDashboard({ stats, language }: FamilyDashboardProps) {
   // Mock budget comparison
   const comparisonData = [
-    { name: 'Alimentation', Budget: 4000, Réel: 3600 },
-    { name: 'Logement', Budget: 5000, Réel: 5000 },
-    { name: 'Transports', Budget: 1500, Réel: 1800 },
-    { name: 'Éducation', Budget: 2000, Réel: 1500 },
-    { name: 'Loisirs', Budget: 1000, Réel: 1200 }
+    { name: language === 'darija' ? 'Mawad Ghadaiya' : 'Alimentation', Budget: 4000, Réel: 3600 },
+    { name: language === 'darija' ? 'Sakan' : 'Logement', Budget: 5000, Réel: 5000 },
+    { name: language === 'darija' ? 'Mowasalat' : 'Transports', Budget: 1500, Réel: 1800 },
+    { name: language === 'darija' ? 'Ta\'lim' : 'Éducation', Budget: 2000, Réel: 1500 },
+    { name: language === 'darija' ? 'Loisirs' : 'Loisirs', Budget: 1000, Réel: 1200 }
   ];
 
   return (
@@ -33,8 +36,8 @@ export function FamilyDashboard({ stats }: FamilyDashboardProps) {
             <Wallet className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-[9px] font-bold text-slate-400 uppercase block tracking-wider">Trésorerie Foyer</span>
-            <span className="text-sm font-black text-slate-800">{stats.totalBalance.toLocaleString('fr-MA')} DH</span>
+            <span className="text-[9px] font-bold text-slate-400 uppercase block tracking-wider">{t('familyTreasury', language)}</span>
+            <span className="text-sm font-black text-slate-800">{formatCurrency(stats.totalBalance)}</span>
           </div>
         </div>
 
@@ -43,8 +46,8 @@ export function FamilyDashboard({ stats }: FamilyDashboardProps) {
             <Users className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-[9px] font-bold text-slate-400 uppercase block tracking-wider">Dépenses Foyer</span>
-            <span className="text-sm font-black text-slate-800">{stats.totalSpentThisMonth.toLocaleString('fr-MA')} DH</span>
+            <span className="text-[9px] font-bold text-slate-400 uppercase block tracking-wider">{t('familyExpenses', language)}</span>
+            <span className="text-sm font-black text-slate-800">{formatCurrency(stats.totalSpentThisMonth)}</span>
           </div>
         </div>
 
@@ -53,8 +56,10 @@ export function FamilyDashboard({ stats }: FamilyDashboardProps) {
             <TrendingUp className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-[9px] font-bold text-slate-400 uppercase block tracking-wider">Membres Actifs</span>
-            <span className="text-sm font-black text-slate-800">3 Comptes</span>
+            <span className="text-[9px] font-bold text-slate-400 uppercase block tracking-wider">{t('familyActiveMembers', language)}</span>
+            <span className="text-sm font-black text-slate-800">
+              {language === 'darija' ? '3 dyal n-Nass' : '3 Comptes'}
+            </span>
           </div>
         </div>
       </div>
@@ -64,7 +69,7 @@ export function FamilyDashboard({ stats }: FamilyDashboardProps) {
         <div className="bg-amber-50/40 border border-amber-200/60 rounded-2xl p-4 space-y-2.5">
           <h4 className="text-[10px] font-black text-amber-800 flex items-center gap-1.5 uppercase tracking-wider">
             <ShieldAlert className="w-4 h-4 text-amber-600 animate-pulse" />
-            <span>Alertes Budgétaires du Foyer</span>
+            <span>{t('familyAlertsTitle', language)}</span>
           </h4>
           <div className="space-y-1.5">
             {stats.familyAlerts.map((alert, idx) => (
@@ -80,7 +85,7 @@ export function FamilyDashboard({ stats }: FamilyDashboardProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Spending distribution by category */}
         <div className="border border-slate-150 rounded-2xl p-5 bg-white shadow-xs flex flex-col justify-between">
-          <h4 className="text-xs font-black text-slate-800 mb-4 uppercase tracking-wider">Masrouf de Famille par Catégorie</h4>
+          <h4 className="text-xs font-black text-slate-800 mb-4 uppercase tracking-wider">{t('familySpendingByCategory', language)}</h4>
           <div className="h-[180px] w-full flex items-center justify-center text-[9px] font-bold">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -106,7 +111,7 @@ export function FamilyDashboard({ stats }: FamilyDashboardProps) {
 
         {/* Budget vs Real */}
         <div className="border border-slate-150 rounded-2xl p-5 bg-white shadow-xs">
-          <h4 className="text-xs font-black text-slate-800 mb-4 uppercase tracking-wider">Budget Alloué vs Réel</h4>
+          <h4 className="text-xs font-black text-slate-800 mb-4 uppercase tracking-wider">{t('familyBudgetComparison', language)}</h4>
           <div className="h-[180px] w-full text-[9px] font-bold">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={comparisonData}>

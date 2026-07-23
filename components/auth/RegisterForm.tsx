@@ -49,23 +49,25 @@ export function RegisterForm({
 
     setStrength(score);
 
+    const isDarija = language === 'darija';
+
     if (password.length === 0) {
-      setStrengthLabel('Inconnu');
+      setStrengthLabel(isDarija ? 'Ma3roufch' : 'Inconnu');
       setStrengthColor('bg-slate-200');
     } else if (score <= 1) {
-      setStrengthLabel('Faible 🔴');
+      setStrengthLabel(isDarija ? 'D3if 🔴' : 'Faible 🔴');
       setStrengthColor('bg-rose-500');
     } else if (score === 2) {
-      setStrengthLabel('Moyen 🟠');
+      setStrengthLabel(isDarija ? 'Metwasat 🟠' : 'Moyen 🟠');
       setStrengthColor('bg-amber-500');
     } else if (score === 3) {
-      setStrengthLabel('Bon 🟡');
+      setStrengthLabel(isDarija ? 'Mzyan 🟡' : 'Bon 🟡');
       setStrengthColor('bg-yellow-500');
     } else if (score === 4) {
-      setStrengthLabel('Excellent 🟢');
+      setStrengthLabel(isDarija ? 'Nadi 🟢' : 'Excellent 🟢');
       setStrengthColor('bg-emerald-500');
     }
-  }, [password]);
+  }, [password, language]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,7 +125,9 @@ export function RegisterForm({
           {getTranslation('registerButton', language)}
         </h2>
         <p className="text-xs font-semibold text-slate-400">
-          Rejoignez Floussi et suivez vos enveloppes de dépenses en DH
+          {language === 'darija' 
+            ? "Dkhel l Floussi o tbe3 l-enveloppes dyal l-masrouf dyalk b l-DH" 
+            : "Rejoignez Floussi et suivez vos enveloppes de dépenses en DH"}
         </p>
       </div>
 
@@ -275,8 +279,12 @@ export function RegisterForm({
           {password.length > 0 && (
             <div className="space-y-1.5 pt-1">
               <div className="flex justify-between items-center text-[9px] font-bold">
-                <span className="text-slate-400">Force : {strengthLabel}</span>
-                <span className="text-slate-400">{password.length} caractères</span>
+                <span className="text-slate-400">
+                  {language === 'darija' ? `L-Qowa : ${strengthLabel}` : `Force : ${strengthLabel}`}
+                </span>
+                <span className="text-slate-400">
+                  {language === 'darija' ? `${password.length} r-ramz` : `${password.length} caractères`}
+                </span>
               </div>
               <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
                 <div 
@@ -286,16 +294,16 @@ export function RegisterForm({
               </div>
               <ul className="text-[9px] text-slate-400 font-medium grid grid-cols-2 gap-1 bg-slate-50 p-1.5 rounded-lg border border-slate-100">
                 <li className={password.length >= 8 ? "text-emerald-600 flex items-center gap-1 font-bold" : "flex items-center gap-1"}>
-                  {password.length >= 8 ? "✓" : "•"} Min. 8 caractères
+                  {password.length >= 8 ? "✓" : "•"} {language === 'darija' ? "A-Aqal 8 d l-chkhass" : "Min. 8 caractères"}
                 </li>
                 <li className={/[A-Z]/.test(password) ? "text-emerald-600 flex items-center gap-1 font-bold" : "flex items-center gap-1"}>
-                  {/[A-Z]/.test(password) ? "✓" : "•"} 1 Majuscule
+                  {/[A-Z]/.test(password) ? "✓" : "•"} {language === 'darija' ? "1 Horf kbir" : "1 Majuscule"}
                 </li>
                 <li className={/[0-9]/.test(password) ? "text-emerald-600 flex items-center gap-1 font-bold" : "flex items-center gap-1"}>
-                  {/[0-9]/.test(password) ? "✓" : "•"} 1 Chiffre
+                  {/[0-9]/.test(password) ? "✓" : "•"} {language === 'darija' ? "1 Raqm" : "1 Chiffre"}
                 </li>
                 <li className={/[^A-Za-z0-9]/.test(password) ? "text-emerald-600 flex items-center gap-1 font-bold" : "flex items-center gap-1"}>
-                  {/[^A-Za-z0-9]/.test(password) ? "✓" : "•"} 1 Caractère spécial
+                  {/[^A-Za-z0-9]/.test(password) ? "✓" : "•"} {language === 'darija' ? "1 Ramz khass" : "1 Caractère spécial"}
                 </li>
               </ul>
             </div>
@@ -309,7 +317,7 @@ export function RegisterForm({
         {/* Confirm Password */}
         <div className="space-y-1">
           <label className="block text-xs font-bold text-slate-700">
-            Confirmation du mot de passe *
+            {language === 'darija' ? "Tkid dyal l-mot de passe *" : "Confirmation du mot de passe *"}
           </label>
           <div className="relative">
             <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -368,7 +376,7 @@ export function RegisterForm({
           {isLoading ? (
             <>
               <RefreshCw size={14} className="animate-spin" />
-              <span>S'enregistrer...</span>
+              <span>{language === 'darija' ? "T-Sajjal..." : "S'enregistrer..."}</span>
             </>
           ) : (
             <>
@@ -382,7 +390,9 @@ export function RegisterForm({
       {/* Divider */}
       <div className="relative flex py-1 items-center">
         <div className="flex-grow border-t border-slate-100"></div>
-        <span className="flex-shrink mx-3 text-[10px] font-bold text-slate-300 uppercase tracking-wider">ou s'inscrire avec</span>
+        <span className="flex-shrink mx-3 text-[10px] font-bold text-slate-300 uppercase tracking-wider">
+          {language === 'darija' ? "wla t-sajjal b" : "ou s'inscrire avec"}
+        </span>
         <div className="flex-grow border-t border-slate-100"></div>
       </div>
 
